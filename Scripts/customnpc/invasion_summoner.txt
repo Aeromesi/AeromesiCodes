@@ -1,0 +1,536 @@
+/*		Summoner Invasion Script
+		Created by: Aeromesi
+		Comments: None
+		Built for Hercules
+
+		//Custom Commands: \\
+//*****************************************************************************************************  
+// Player Commands:
+'@joininvasion' - Allows you to join Invasion instead of going to NPC, directly go to the invasion!
+'@quitinvasion' - Allows you to leave the invasion
+// GM Commands		
+'@repeatinvasion' - Once finished invasion if you want to do another same invasion setup as before just type this command!
+'@destroyinvasion' - Allows you to end the Invasion early. Can also be accessible through NPC
+'@createinvasion' - Opens CREATE_INVASION so you can setup everything on the go.
+'@rewardinvasion' - Allows you to get reward if you participated in killing enough and the Invasion is over will you be able to receive reward.
+	NOTE: ALL THE COMMANDS ARE SCRIPTED INTO AN NPC INTERPHASE, SO IF YOU DON'T LIKE THE COMMANDS, TALK TO THE INVASION SUMMONER!
+*/
+//*******************************************************************************************************
+
+
+prontera,150,159,4	script	Invasion Summoner#Test	4_F_MORAFINE2,{
+INPUT_RESET:
+	mes .@insv$ = "[^FF0000 Invasion Summoner ^000000]";
+if( getgmlevel() >= 99 ) {
+if( $@Inv_Active ) {
+	mes "Would you like to Destroy/Prematurely end Invasion for whatever reason?";
+	next;
+	switch(select("Yes please.:No thanks!"))
+	{
+	case 1:
+	mes "You will now warp to the map in order to destroy the invasion that's in-progress.";
+	next;
+	warp $MapInput$,0,0;
+	sleep2 4000;
+	$@Inv_Active = 0;
+	$@KillCount = 0;
+	killmonster $MapInput$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	announce "Invasion has been destroyed by a GM.",bc_map;
+	end;
+
+	case 2:
+	mes .@insv$;
+	mes "Alrighty then!";
+	close;
+}
+}
+	mes "Would you like to start configuring your invasion?";
+	next;
+	switch(select("Yes please.:No thanks.")) {
+	case 1:
+CREATE_INVASION:
+	mes .@insv$;
+	mes "Please input the map you want the Invasion to start on.";
+MAP_INPUT:
+if ( input( @MapInput$, 4, 23 ) ) { 
+	dispbottom " Please input a valid map name with length between 4~23";
+	callsub MAP_INPUT;
+	end;
+}
+if ( getmapusers(@MapInput$) == -1 ) { 
+	dispbottom "Please input a valid mapname.";
+	callsub MAP_INPUT;
+	end;
+}
+
+	mes "Alright, so the map we chose is ^FF0000"+@MapInput$+"^000000.";
+	next;
+
+	mes .@insv$;
+	mes "Alright, please input Monster 1.";
+MOB1_INPUT:
+	input .Mob1ID;
+	next;
+	if(getmonsterinfo(.Mob1ID,MOB_LV)<0 || getmonsterinfo(.Mob1ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB1_INPUT;
+		end;
+}
+	mes .@insv$;
+	mes "How many of "+strmobinfo(1,.Mob1ID)+" would you like to spawn?";
+MOB1_INPUTAM:
+	input .Mob1AM;
+	if(.Mob1AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob1ID)+"'s amount.";
+	callsub MOB1_INPUTAM;
+	end;
+}
+	mes "Alright, monster 1 will be ["+strmobinfo(1,.Mob1ID)+"] x ("+.Mob1AM+").";
+next;
+	mes .@insv$;
+	mes "Please input Monster 2.";
+MOB2_INPUT:
+	input .Mob2ID;
+	if(getmonsterinfo(.Mob2ID,MOB_LV)<0 || getmonsterinfo(.Mob2ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB2_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob2ID)+" would you like to spawn?";
+MOB2_INPUTAM:
+	input .Mob2AM;
+	if(.Mob2AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob2ID)+"'s amount.";
+	callsub MOB2_INPUTAM;
+	end;
+}
+	mes "Alright, monster 2 will be ["+strmobinfo(1,.Mob2ID)+"] x ("+.Mob2AM+").";
+next;
+	mes .@insv$;
+	mes "Please input Monster 3.";
+MOB3_INPUT:
+	input .Mob3ID;
+	if(getmonsterinfo(.Mob3ID,MOB_LV)<0 || getmonsterinfo(.Mob3ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB3_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob3ID)+" would you like to spawn?";
+MOB3_INPUTAM:
+	input .Mob3AM;
+	if(.Mob3AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob3ID)+"'s amount.";
+	callsub MOB3_INPUTAM;
+	end;
+}
+	mes "Alright, monster 3 will be ["+strmobinfo(1,.Mob3ID)+"] x ("+.Mob3AM+").";
+next;
+	mes .@insv$;
+	mes "Please input Monster 4.";
+MOB4_INPUT:
+	input .Mob4ID;
+	if(getmonsterinfo(.Mob4ID,MOB_LV)<0 || getmonsterinfo(.Mob4ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB4_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob4ID)+" would you like to spawn?";
+MOB4_INPUTAM:
+	input .Mob4AM;
+	if(.Mob4AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob4ID)+"'s amount.";
+	callsub MOB4_INPUTAM;
+	end;
+}
+	mes "Alright, monster 4 will be ["+strmobinfo(1,.Mob4ID)+"] x ("+.Mob4AM+").";
+next;
+	mes .@insv$;
+	mes "Please input Monster 5.";
+MOB5_INPUT:
+	input .Mob5ID;
+	if(getmonsterinfo(.Mob5ID,MOB_LV)<0 || getmonsterinfo(.Mob5ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB5_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob5ID)+" would you like to spawn?";
+MOB5_INPUTAM:
+	input .Mob5AM;
+	if(.Mob5AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob5ID)+"'s amount.";
+	callsub MOB5_INPUTAM;
+	end;
+}
+	mes "Alright, monster 5 will be ["+strmobinfo(1,.Mob5ID)+"] x ("+.Mob5AM+").";
+next;
+
+	mes .@insv$;
+	mes "Please input Monster 6.";
+MOB6_INPUT:
+	input .Mob6ID;
+	if(getmonsterinfo(.Mob6ID,MOB_LV)<0 || getmonsterinfo(.Mob6ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB6_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob6ID)+" would you like to spawn?";
+MOB6_INPUTAM:
+	input .Mob6AM;
+	if(.Mob6AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob6ID)+"'s amount.";
+	callsub MOB6_INPUTAM;
+	end;
+}
+	mes "Alright, monster 6 will be ["+strmobinfo(1,.Mob6ID)+"] x ("+.Mob6AM+").";
+next;
+MOB7_INPUT:
+
+	dispbottom "Please input Monster 7.";
+	input .Mob7ID;
+	if(getmonsterinfo(.Mob7ID,MOB_LV)<0 || getmonsterinfo(.Mob7ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB7_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob7ID)+" would you like to spawn?";
+MOB7_INPUTAM:
+	input .Mob7AM;
+	if(.Mob7AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob7ID)+"'s amount.";
+	callsub MOB7_INPUTAM;
+	end;
+}
+	mes "Alright, monster 7 will be ["+strmobinfo(1,.Mob7ID)+"] x ("+.Mob7AM+").";
+next;
+	dispbottom .@insv$;
+	dispbottom "Please input Monster 8.";
+MOB8_INPUT:
+	input .Mob8ID;
+	if(getmonsterinfo(.Mob8ID,MOB_LV)<0 || getmonsterinfo(.Mob8ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB8_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob8ID)+" would you like to spawn?";
+MOB8_INPUTAM:
+	input .Mob8AM;
+	if(.Mob8AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob8ID)+"'s amount.";
+	callsub MOB8_INPUTAM;
+	end;
+}
+	mes "Alright, monster 8 will be ["+strmobinfo(1,.Mob8ID)+"] x ("+.Mob8AM+").";
+next;
+	dispbottom .@insv$;
+	dispbottom "Please input Monster 9.";
+MOB9_INPUT:
+	input .Mob9ID;
+	if(getmonsterinfo(.Mob9ID,MOB_LV)<0 || getmonsterinfo(.Mob9ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB9_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob9ID)+" would you like to spawn?";
+MOB9_INPUTAM:
+	input .Mob9AM;
+	if(.Mob9AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob9ID)+"'s amount.";
+	callsub MOB9_INPUTAM;
+	end;
+}
+	mes "Alright, monster 9 will be ["+strmobinfo(1,.Mob9ID)+"] x ("+.Mob9AM+").";
+next;
+	mes .@insv$;
+	mes "Please input Monster 10.";
+MOB10_INPUT:
+	input .Mob10ID; 
+	if(getmonsterinfo(.Mob10ID,MOB_LV)<0 || getmonsterinfo(.Mob10ID,MOB_NAME)=="Dummy") {
+
+		dispbottom "Please enter valid Monster ID";
+		callsub MOB10_INPUT;
+		end;
+}
+	mes "How many of "+strmobinfo(1,.Mob10ID)+" would you like to spawn?";
+MOB10_INPUTAM:
+	input .Mob10AM;
+	if(.Mob10AM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
+	dispbottom "Please reinput "+strmobinfo(1,.Mob10ID)+"'s amount.";
+	callsub MOB10_INPUTAM;
+	end;
+}
+	mes "Alright, monster 10 will be ["+strmobinfo(1,.Mob10ID)+"] x ("+.Mob10AM+").";
+next;
+.MobTotal = .Mob1AM+.Mob2AM+.Mob3AM+.Mob4AM+.Mob5AM+.Mob6AM+.Mob7AM+.Mob8AM+.Mob9AM+.Mob10AM;
+$MobTotal = .MobTotal;
+	mes "What should be the minimum amount of monsters for participating players to kill to receive reward?";
+MINIMUM_AM:
+	input $@KillMinimum;
+	if ( $@KillMinimum > .MobTotal) {
+	dispbottom "Sorry, but you cannot make the minimum amount of kills for participating players higher than the total amount of mobs, please re-input.";
+	callsub MINIMUM_AM;
+	end;
+} else
+	if ($@KillMinimum == 0) {
+	dispbottom "Sorry, but choosing 0 is impossible, please re-input.";
+	callsub MINIMUM_AM;
+	end;
+}
+next;
+	mes "Input Reward Item ID.";
+REW_INPUT:
+	input .Inv_Reward;
+	if ( !.Inv_Reward ) {
+
+	dispbottom "Sorry, but choosing 0 is impossible, please re-input.";
+	callsub REW_INPUT;
+	end;
+}
+next;
+	mes "Input Reward Item amount.";
+REW_AM:
+	input .Reward_Amount;
+	if ( !.Reward_Amount ) {
+
+	dispbottom "Sorry, but choosing 0 is impossible, please re-input.";
+	callsub REW_AM;
+	end;
+}	mes "Also as an extra feature, would you like to enable Bonus drops? You can control the drop rate of bonus items too.";
+	next;
+	switch(select("Enable Bonus items:Skip Feature")) {
+	case 1:
+	.Bonus_Enabled++;
+	dispbottom "Input Bonus Item Drop Rate on Monsters:";
+	dispbottom "0~100, input 50 it would be 50% Chance";
+BONUS_INPUT:
+	input .BonusItemRate;
+	if(.BonusItemRate <= 0) {
+	dispbottom "You cannot input anything below 0, please reinput.";
+	callsub BONUS_INPUT;
+	end;
+}
+		mes "Bonus items Rate: ("+.BonusItemRate+"%).";
+		mes "Bonus items are now applied.";
+		next;
+	case 2:
+	next;
+	mes .@insv$;
+	mes "Are you fine with these choices?";
+	next;
+	mes .@insv$;
+	mes "Map: ^FF0000"+@MapInput$+"^000000.";
+		$MapInput$ = @MapInput$;
+	mes "";
+	mes "Monster Information:";
+	mes "1. ["+strmobinfo(1,.Mob1ID)+"] x ("+.Mob1AM+").";
+	mes "2. ["+strmobinfo(1,.Mob2ID)+"] x ("+.Mob2AM+").";
+	mes "3. ["+strmobinfo(1,.Mob3ID)+"] x ("+.Mob3AM+").";
+	mes "4. ["+strmobinfo(1,.Mob4ID)+"] x ("+.Mob4AM+").";
+	mes "5. ["+strmobinfo(1,.Mob5ID)+"] x ("+.Mob5AM+").";
+	mes "6. ["+strmobinfo(1,.Mob6ID)+"] x ("+.Mob6AM+").";
+	mes "7. ["+strmobinfo(1,.Mob7ID)+"] x ("+.Mob7AM+").";
+	mes "8. ["+strmobinfo(1,.Mob8ID)+"] x ("+.Mob8AM+").";
+	mes "9. ["+strmobinfo(1,.Mob9ID)+"] x ("+.Mob9AM+").";
+	mes "10. ["+strmobinfo(1,.Mob10ID)+"] x ("+.Mob10AM+").";
+	mes "Minimum Kills to receive reward: ^FF0000"+$@KillMinimum+"^000000.";
+	mes "Reward item: "+getitemname(.Inv_Reward)+" x ^FF0000"+.Reward_Amount+"^000000.";
+	mes "Bonus Feature: "+.Bonus_Enabled+" 1 - On / 0 - Off";
+	next;
+}
+	switch(select("Yes, start Invasion.:Redue Invasion.")) {
+	case 1:
+	//Adding .Mob*ID's value into a temporary global variable that gets erased once finished, destroyed, or server restarts/maintenance.
+	$Mob1ID = .Mob1ID;
+	$Mob2ID = .Mob2ID;
+	$Mob3ID = .Mob3ID;
+	$Mob4ID = .Mob4ID;
+	$Mob5ID = .Mob5ID;
+	$Mob6ID = .Mob6ID;
+	$Mob7ID = .Mob7ID;
+	$Mob8ID = .Mob8ID;
+	$Mob9ID = .Mob9ID;
+	$Mob10ID = .Mob10ID;
+
+	//Adding .Mob*AM's value into a temporary global variable that gets erased once finished, destroyed, or server restarts/maintenance.
+	$Mob1AM = .Mob1AM;
+	$Mob2AM = .Mob2AM;
+	$Mob3AM = .Mob3AM;
+	$Mob4AM = .Mob4AM;
+	$Mob5AM = .Mob5AM;
+	$Mob6AM = .Mob6AM;
+	$Mob7AM = .Mob7AM;
+	$Mob8AM = .Mob8AM;
+	$Mob9AM = .Mob9AM;
+	$Mob10AM = .Mob10AM;
+
+	//End of Conversion
+
+	mes "Invasion activated!";
+	mes "GM you will now be warped to the map to enable the event.";
+	$@Count = 0;
+	$@Inv_Active++;
+	donpcevent ("Invasion Summoner#Test::OnStartInvasion");
+	close;
+	case 2:
+	callsub INPUT_RESET;
+	end;
+}
+	case 2:
+	mes .@insv$;
+	mes "Alright, come again if you decide to change your mind!";
+	close;
+}
+}
+if(getgmlevel() <= 1 && !$@Inv_Active ) {
+if( @ParticKills > $@KillMinimum)
+{
+	mes .@insv$;
+	mes "You participated and killed more than "+$@KillMinimum+" monsters to recieve a reward! Thank you "+strcharinfo(0)+" for your service.";
+	getitem .Inv_Reward, .Reward_Amount;
+	@ParticKills = 0;
+	close2;
+	end;
+}
+	mes "There is currently no Invasion in progress currently.";
+	close;
+} else
+	mes "Currently there is an invasion going on in "+$MapInput$+" head there now to protect the city and reap the rewards!";
+	mes "Warp to Map that is being invaded?";
+	next;
+	switch(select("Yes I want to help!:No thanks.")) {
+	case 1:
+	warp $MapInput$,0,0;
+	end;
+	case 2:
+	mes "Alright, come back if you change your mind! We need all the help we can get.";
+
+	close;
+}
+OnStartInvasion:
+announce "The invasion has begun at "+$MapInput$+" please go there at once to protect the city and reap the rewards!",bc_all;
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob1ID)+"",$Mob1ID,$Mob1AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob2ID)+"",$Mob2ID,$Mob2AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob3ID)+"",$Mob3ID,$Mob3AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob4ID)+"",$Mob4ID,$Mob4AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob5ID)+"",$Mob5ID,$Mob5AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob6ID)+"",$Mob6ID,$Mob6AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob7ID)+"",$Mob7ID,$Mob7AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob8ID)+"",$Mob8ID,$Mob8AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob9ID)+"",$Mob9ID,$Mob9AM,strnpcinfo(0)+"::OnMyMobDead";
+monster $MapInput$,0,0,""+strmobinfo(1,.Mob10ID)+"",$Mob10ID,$Mob10AM,strnpcinfo(0)+"::OnMyMobDead";
+end;
+OnMyMobDead:
+$@KillCount++;
+@ParticKills++;
+announce "There's still monsters invading!  ("+$@KillCount+"/"+$MobTotal+") have been killed! Keep going!",bc_map;
+if( $@KillCount == $MobTotal) {
+announce "Invasion has ended! Thank you for protecting "+$MapInput$+"!",bc_all;
+//$@MobTotal = .MobTotal;
+$@Inv_Active = 0;
+$@KillCount = 0;
+end;
+}
+if( .Bonus_Enabled ) {
+	if(rand(100) < .BonusItemRate ) 
+{
+		//SET THE ID'S TO THE ITEMS YOU WANT! REMEMBER TO EDIT THIS
+		.RandItemList = callfunc("F_Rand",1129,1222,1163,1357,1360,1522,1811,1410);
+		getitem .RandItemList, 1;
+		end;
+} else
+end;
+}
+OnInit:
+	//Player Commands
+	bindatcmd "joininvasion",strnpcinfo(0)+"::OnAtJoinInvasion";
+	bindatcmd "quitinvasion",strnpcinfo(0)+"::OnAtQuitInvasion";
+	bindatcmd "rewardinvasion",strnpcinfo(0)+"::OnAtRewardInvasion";
+	
+	//GM Commands
+	bindatcmd "destroyinvasion",strnpcinfo(0)+"::OnAtDestroyInvasion";
+	bindatcmd "repeatinvasion",strnpcinfo(0)+"::OnAtRepeatInvasion";
+	bindatcmd "createinvasion",strnpcinfo(0)+"::OnAtCreateInvasion";
+	end;
+OnAtJoinInvasion:
+	if( $@Inv_Active ) {
+	warp $MapInput$, 0 ,0;
+	dispbottom "Successfully joined Invasion.";
+	end;
+} else
+	dispbottom "No Invasion in Progress.";
+	end;
+
+OnAtDestroyInvasion:
+if(getgmlevel() >= 99) {
+	if( $@Inv_Active ) {
+	$@Inv_Active = 0;
+	$@KillCount = 0;
+	killmonster $MapInput$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	announce "Invasion has been destroyed by a GM.",bc_map;
+	$@Inv_Active = 0;
+	end;
+} else
+	dispbottom "No Invasion in Progress.";
+	end;
+}
+OnAtRepeatInvasion:
+if(getgmlevel() >=  99) {
+	if( !$@Inv_Active ) {
+	$@Inv_Active++;
+	donpcevent ("Invasion Summoner#Test::OnStartInvasion");
+	end;
+} else
+	dispbottom "No Invasion in Progress.";
+	end;
+}
+end;
+OnAtQuitInvasion:
+if ($@Inv_Active) {
+	warp "SavePoint",0,0;
+	end;
+} else
+	dispbottom "No Invasion in Progress.";
+	end;
+OnAtCreateInvasion:
+if(getgmlevel() >= 99) {
+if(!$@Inv_Active) {
+callsub CREATE_INVASION;
+end;
+} else
+dispbottom "Invasion in progress/already created. Please '@destroyinvasion' to setup a new Invasion.";
+end;
+} else
+end;
+OnAtRewardInvasion:
+if(getgmlevel() <= 1 && !$@Inv_Active ) {
+if( @ParticKills > $@KillMinimum)
+{
+	dispbottom "You participated and killed more than "+$@KillMinimum+" monsters to recieve a reward! Thank you "+strcharinfo(0)+" for your service.";
+	getitem .Inv_Reward, .Reward_Amount;
+	@ParticKills = 0;
+	end;
+}
+}
+}

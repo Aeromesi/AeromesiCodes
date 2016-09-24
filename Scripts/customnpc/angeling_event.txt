@@ -1,0 +1,118 @@
+/*	Find the Angeling Event, dubbed [FtA]!
+	Created by Aeromesi
+	Version 1.0
+	If event is finished and you don't want to wait the next hour, simply do @startangeling!
+	Later version will include: Disabling the event on the go, and modifying item rewards. For now can only set in the OnInit.
+	Emulators Supported: Hercules/rAthena
+	Additional Comments: None
+*/
+-	script	AngelingEvent#Auto	-1,{
+OnInit:
+	.AngelActive = 0; // Don't touch
+	bindatcmd "startangeling",strnpcinfo(0)+"::OnAtStartAngeling";
+	.AngelingAmount = 10; // The amount of Angelings you want players to find.
+	$@MapChoice$ = "1@trivia";
+	.AngelingReward1ID = 501; // The normal item ID of the Angelings you find.
+	.AngelingReward1AM = 3; // The normal item Amount of the Angelings you find.
+	.AngelingReward2ID = 502; // The item rewarded to the player who finishes off the last Angeling.
+	.AngelingReward2AM = 1; // The item Amount of the player who finishes off the last Angeling.
+	.FakeMobAmounts = 1; // This will apply to all fake mob amounts.
+	
+	.AngCMDName$ = "[ ^551a8bFtA CMD System^000000 ]"; // Name represented in Command System for `@startangeling`
+end;
+OnMinute00:
+donpcevent strnpcinfo(0)+"::OnAngelingReminder";
+donpcevent strnpcinfo(0)+"::OnAngelingBegin";
+end;
+OnMinute15:
+donpcevent strnpcinfo(0)+"::OnAngelingReminder";
+end;
+OnMinute30:
+donpcevent strnpcinfo(0)+"::OnAngelingReminder";
+end;
+OnMinute45:
+donpcevent strnpcinfo(0)+"::OnAngelingReminder";
+end;
+OnAngelingBegin:
+if( !.AngelingActive ) {
+
+	announce "[FtA] Find the Angeling Event has begun at "+$@MapChoice$+"! Please go there at once and find the Angeling!",bc_all;
+	.AngelingActive++;
+} else
+end;
+	// Angeling
+	monster $@MapChoice$,0,0,"Angeling",1096,.AngelingAmount,strnpcinfo(0)+"::OnFoundAngeling";
+	// Fake Mobs
+	monster $@MapChoice$,0,0,"Metalinga",1613,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Metaring",1613,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Poporingi",1031,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Poringo",1002,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Lunatik",1063,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Lunatick",1063,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Poirng",1002,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Poing",1002,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Spori",1014,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Sporez",1014,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Sorie",1014,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Santa",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Santa Clause",1162,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"SantaPorig",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"SantaPoirng",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Santa Boring",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Santa Poirneg",1162,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Poring Santa",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Poreng Santa",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	monster $@MapChoice$,0,0,"Porie Santa",1062,.FakeMobAmounts,strnpcinfo(0)+"::OnFakeMob";
+	end;
+OnFoundAngeling:
+.AngelingFound++;
+	getitem .AngelingReward1ID, .AngelingReward1AM;
+if(.AngelingFound == .AngelingAmount) {
+	sleep2 1000;
+	announce "[FtA] The player "+strcharinfo(0)+" has found the last Angeling! Congratulations!",bc_map;
+	getitem .AngelingReward2ID, .AngelingReward2AM;
+	killmonster $@MapChoice$,"All";
+	atcommand "@cleanmap";
+	.AngelingActive = 0; 
+	.AngelingFound = 0;
+end;
+}
+announce "[FtA] ("+.AngelingFound+"/"+.AngelingAmount+") Angelings have been found! Keep going!",bc_map;
+end;
+OnFakeMob:
+announce "[FtA] That isn't an Angeling!",bc_map;
+end;
+OnAtStartAngeling:
+if(getgmlevel() >= 99) {
+	if( !.AngelingActive ) {
+		mes .AngCMDName$;
+		mes "GM "+strcharinfo(0)+"";
+		mes "Would you like to begin Find the Angeling Event since it is not Active?";
+			next;
+			switch(select("Start [Find the Angeling]","Exit"))
+				{
+					case 1:
+					if( !.AngelingActive ) {
+					mes "Beginning Find the Angeling..";
+					close2;
+					announce "[FtA] Find the Angeling Event has begun at "+$@MapChoice$+"! Please go there at once and find the Angeling!",bc_all;
+					donpcevent strnpcinfo(0)+"::OnAngelingBegin";
+					.AngelingActive++;
+					end;
+				} else
+					mes "Currently FtA is active.";
+					close;
+					case 2:
+					close;
+				}
+} else
+dispbottom "Currently Find the Angeling is active.";
+end;
+} else
+end;
+OnAngelingReminder:
+if( !.AngelingActive ) {
+end;
+} else
+	announce "[FtA] Event is still active in "+$@MapChoice$+"! Please go there at once and find the Angelings!",bc_all; //Reminders
+}

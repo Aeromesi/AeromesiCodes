@@ -1,0 +1,116 @@
+-	script	supreqadmin	-1,{
+
+OnPCLoginEvent:
+
+	if(getgmlevel() >=99) {
+	announce "Administrator "+strcharinfo(0)+" has just signed in.",bc_all,0x00FF66;
+	mes "[Support Request]";
+	mes "Would you like to accept support requests?";
+	next;
+	switch(select("Yes:No")) {
+	case 1:
+	if(getgmlevel() >=99) {
+	announce "Administrator "+strcharinfo(0)+" is accepting support requests.",bc_all,0x00FF66;
+	mes "You accepted requests.";
+	close;
+	end;
+}
+	case 2:
+	if(getgmlevel() >=99) {
+	announce "Administrator "+strcharinfo(0)+" is not accepting support requests.",bc_all,0x00FF66;
+	mes "You are not accepting quests at this time.";
+	close;
+	end;
+}
+}
+} else 
+	{ if(getgmlevel() == 50) {
+	announce "Game Master "+strcharinfo(0)+" has just signed in.",bc_all,0x0FF66;
+	mes "[Support Request]";
+	mes "Would you like to accept player questions through the whisper system?";
+	next;
+	switch(select("Yes:No")) {
+	case 1:
+	if(getgmlevel()  == 50) {
+	announce "Game Master "+strcharinfo(0)+" is accepting questions, reports and concerns, please whisper them.",bc_all,0x00FF66;
+	mes "You are accepting inquiries by players at this time.";
+	close;
+	end;
+}
+	case 2:
+	if(getgmlevel()  == 50) {
+	announce "Game Master "+strcharinfo(0)+" is not accepting questions, reports or concerns at this time.",bc_all,0x0FF66;
+	mes "You are not accepting inquiries by players at this time.";
+	close;
+	end;
+	}
+}
+}
+}
+}
+-	script	lvannounce	-1,{
+OnPCBaseLvUpEvent:
+1_ann = 2;
+2_ann = 3;
+3_ann = 4;
+4_ann = 5;
+5_ann = 6;
+6_ann = 0;
+7_ann = 0;
+8_ann = 0;
+9_ann = 0;
+10_ann = 0;
+Type = BaseLevel;
+.Type2 = JobLevel;
+if (#50cash != 0) {
+end;
+} else
+{
+if (Type == 1_ann)
+	{
+		dispbottom "Level 2? You got a ways to go Novice!";
+		Zeny+=500;
+		getitem 501, 30;
+		end;
+	} else {
+if (.Type$ == 2_ann)
+	{
+		dispbottom "Achieved level 10! Keep leveling and don't get an attitude about it!";
+		dispbottom "Obtained 5000 Zeny";
+		Zeny+=5000;
+		getitem 25005, 1;
+		end;
+	} else 
+if (.Type$ == 3_ann)
+	{
+		getitem 501, 3;
+		getitem 502, 5;
+		getitem 503, 5;
+		getitem 504, 5;
+		getitem 505, 5;
+		getitem 506, 5;
+		getitem 507, 5;
+		dispbottom "Working your way up the Level ladder, keep goin'!";
+		end;
+	} else
+	
+if (.Type$ == 4_ann)
+	{
+		getitem 25021, 1;
+		Zeny+=100000;
+		dispbottom "Congratulations! You are now level 50, you're almost there!";
+		dispbottom "Obtained 100,000z";
+		end;
+	} else
+if (BaseLevel == 5_ann)
+	{
+		#50cash = 1;
+		getitem 25033, 1;
+		Zeny+=500000;
+		dispbottom "Feel accomplished? Congratulations on maxing your first Character!";
+		dispbottom "Enjoy the 50$ Cash Prize and the 500,000 Zeny!";
+		end;
+	}
+}
+}
+}

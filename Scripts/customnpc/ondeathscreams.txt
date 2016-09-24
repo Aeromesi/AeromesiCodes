@@ -1,0 +1,45 @@
+function	script	MalScreams	{
+
+.@MalScreams = rand(1,5);
+
+if (Sex == 1 && .@MalScreams == 1) {
+soundeffect "voice_man.wav", 0;
+} else
+if (Sex == 1 && .@MalScreams == 2) {
+soundeffect "voice_man2.wav", 0;
+} else
+if (Sex == 1 && .@MalScreams == 3) {
+soundeffect "voice_man3.wav", 0;
+} else
+if (Sex == 1 && .@MalScreams == 4) {
+soundeffect "voice_man4.wav", 0;
+} else
+if (Sex == 1 && .@MalScreams == 5) {
+soundeffect "voice_man5.wav", 0;
+} else
+end;
+}
+function	script	FemScreams	{
+.@FemScreams = rand(1,4);
+if (Sex == 0 && .@FemScreams == 1) {
+soundeffect "voice_girl.wav", 0;
+} else
+if (Sex == 0 && .@FemScreams == 2) {
+soundeffect "voice_girl2.wav", 0;
+} else
+if (Sex == 0 && .@FemScreams == 3) {
+soundeffect "voice_girl3.wav", 0;
+} else
+if (Sex == 0 && .@FemScreams == 4) {
+soundeffect "voice_girl4.wav", 0;
+} else
+end;
+}
+-	script	DeathS	-1,{
+OnPCDieEvent:
+if (Sex)
+{
+	callfunc ("MalScreams");
+} else
+	callfunc ("FemScreams");
+}

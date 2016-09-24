@@ -1,0 +1,40 @@
+// Created by Aeromesi
+// Version 1.0
+// Works with Hercules & rAthena
+-	script	ExtraDrop	-1,{
+OnNPCKillEvent:
+
+	.@killedRID = killedrid;
+	for ( .@i = 1; .@i <= $@SelectedMob; .@i++ ) {
+	if ( .@killedRID == $@MonsterID[.@i]) {
+		if ( rand(100) > $@DropRate[.@i] ) {
+	getitem $@ItemRewards[.@i], $@RewardAmount[.@i];
+	Zeny += $@ZenyAmount[.@i];
+	#CASHPOINTS += $@CashAmount[.@i];
+	dispbottom "Obtained "+$@ZenyAmount[.@i]+" Zeny.";
+	dispbottom "Obtained "+$@CashAmount[.@i]+" Cash Points.";
+	end;
+} else
+dispbottom "Did not get reward at "+$@DropRate[.@i]+"% drop rate.";
+	end;
+} else
+	end;
+	}
+				/* --- 		Format: 	
+						Poring(1002)
+						Zeny: 5000
+						Cash: 10
+						Item: Red Potion (501)
+						Amount of Red Potion: 6
+												--- */
+									
+OnInit:
+	setarray $@SelectedMob,4; // Edit this to the max amount of monsters you have, currently in $@MonsterID we have a total of 4 monsters, so we put 4.
+	setarray $@MonsterID[1],1002,1004,1005,1007; // Monster ID's, make sure to keep count of how many you're adding for $@SelectedMob array.
+	setarray $@ZenyAmount[1],5000,3000,4000,1000; // 1002 would be poring, so he would get 5000 zeny, set the item rewards/cash amounts in accordance to each monster.
+	setarray $@CashAmount[1],10,5,10,5; // Same for Cash, 1002 (Poring) would get 10 Cash Points.
+	setarray $@ItemRewards[1],501,502,503,504; // Poring would drop a Red Potion.
+	setarray $@RewardAmount[1],6,5,5,5;
+	setarray $@DropRate[1],50,5,5,1;
+end;
+}

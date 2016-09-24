@@ -1,0 +1,251 @@
+// Deckster the Card Guy NPC ( Can you see guess what card I'm holding? )
+// Created by Aeromesi
+// Version 2.0
+// 	2.0 features:
+//	GM Menu (Through contact with NPC or command `@deckedit`! Able to control the Minium and Maximum numbers a player can bet on. Want it 50-100, or 1-100, 1-1000? it's your choice.
+//	Control The Item Fee ID/Amount as well as enabling/disabling the fee for the NPC.
+//	Control the Random Item Reward ID's ( IMPORTANT! PLEASE NOTE: if you want to edit the list of items, edit the array $DeckRewardItems and then count all the items you made and set $DeckMaxItems to the max amount of items the array of your rewards hold.
+//	Control the % rate as well as enabling or disabling the Lucky Day ( Second Chance option) in-case you want the players to have another crack at guessing!
+// Simple guessing game, easily setup the reward they get for guessing the card. There's an option to enable the fee or not. Look into the 'OnInit:'
+
+prontera,150,152,4	script	Deckster	4_M_PIERROT,{
+OnBegin:
+	.name$ = "[ ^EE7600Deckster^000000 ]";
+	if(getgmlevel() >= 99) {
+		callsub GM_Menu;
+		end;
+}
+
+Player_Menu:
+	mes .name$;
+if ( $EnableFee ) {
+	if (countitem($FeeID) < $FeeAM ) {
+		mes "Sorry but you need "+getitemname($FeeID)+" x "+$FeeAM+" in order to play.";
+		close;
+}
+}
+
+mes "Hello there "+strcharinfo(0)+". ";
+mes "I'm thinking of a card, actually I am looking at it right now. If you guess what the card is, I'll reward you.";
+mes "Wanna give it a whirl?";
+next;
+	mes .name$;
+	mes ""+ (( $EnableFee )?"Fee Requirement [^006400Enabled^000000]":"")+ "";
+	mes ""+ (( $EnableLuckyDay )?"Lucky Day [^006400Enabled^000000]":"")+ "";
+	mes "Guessing Range: (^000080"+$DeckMin+"^000000) - (^000080"+$DeckMax+"^000000) ";
+	mes ""+ (( $EnableFee )?"Fee (^551A8B"+getitemname($FeeID)+"^000000)":"")+ "";
+	mes ""+ (( $EnableFee )?"Fee Amount (^000080"+$FeeAM+"^000000)":"")+ "";
+	mes ""+ (( $EnableLuckyDay )?"Lucky Rate (^000080"+$LuckyDayRate+"^000000%)":"")+"";
+	next;
+
+switch(select("Sure why not.","No thanks, I'm good.")) {
+	
+	case 1:
+if ( $EnableFee ) {
+	delitem $FeeID, $FeeAM;
+}
+	mes .name$;
+	mes "Alright, I picked my number... Now you pick yours.";
+	next;
+DeckInput:
+	input .@CardChoice;
+	if ( .@CardChoice == 0 ) {
+	dispbottom "You cannot input 0.";
+	callsub DeckInput;
+	end;
+}
+	if ( .@CardChoice > $DeckMax ) {
+	dispbottom "You cannot input a number bigger than the Maximum guessing number.";
+	callsub DeckInput;
+	end;
+}
+	.deck = rand($DeckMin,$DeckMax);
+	if ( .@CardChoice == .deck ) {
+	mes .name$;
+	mes "Wow! You picked "+.deck+", which was the same number I chose! Here's your reward.";
+	getitem $DeckRewardList[rand(0,$DeckMaxItems)], 1;
+	close;
+
+	} else
+	if (.@CardChoice != .deck) {
+	mes .name$;
+	mes "Wrong number buddy, you chose "+.@CardChoice+" while I chose "+.deck+".";
+	mes "Better luck next time, haha!";
+	close2;
+	// Lucky Day Function
+	if ( $EnableLuckyDay ) {
+	if( rand(100) < $LuckyDayRate ) {
+	mes .name$;
+	mes "Wow! Guess what, it seems it's your lucky day! You have a free chance at guessing again! Which number am I guessing now?";
+	close2;
+	callsub DeckInput;
+	end;
+	}
+} else
+close;
+}
+end;
+
+
+	case 2:
+	mes .name$;
+	mes "Oh okay, come again!";
+	close;
+}
+// GM Menu for everything related to editing data.
+GM_Menu:
+	mes .name$;
+	mes "Please select an option to edit within the Deckster NPC.";
+	switch(select(
+	"[^006400Edit^000000] Deck Minimum (^000080"+$DeckMin+"^000000)" // Case 1
+	,"[^006400Edit^000000] Deck Maximum (^000080"+$DeckMax+"^000000)" // Case 2
+	,""+ (( $EnableFee )?"[^006400Edit^000000] Fee (^551A8B"+getitemname($FeeID)+"^000000)":"")+ ""
+	,""+ (( $EnableFee )?"[^006400Edit^000000] Fee Amount (^000080"+$FeeAM+"^000000)":"")+ ""
+	,"[^006400Edit^000000] Item List" // Case 5
+	,""+ (( $EnableLuckyDay )?"[^006400Edit^000000] Lucky Rate (^000080"+$LuckyDayRate+"^000000%)":"")+"" // Case 6
+	,""+ (( $EnableFee )?"[^FF0000Disable^000000] Fee Requirement":"[^006400Enable^000000] Fee Requirement")+ "" // Case 7
+	,""+ (( $EnableLuckyDay )?"[^FF0000Disable^000000] Lucky Day":"[^006400Enable^000000] Lucky Day")+ "" // Case 8
+	,"Player Menu")) // Case 9
+
+	{
+
+		case 1:
+DeckMinInput:
+		input $DeckMin;
+			if ($DeckMin <= 0 ) {
+				dispbottom "Cannot enter a value of 0. NOTE: You cannot have the Min value higher than the maximum.";
+				callsub DeckMinInput;
+				end;
+			}
+		close2;
+		callsub GM_Menu;
+		end;
+			
+		case 2:
+DeckMaxInput:
+		input $DeckMax;
+			if ($DeckMax <= 0 ) {
+				dispbottom "Cannot enter a value of 0. NOTE: You cannot have the Max value lower than the minimum.";
+				callsub DeckMaxInput;
+				end;
+			}
+		close2;
+		callsub GM_Menu;
+		end;
+
+		case 3:
+FeeIDInput:
+		input $FeeID;
+			if( getitemname( $FeeID ) == "null" ) {
+				dispbottom "Please input valid item ID.";
+				callsub FeeIDInput;
+				end;
+}
+		close2;
+		callsub GM_Menu;
+		end;
+
+		case 4:
+FeeAMInput:
+		input $FeeAM;
+			if ( !$FeeAM ) {
+				dispbottom "Fee amount cannot be 0. Please enter a number higher than 0.";
+				callsub FeeAMInput;
+				end;
+}
+		close2;
+		callsub GM_Menu;
+		end;
+
+		case 5:
+Item_List:
+	for( .@i = 0; .@i < $DeckMaxItems; .@i++ ) {
+		$RewardString$[.@i] = ""+getitemname($DeckRewardList[.@i])+"";
+	}
+		switch(select(implode($RewardString$,":"))) {
+			default:
+				.@itemid = $DeckRewardList[@menu-1];
+				dispbottom "Previous item: "+getitemname(.@itemid)+".";
+Item_ID:
+				input $DeckRewardList[@menu-1];
+				if( getitemname( $DeckRewardList[@menu-1] ) == "null" ) {
+				dispbottom "Please input valid item ID.";
+				callsub Item_ID;
+				end;
+				}
+				dispbottom "Changed item to: "+getitemname($DeckRewardList[@menu-1])+".";
+				close2;
+				callsub Item_List;
+				end;
+}
+		case 6:
+LuckyDay_Rate:
+
+			input $LuckyDayRate;
+				if ( $LuckyDayRate == 0) {
+				dispbottom "You cannot make the rate to get a Lucky Day 0%. Please reinput.";
+				callsub LuckyDay_Rate;
+				end;
+}
+				close2;
+				callsub GM_Menu;
+				end;
+
+		case 7:
+			if ( $EnableFee ) {
+				$EnableFee = 0;
+				close2;
+				callsub GM_Menu;
+				end;
+			} else
+			if ( !$EnableFee ) {
+				$EnableFee = 1;
+				close2;
+				callsub GM_Menu;
+				end;
+}
+				
+		case 8:
+			if ( $EnableLuckyDay ) {
+				$EnableLuckyDay = 0;
+				close2;
+				callsub GM_Menu;
+				end;
+			} else
+			if ( !$EnableLuckyDay ) {
+				$EnableLuckyDay = 1;
+				close2;
+				callsub GM_Menu;
+				end;
+}
+ 		case 9:
+		close2;
+		callsub Player_Menu;
+		end;
+}
+
+OnInit:
+	// @deckedit to directly access the GM Menu without having to warp to Deckster. Just an ease of access ;)
+	bindatcmd "deckedit",strnpcinfo(0)+"::OnBegin",99;
+
+if ( !$DeckSetup ) {
+	$DeckMin = 1; // Minium number to input at the guessing game.
+	$DeckMax = 25; // Maximum number to input at the guessing game.
+	.DeckRewardID = 501; // Reward Item ID
+	.DeckRewardAM = 50; // Reward Item Amount
+
+	// Default: On
+	setarray $DeckRewardList[0],501,502,503,504,505,506,507,508,509,510;
+	$DeckMaxItems = 10; // IMPORTANT: Edit this value in accordance to how many items you have in the array "$DeckRewardList".
+	$EnableFee = 1; // 0 = Off || 1 = On ( This allows a fee everytime you want to take a shot at Deckster! )
+	$FeeID = 502; // ID for Item Fee
+	$FeeAM = 5; // Amount of the Item used for the fee
+	$EnableLuckyDay = 1; // 0 = Off || 1 = On ( This allows the user to have a second chance, kind of like your lucky day :D! )
+	$LuckyDayRate = 10; // 10% Chance to trigger a Lucky day to you by Deckster
+
+	$DeckSetup = 1; // WARNING: IGNORE THIS DO NOT EDIT
+	end;
+
+} else
+end;
+}

@@ -1,0 +1,53 @@
+
+
+//Zombie Massacre
+z@prt.gnd#prontera.gnd#
+z@prt.gat#prontera.gat#
+z@prt.rsw#prontera.rsw#
+유저인터페이스\map\z@prt.bmp#유저인터페이스\map\prontera.bmp#
+
+//Fiery Fairy Forest
+f@prt.gnd#prt_fild08.gnd#
+f@prt.gat#prt_fild08.gat#
+f@prt.rsw#prt_fild08.rsw#
+유저인터페이스\map\f@prt.bmp#유저인터페이스\map\prt_fild08.bmp#
+
+//Trivia Instance
+유저인터페이스\map\1@trivia.bmp#유저인터페이스\map\blank.bmp#
+//Trivia 1
+2@trivia.gnd#1@trivia.gnd#
+2@trivia.gat#1@trivia.gat#
+2@trivia.rsw#1@trivia.rsw#
+유저인터페이스\map\2@trivia.bmp#유저인터페이스\map\blank.bmp#
+//Trivia 2
+3@trivia.gnd#dali.gnd#
+3@trivia.gat#dali.gat#
+3@trivia.rsw#dali.rsw#
+유저인터페이스\map\3@trivia.bmp#유저인터페이스\map\blank.bmp#
+//Trivia 3
+4@trivia.gnd#1@pump.gnd#
+4@trivia.gat#1@pump.gat#
+4@trivia.rsw#1@pump.rsw#
+유저인터페이스\map\4@trivia.bmp#유저인터페이스\map\blank.bmp#
+//Trivia 4
+5@trivia.gnd#1@mir.gnd#
+5@trivia.gat#1@mir.gat#
+5@trivia.rsw#1@mir.rsw#
+유저인터페이스\map\5@trivia#유저인터페이스\map\blank.bmp#
+//Trivia 5
+6@trivia.gnd#r_road.gnd#
+6@trivia.gat#r_road.gat#
+6@trivia.rsw#r_road.rsw#
+유저인터페이스\map\6@trivia.bmp#유저인터페이스\map\r_road.bmp#
+
+//Mastery Dungeon Instance
+1@mor.gnd#moro_vol.gnd#
+1@mor.gat#moro_vol.gat#
+1@mor.rsw#moro_vol.rsw#
+유저인터페이스\map\1@mor.bmp#유저인터페이스\map\moro_vol.bmp#
+
+//Antarctic Ice Titans Attack El Dicastes Instance
+d@eld.gnd#dicastes01.gnd#
+d@eld.gat#dicastes01.gat#
+d@eld.rsw#dicastes01.rsw#
+유저인터페이스\map\d@eld.bmp#유저인터페이스\map\dicastes01.bmp#

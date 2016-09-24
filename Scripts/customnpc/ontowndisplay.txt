@@ -1,0 +1,169 @@
+//Developed by Aeromesi
+//Version: 1.3 (eAthena to Hercules Conversion)
+//Whisper NPC:whispmap to change the settings incase you change your mind, make sure to let players know!
+//When you login to the towns in the array ".@cutinmaps$[0]" you will see awesome pictures that describe that town!
+-	script	whispmap	-1,{
+OnWhisperGlobal:
+	mes "[^FF0000Town Picture System^000000]";
+	mes "Hello, if you set your map display and you wish to change it, I can reset it for you.";
+	mes "0 Means to show the pictures on the towns.";
+	mes "1 Means to not show the pictures on the towns.";
+	mes "Please select the option you wish to choose.";
+	next;
+	switch(select("Set option to 0:Set option to 1")) {
+case 1:
+	mes "[^FF0000Town Picture System^000000]";
+	mes "I will now set your option to 0, pictures will display.";
+	showmapdis = 0;
+	close;
+case 2:
+	mes "[^FF0000Town Picture System^000000]";
+	mes "I will now set your option to 1, pictures will not display.";
+	showmapdis = 1;
+	close;
+}
+}
+-	script	mappic	-1,{
+OnPCLoadMapEvent:
+if(showmapdis == 0) {
+	//Gets the players map
+	getmapxy(.@map$,.@x,.@y,0);
+	//Set array for all the maps that you want to have the cutin images
+	setarray .@cutinmaps$[0], "prontera", "alberta", "izlude", "aldebaran", "amatsu", "ayothaya", "comodo", "einbroch", "geffen", "hugel", "jawaii", "lighthalzen", "louyang", "xmas", "manuk", "morocc", "moscovia", "niflheim", "payon", "rachel", "splendide", "umbala", "veins", "yuno";
+	//The number of cutin images for each city in array '.@cutinmaps$' respectively
+	//Example: 5 images for prontera, 6 images for brasilis, etc
+setarray .@images[1], 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5;
+	//Goes through all the maps in the array '.@cutinmaps$'
+for( .@i = 0; .@i < getarraysize(.@cutinmaps$); .@i += 1) {
+//for( .@i = 0; .@i < getarraysize(.@cutinmaps$); .@i + 1) {
+	//Checks if player is on the map from array '.@cutinmaps$'
+	if(.@map$ == .@cutinmaps$[.@i]) {
+	//if Player is on a map defined in that array, it'll go through the array of number of images '.@images'
+	for( .@a = 1; .@a < (.@images[.@i+1]+1); .@a += 1){
+	//shows the image "map_<mapename>-<number>"
+	cutin "map_title-"+.@map$+"-"+.@a, 4;
+	//slows down the display of cutins by a bit
+	sleep2 400;
+	}
+	//remove cutins
+	cutin "", 255;
+
+}
+	//if at the end of the array of '.@cutinmaps$', it goes to the end;
+	//else, it goes to another map and checks if the player is on that map
+}
+	//ends script
+	end;
+	//end of NPC script
+} else { end;
+}
+}
+//mapflags to load the NPC event
+prontera	mapflag	loadevent
+alberta	mapflag	loadevent
+izlude	mapflag	loadevent
+aldebaran	mapflag	loadevent
+amatsu	mapflag	loadevent
+ayothaya	mapflag	loadevent
+comodo	mapflag	loadevent
+einbroch	mapflag	loadevent
+geffen	mapflag	loadevent
+hugel	mapflag	loadevent
+jawaii	mapflag	loadevent
+lighthalzen	mapflag	loadevent
+louyang	mapflag	loadevent
+xmas	mapflag	loadevent
+manuk	mapflag	loadevent
+morocc	mapflag	loadevent
+moscovia	mapflag	loadevent
+niflheim	mapflag	loadevent
+payon	mapflag	loadevent
+rachel	mapflag	loadevent
+splendide	mapflag	loadevent
+umbala	mapflag	loadevent	
+veins	mapflag	loadevent
+yuno	mapflag	loadevent
+/*-	script	wanttoshow	-1,{
+OnPCLoginEvent:
+callsub MAPDISPLAY;
+
+MAPDISPLAY:
+if(mapset == 0) {
+mes "[^FF0000Town Picture System^000000]";
+mes "Hello, this is a first time  configuration on your character account for a Map-Display picture of towns.";
+next;
+mes "[^FF0000Town Picture System^000000]";
+mes "You have the option to show these cool pictures when you login to towns.";
+next;
+mes "[^FF0000Town Picture System^000000]";
+mes "This is what the picture looks like when you warp at Alberta:";
+next;
+cutin "map_title-alberta-1", 4;
+sleep2 255;
+cutin "map_title-alberta-2", 4;
+sleep2 255;
+cutin "map_title-alberta-3", 4;
+sleep2 255;
+cutin "map_title-alberta-4", 4;
+sleep2 255;
+cutin "map_title-alberta-5", 4;
+sleep2 1300;
+cutin "", 255;
+next;
+mes "[^FF0000Town Picture System^000000]";
+mes "That's what it looks like.";
+mes "So, do you want to have that happen each time you login to certain towns?";
+mes "It's mainly just for looks.";
+next;
+MAPDIS_MENU:
+switch(select("Sure:No thanks:View Picture again!")) {
+case 1:
+mes "[^FF0000Town Picture System^000000]";
+mes "Alright then, I will now set your option.";
+sleep2 200;
+mes "1...";
+sleep2 300;
+mes "2...";
+sleep2 400;
+mes "3...";
+sleep2 300;
+mes "Done!";
+mes "Enjoy the feature you just added to yourself.";
+mes " ";
+mes "If you ever change your mind, whisper ^0000FFNPC:whispmap^000000 to change your option!";
+showmapdis = 0;
+mapset = 1;
+close;
+end;
+
+case 2:
+mes "[^FF0000Town Picture System^000000]";
+mes "Alright then!";
+mes " ";
+mes "If you ever change your mind, whisper ^0000FFNPC:whispmap^000000 to change your option!";
+
+showmapdis = 1;
+mapset = 1;
+close;
+end;
+
+case 3:
+mes "[^FF0000Town Picture System^000000]";
+mes "Here is the picture again.";
+next;
+cutin "map_title-alberta-1", 4;
+sleep2 255;
+cutin "map_title-alberta-2", 4;
+sleep2 255;
+cutin "map_title-alberta-3", 4;
+sleep2 255;
+cutin "map_title-alberta-4", 4;
+sleep2 255;
+cutin "map_title-alberta-5", 4;
+sleep2 1300;
+cutin "", 255;
+callsub MAPDIS_MENU;
+}
+} else
+end;
+} */

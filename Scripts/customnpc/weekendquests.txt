@@ -1,0 +1,202 @@
+/*
+Weekend Events (Friday, Saturday, and Sunday)
+Version 1.0
+Explanation: 
+The weekend quest NPC is developed for players who cannot afford to donate, it is offered on the days people are usually not busy to complete the given quest
+so that they may enjoy Donation items as well!
+
+								Totally customizable!
+[.fricash, .satcash, .suncash] handle the amount of Cash Points given per-quest finished!
+[.frireq, .satreq, .sunreq] are the required ITEM needed for the quest!
+[.friitemam, .satitemam, .sunitemam] are the required AMOUNT of the ITEM needed to COMPLETE the quest!
+[.frireq2, .satreq2, .sunreq2] handle the required amount of ZENY needed to COMPLETE the quest!
+
+Please NOTE: This is account bound, so no other characters created may abuse this script!
+
+Supported Emulator: Hercules
+Script developed by Aeromesi
+*/
+eden,99,134,4	script	Weekend Quests	4_F_PINKWOMAN,{
+
+// Fridays Cash amount prize
+.fricash = 50;
+//Fridays Requirements
+.frireq = 501;
+.friitemam = 500;
+.frireq2 = 100000;
+
+// Saturdays Cash amount prize
+.satcash = 100;
+//Saturdays Requirements
+.satreq = 501;
+.satitemam = 150;
+.satreq2 = 500000;
+
+// Sundays Cash amount prize
+.suncash = 150;
+//Sundays Requirements
+.sunreq = 501;
+.sunitemam = 200;
+.sunreq2 = 1000000;
+
+mes .noa$ = "^0000FF[Weekend Quests]^000000";
+if (gettime(4)== 1 || gettime(4)==2 || gettime(4)==3 || gettime(4)==4) {
+	mes "You can't do any quests until Friday, Saturday, and Sunday.";
+	close;
+} else
+if (gettime(4)== 5 && #frifin == 1) {
+	mes .noa$;
+	mes "You've already completed Fridays quest.";
+	close;
+} else
+if (gettime(4)== 6 && #satfin == 1) {
+	mes .noa$;
+	mes "You've already completed Saturdays quest.";
+	close;
+} else
+if (gettime(4)== 0 && #sunfin == 1) {
+	mes .noa$;
+	mes "You've already completed Sundays quest.";
+	close;
+} else { callsub startquest; }
+
+startquest:
+	 #frifin = 0;
+	 #satfin = 0;
+	 #sunfin = 0;
+	mes "Hello "+strcharinfo(0)+".";
+	mes "It's the weekend, have you had a busy week?";
+	mes "Gotta pay bills and can't afford to donate?";
+next;
+	mes .noa$;
+	mes "Well I offer quests throughout the weekend (Friday, Saturday, Sunday) so you can have some extra Cash Points.";
+next;
+	mes .noa$;
+	mes "You may only do each quest ^FF0000ONCE^000000 per day out of the 3 days.";
+	mes "Then the next weekend, it resets.";
+next;
+	mes .noa$;
+	mes "So, wanna do a quest?";
+next;
+	switch(select("Yes:No thanks.")) {
+	case 1:
+// Quest for Friday
+
+	if (gettime(4)==5) {
+	mes .noa$;
+	mes "Today is Friday's Quest!";
+	mes "You will need to gather Friday's requirements for a grand prize of "+.fricash+" Cash Points!";
+	mes " ";
+	mes "Requirements:";
+	mes ""+getitemname(.frireq)+" x ^FF0000"+.friitemam+"^000000 and a total of ^FF0000"+.frireq2+"^000000 Zeny.";
+	next;
+	mes .noa$;
+	mes "Now, let me check if you have Fridays requirements.";
+	next;
+	mes .noa$;
+	mes "Searching...";
+	sleep2 1000;
+	mes "...";
+	sleep2 1000;
+	mes "...";
+	sleep2 1000;
+	mes " ";
+if(countitem(.frireq)) >= .friitemam && Zeny >= .frireq2 {
+	mes "You have the required amount of "+getitemname(.frireq)+" and Zeny, so for that, here is your Cash Points.";
+	dispbottom "You have gained "+.fricash+" Cash Points for completing Friday's Quest.";
+	#CASHPOINTS+= .fricash;
+	Zeny -= .frireq2;
+	delitem .frireq, .friitemam;
+	#frifin = 1;
+	close;
+ } else {
+	mes "You don't have Fridays requirements, which are:";
+	mes " ";
+	mes "Requirements: "+getitemname(.frireq)+" x ^FF0000"+.friitemam+"^000000 and a total of ^FF0000"+.frireq2+"^000000 Zeny.";
+	close;
+}
+} else
+
+// Quest for Saturday
+	if ( gettime(4)==6) {
+	mes .noa$;
+	mes "You will need to gather Saturday's Requirements for a grand prize of "+.satcash+" Cash Points!";
+	mes " ";
+	mes "Requirements: "+getitemname(.satreq)+" x ^FF0000"+.satitemam+"^000000 and a total of ^FF0000"+.satreq2+"^000000 Zeny.";
+	next;
+	mes .noa$;
+	mes "Now, let me check if you already have Saturday's Requirements.";
+	next;
+	mes .noa$;
+	sleep2 1000;
+	mes "Searching...";
+	sleep2 1000;
+	mes "...";
+	sleep2 1000;
+	mes "...";
+	sleep2 1000;
+	mes " ";
+if(countitem(.satreq)) >= .satitemam && Zeny >= .satreq2 {
+	mes "You have the required amount of "+getitemname(.satreq)+" and Zeny, so for that, here is your Cash Points.";
+	dispbottom "You have gained "+.satcash+" Cash Points for completing Saturday's Quest.";
+	#CASHPOINTS+= .satcash;
+	Zeny -= .satreq2;
+	delitem .satreq, .satitemam;
+	#satfin = 1;
+	close;
+ } else {
+	mes "You don't have Saturday's Requirements, which are:";
+	mes " ";
+	mes ""+getitemname(.satreq)+" x ^FF0000"+.satitemam+"^000000 and a total of ^FF0000"+.satreq2+"^000000 Zeny.";
+	close;
+}
+} else
+
+//Quest for Sunday
+	if ( gettime(4)==0) {
+	mes .noa$;
+	mes "You will need to gather Sunday's Requirements for a grand prize of "+.suncash+" Cash Points!";
+	mes " ";
+	mes "Requirements: "+getitemname(.sunreq)+" x ^FF0000"+.sunitemam+"^000000 and a total of ^FF0000"+.sunreq2+"^000000 Zeny.";
+	next;
+	mes .noa$;
+	mes "Now, let me check if you already have Sunday's Requirements.";
+	next;
+	mes .noa$;
+	sleep2 1000;
+	mes "Searching...";
+	sleep2 1000;
+	mes "...";
+	sleep2 1000;
+	mes "...";
+	sleep2 1000;
+	mes " ";
+if(countitem(.sunreq)) >= .sunitemam && Zeny >= .sunreq2 {
+	mes "You have the required amount of "+getitemname(.satreq)+" and Zeny, so for that, here is your Cash Points.";
+	dispbottom "You have gained "+.suncash+" Cash Points for completing Sunday's Quest.";
+	#CASHPOINTS+= .suncash;
+	Zeny -= .sunreq2;
+	delitem .sunreq, .sunitemam;
+	#sunfin = 1;
+	close;
+ } else {
+	mes "You don't have Sunday's Requirements, which are:";
+	mes " ";
+	mes ""+getitemname(.sunreq)+" x ^FF0000"+.sunitemam+"^000000 and a total of ^FF0000"+.sunreq2+"^000000 Zeny.";
+	close;
+}
+}
+case 2:
+	mes .noa$;
+	mes "Alright, well come back if you decided you changed your mind!";
+	close;
+}
+}
+-	script	weekend	-1,{
+
+if (gettime(4)== 1 || gettime(4)==2 || gettime(4)==3 || gettime(4)==4) {
+	#frifin = 0;
+	#satfin = 0;
+	#sunfin = 0;
+}
+}

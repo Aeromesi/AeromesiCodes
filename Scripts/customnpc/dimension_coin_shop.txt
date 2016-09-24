@@ -1,0 +1,297 @@
+/*------------------------------------------------------------------------------------------------------
+Dimension Coin Shop script Based by Aeromesi
+Built for Hercules
+1.0
+--------------------------------------------------------------------------------------------------------*/
+prontera,149,191,6	script	Dimension Coin Shop	4_M_TRAINEE,{
+/* Item ID's (What's used in the shop for your items)*/
+
+item1_id = 5200;
+item2_id = 5201;
+item3_id = 5202;
+item4_id = 5203;
+item5_id = 5204;
+item6_id = 5205;
+item7_id = 5206;
+item8_id = 5207;
+item9_id = 5208;
+item10_id = 5209;
+item11_id = 5210;
+item12_id = 503;
+item13_id = 502;
+last_i_id = 501;
+
+/* Item Prices */
+ 
+item1 = 10000;
+item2 = 7000;
+item3 = 5000;
+item4 = 3500;
+item5 = 3000;
+item6 = 2500;
+item7 = 2000;
+item8 = 1500;
+item9 = 1000;
+item10 = 750;
+item11 = 500;
+item12 = 150;
+item13 = 120;
+last_item = 100;
+
+/* Item Amount (How much of a certain item you want to give according to the id's you placed in the item*_ variables */
+
+item1_am = 1;
+item2_am = 1;
+item3_am = 1;
+item4_am = 1;
+item5_am = 1;
+item6_am = 1;
+item7_am = 1;
+item8_am = 1;
+item9_am = 1;
+item10_am = 1;
+item11_am = 1;
+item12_am = 50;
+item13_am = 50;
+last_i_am = 50;
+
+.@inss$ = "[^551a8bDimension Coin Shop^000000]";
+mes .@inss$;
+mes "What would you like to do ^FF0000"+strcharinfo(0)+"^000000?";
+mes " ";
+mes " ";
+mes "Total Instance Dimension Coins - "+ ((#DIM_COIN == 0)?"^f94a32":"^0000ff")+ ""+#DIM_COIN+"^000000";
+next;
+INSS_MENU:
+.@inss$ = "[^551a8bDimension Coin Shop^000000]";
+switch(select("^551a8bDimension Coin Shop^000000","Exit")) {
+case 1:
+
+	setarray .@scpshop$[0],	
+""+getitemname(item1_id)+" ("+ ((#DIM_COIN >= item1)?"^0000ff":"^f94a32")+""+#DIM_COIN+"^000000/^0000ff"+item1+"^000000):"+getitemname(item2_id)+" ("+ ((#DIM_COIN >= item2)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item2+"^000000):"+getitemname(item3_id)+" ("+ ((#DIM_COIN >= item3)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item3+"^000000):"+getitemname(item4_id)+" ("+ ((#DIM_COIN >= item4)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item4+"^000000):"+getitemname(item5_id)+" ("+ ((#DIM_COIN >= item5)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item5+"^000000):"+getitemname(item6_id)+" ("+ ((#DIM_COIN >= item6)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item6+"^000000):"+getitemname(item7_id)+" ("+ ((#DIM_COIN >= item7)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item7+"^000000):"+getitemname(item8_id)+" ("+ ((#DIM_COIN >= item8)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item8+"^000000):"+getitemname(item9_id)+" ("+ ((#DIM_COIN >= item9)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item9+"^000000):"+getitemname(item10_id)+" ("+ ((#DIM_COIN >= item10)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item10+"^000000):"+getitemname(item11_id)+" ("+ ((#DIM_COIN >= item11)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item11+"^000000):"+getitemname(item12_id)+" ("+ ((#DIM_COIN >= item12)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item12+"^000000):"+getitemname(item13_id)+" ("+ ((#DIM_COIN >= item13)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+item13+"^000000):"+getitemname(last_i_id)+" ("+ ((#DIM_COIN >= last_item)?"^0000ff":"^f94a32") +""+#DIM_COIN+"^000000/^0000ff"+last_item+"^000000)";
+	
+	mes .@inss$;
+	mes "So, what would you like to buy with your ^FF0000Dimension Coins?^000000";
+next;
+switch(select(.@scpshop$))
+{
+case 1:
+	mes .@inss$;
+if ( #DIM_COIN >= item1)
+{
+	mes "You have at least ^0C00F7"+item1+"^000000 Dimension Coins!";
+	getitem item1_id, item1_am;
+#DIM_COIN -= item1;
+next;
+	callsub INSS_MENU;
+} else
+{
+	mes "You need at least ^0C00F7"+item1+"^000000 Dimension Coins!";
+	next;
+	callsub INSS_MENU;
+}
+case 2:
+	mes .@inss$;
+if ( #DIM_COIN >= item2)
+{
+	mes "You have at least ^0C00F7"+item2+"^000000 Dimension Coins!";
+	getitem item2_id, item2_am;
+#DIM_COIN -= item2;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item2+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 3:
+	mes .@inss$;
+if ( #DIM_COIN >= item3)
+{
+	mes "You have at least ^0C00F7"+item3+"^000000 Dimension Coins!";
+	getitem item3_id, item3_am;
+#DIM_COIN -= item3;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item3+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+
+case 4:
+	mes .@inss$;
+if ( #DIM_COIN >= item4)
+{
+	mes "You have at least ^0C00F7"+item4+"^000000 Dimension Coins!";
+	getitem item4_id, item4_am;
+#DIM_COIN -= item4;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item4+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 5:
+	mes .@inss$;
+if ( #DIM_COIN >= item5)
+{
+	mes "You have at least ^0C00F7"+item5+"^000000 Dimension Coins!";
+	getitem item5_id, item5_am;
+#DIM_COIN -= item5;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item5+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 6:
+	mes .@inss$;
+if ( #DIM_COIN >= item6)
+{
+	mes "You have at least ^0C00F7"+item6+"^000000 Dimension Coins!";
+	getitem item6_id, item6_am;
+#DIM_COIN -= item6;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item6+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 7:
+	mes .@inss$;
+if ( #DIM_COIN >= item7)
+{
+	mes "You have at least ^0C00F7"+item7+"^000000 Dimension Coins!";
+	getitem item7_id, item7_am;
+#DIM_COIN -= item7;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item7+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 8:
+	mes .@inss$;
+if ( #DIM_COIN >= item8)
+{
+	mes "You have at least ^0C00F7"+item8+"^000000 Dimension Coins!";
+	getitem item8_id, item8_am;
+#DIM_COIN -= item8;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item8+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 9:
+	mes .@inss$;
+if ( #DIM_COIN >= item9)
+{
+	mes "You have at least ^0C00F7"+item9+"^000000 Dimension Coins!";
+	getitem item9_id, item9_am;
+#DIM_COIN -= item9;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item9+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 10:
+	mes .@inss$;
+if ( #DIM_COIN >= item10)
+{
+	mes "You have at least ^0C00F7"+item10+"^000000 Dimension Coins!";
+	getitem item10_id, item10_am;
+#DIM_COIN -= item10;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item10+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 11:
+	mes .@inss$;
+if ( #DIM_COIN >= item11)
+{
+	mes "You have at least ^0C00F7"+item11+"^000000 Dimension Coins!";
+	getitem item11_id, item11_am;
+#DIM_COIN -= item11;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item11+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 12:
+	mes .@inss$;
+if ( #DIM_COIN >= item12)
+{
+	mes "You have at least ^0C00F7"+item12+"^000000 Dimension Coins!";
+	getitem item12_id, item12_am;
+#DIM_COIN -= item12;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item13+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 13:
+	mes .@inss$;
+if ( #DIM_COIN >= item13)
+{
+	mes "You have at least ^0C00F7"+item13+"^000000 Dimension Coins!";
+	mes "Enjoy your "+getitemname(item13_id)+" x ^f94a32"+item13_am+"^000000!";
+	getitem item13_id, item13_am;
+#DIM_COIN -= item13;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+item13+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+}
+case 14:
+	mes .@inss$;
+if ( #DIM_COIN >= last_item)
+{
+	mes "You have at least ^0C00F7"+last_item+"^000000 Dimension Coins!";
+	getitem last_i_id, last_i_am;
+#DIM_COIN -= last_item;
+next;
+	callsub INSS_MENU;
+} else
+{
+
+	mes "You need at least ^0C00F7"+last_item+"^000000 Dimension Coins!";
+	callsub INSS_MENU;
+}
+case 2:
+	mes .@inss$;
+	mes "Alright "+strcharinfo(0)+".";
+	mes "If you decide to change your mind, come again!";
+	close;
+}
+}

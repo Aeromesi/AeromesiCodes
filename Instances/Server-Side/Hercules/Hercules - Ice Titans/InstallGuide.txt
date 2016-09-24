@@ -1,0 +1,44 @@
+//======================================================================
+//======================================================================
+//======================================================================
+						Aeromesis Instance Mod Package
+								INSTALL GUIDE
+//======================================================================
+//======================================================================
+//======================================================================
+
+NOTE: No matter what emulator you use, the installation process will be the-same.
+
+//Client Side Installation
+
+1) Open up "resnametable.txt" inside the Client Folder, and Copy & Paste all the content into your own "resnametable.txt" and apply it to AeroPatch1.thor (Can make as separate patch)
+
+2) Open up "mp3nametable.txt" inside the Client Folder, and Copy & Paste all the content into your own "mp3nametable.txt" and apply it to AeroPatch1.thor (Can make as separate patch)
+
+//4) For AeroPatch1.thor, open in GRF Editor, go to Container options, and change example.grf to your Servers Custom GRF so that the patch will install inside your Servers Custom GRF, and not the non-existing example.grf.
+
+//5) Upload AeroPatch1.thor to your webhost, apply new patch into your "patchlist.txt" and get ready to experience my Mod Package V2.0!
+
+//Server Side Installation
+//1) For simple installation of all .txt (NPC/Instance related files) just do the following:
+//1.a) Open "npc/custom/" from your emulator.
+//1.b) For all the Custom Scripts, just add folders: "customnpc", "PartyBoard", "broadcaster", to "npc/custom/" folder.
+//1.c) For all the Custom Instances, just make folder in "custom" called "custom_instances" and drag all the instance files into the "npc/custom_instances" folder.
+
+2) Install the  UPDATED resnametable that you applied my patches with into your map_cache.dat. You can do this by downloading the program "WeeMapCache". Download WeeMapCache, load your "map_cache.dat", and select "RNT" then proceed to select your updated "resnametable.txt". Click Save.
+WeeMapCache download: https://rathena.org/board/topic/53424-weemapcache/
+//PS: I also included the WeeMapCache.exe inside package.
+
+//NOTE: YOU DONT HAVE TO DO THIS YET, RAINBOW ROAD WILL BE TRIVIA 5 THAT WILL BE IN A LATER UPDATE. But if you have the time, why not just get the client-side files installed?
+//3) For the Trivia Instance, you'll want to just simply take all three files of r_road(.gat,.rsw,.gnd), as well as  the textures and put the map files into your data/GRF.
+//	PS: If you  want it to be easier, just download Syouji's map, aka the Rainbow Road from here: https://rathena.org/board/topic/62672-rainbow-road/
+
+4) All files labeled with "AddTo_" simply ADD meaning Copy and Paste the contents inside of your emulators file! Example: Copy and paste contents of "/db/AddTo_map_index.txt" to "/db/map_index.txt"
+
+Contact information:
+
+Hercules: http://herc.ws/board/user/4149-aeromesi/
+Facebook: http://www.facebook.com/michael.morici.12
+Skype: itzmichaelmorici
+
+(Just in-case you forget your Skype password, now you can contact me via Hercules or Facebook.)

@@ -1,0 +1,11 @@
+z@prt.rsw#bgm\\dstheme.mp3#
+1@trivia.rsw#bgm\\ff7.mp3#
+2@trivia.rsw#bgm\\ff7.mp3#
+3@trivia.rsw#bgm\\ff7.mp3#
+4@trivia.rsw#bgm\\ff7.mp3#
+5@trivia.rsw#bgm\\ff7.mp3#
+6@trivia.rsw#bgm\\rainbow_road.mp3#
+r_road.rsw#bgm\\rainbow_road.mp3#
+1@mor.rsw#bgm\\so3theme.mp3#
+f@prt.rsw#bgm\\ff8dba.mp3#
+d@eld.rsw#bgm\\fft0bgm.mp3#

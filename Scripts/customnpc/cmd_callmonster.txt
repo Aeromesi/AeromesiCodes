@@ -1,0 +1,135 @@
+//===== Hercules Script ======================================
+//= @callmonster <monster_id>
+//= @callmonedit (explanation below in Modified By )
+//= For: VNRO
+//= Re-Release intended for: Hercules || RagEmu
+//====== Modified By ==================
+//= Added Set Item Requirements : Zhao Chow ( Plug and Play PH )
+//= Added Set Item Count : Zhao Chow ( Plug and Play PH )
+//= Added Command "@callmonedit" in order for a GM to set the Item ID and item requirement for everyone who uses the command. : Aeromesi ( Herc & RagEmu Support Staff )
+//= Fixed some confusion with the translation of the script as a well as a few minor bugs after fully testing this NPC. : Aeromesi ( Herc & RagEmu Support Staff )
+//===== By: ==================================================
+//= ndh
+//= Revisions and fixes: Aeromesi & Zhao Chow
+ 
+-	script	callmonster	FAKE_NPC	,{
+    OnInit:
+        bindatcmd "callmonster", strnpcinfo(0) + "::OnCallMonster";
+		bindatcmd "callmonedit", strnpcinfo(0) + "::OnCallMonEdit",99;
+        .callmonsterDuration = 60; // Minute Duration for Monster
+        $@ItemID = 7711; // Item needed to summon monster (Default 7711 : Event Ticket )
+        $@ItemCount = 1; // How many items needed to summon monster ( Default : 1 )
+        end;
+       
+    OnCallMonster:
+        if(Hp == 0) {
+            dispbottom "Can't Call if died.";
+            end;
+        }
+   
+        if(callmonsterhaveMonster > 0) {
+            dispbottom "Only call 1 per times.";
+            end;
+        }
+   
+        // Proccess argument
+        .@argument$ = "";
+        for (.@i = 0; .@i < .@atcmd_numparameters; ++.@i) {
+            .@argument$ += (.@i > 0 ? " " : "") + .@atcmd_parameters$[.@i];
+        }
+        .@monsterId = atoi(.@argument$);
+       
+        // Find card ID
+		.@cardId = -1;
+        if(getmobdrops(.@monsterId)) {
+            .@count = $@MobDrop_count;
+            copyarray .@item[0],$@MobDrop_item[0],.@count;
+ 
+            for (.@i = 0; .@i < .@count; ++.@i) {
+                //item type 6 la card, getiteminfo(id,2) -> get item type
+                if(getiteminfo(.@item[.@i],2) == 6) .@cardId = .@item[.@i];
+            }
+ 
+            if(.@cardId == -1) {
+                dispbottom "Not available in Database.";
+                end;
+            }
+        } else {
+				dispbottom "Can't find the Monster.";
+            end;
+        }
+ 
+        // Find card ID in inventory
+        if(countitem(.@cardId) > .@ItemNeeded) {
+            delitem .@cardId, 1;
+			delitem $@ItemID, $@ItemCount;
+            atcommand "@summon " + .@monsterId + " " + .callmonsterDuration;
+            callmonsterhaveMonster = 1;
+            addtimer (.callmonsterDuration * 60 * 1000), strnpcinfo(3)+"::OnMonsterGone";
+            dispbottom "Called monster for 60 minutes!";
+        }
+        else {
+            dispbottom "Can't call the monster, please check if you have "
+                            + getitemname(.@cardId)
+                            + " in your inventory if you have it, also you need "+getitemname($@ItemID)+" x "+$@ItemCount+" to call them forth!";
+            end;
+        }
+ 
+        end;
+       
+    OnMonsterGone:
+        callmonsterhaveMonster = 0;
+        end;
+    OnPCDieEvent:
+        callmonsterhaveMonster = 0;
+        end;
+    OnPCLogoutEvent:
+        callmonsterhaveMonster = 0;
+        end;
+       
+    OnWhisperGlobal:
+        set getd(@whispervar0$), atoi(@whispervar1$); // debug function
+        end;
+
+	// Aeromesi
+	OnCallMonEdit:
+	dispbottom "Initiated '@callmonedit' : Edit Item ID or Item Amount for '@callmonster' GM "+strcharinfo(0)+".";
+
+	mes "[ Call Mob CMD ]";
+	mes "Would you like to edit the current items used to call upon a monster via '^FF0000@callmonster^000000' for players?";
+	next;
+EditMenu:
+	switch(select("Item - ["+getitemname($@ItemID)+"]","Amount - ["+$@ItemCount+"]","Exit")) {
+		case 1:
+
+CallID:
+			input $@ItemID;
+			if( getitemname( $@ItemID ) == "null" ){
+			dispbottom "Please input valid item ID.";
+			callsub CallID;
+		}
+			mes "Item for '^FF0000@callmonster^000000' now changed to "+getitemname($@ItemID)+".";
+			close2;
+			callsub EditMenu;
+			end;
+
+			
+		case 2:
+CallAM:
+			input $@ItemCount;
+			if ($@ItemCount < 1 ) 
+		{
+			dispbottom "Please input an item value higher than 0.";
+			callsub CallAM;
+		}
+			mes "Item Amount for '^FF0000@callmonster^000000' now changed to "+$@ItemCount+".";
+			close2;
+			callsub EditMenu;
+			end;
+
+		case 3:
+			mes "If you want to modify the settings, just type '^FF0000@callmonedit^000000' in order to edit the values again!";
+			close;
+
+		}
+}

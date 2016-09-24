@@ -1,0 +1,52 @@
+//Special thanks to BrianL for coding this on eA years ago
+//Recoded by Aeromesi
+//Enter a new town, and gain Base/Job EXP (WoW System)
+//Version 1.0
+-	script	new_map_exp	-1,{
+OnPCLoadMapEvent:
+	setarray .maps$[0], "alberta","aldebaran","amatsu","ayothaya","comodo",
+	                    "einbroch","einbech","geffen","gonryun","hugel",
+	                    "izlude","lighthalzen","louyang","xmas","morocc",
+	                    "payon","prontera","umbala","yuno","brasilis","eden";
+	getmapxy(.@mapname$, .@x, .@y, 0);
+	for( .@i = 0; .@i<getarraysize(.maps$); .@i += 1 ) {
+		if (.@mapname$ == .maps$[.@i])
+			callsub S_exp, .@i;
+	}
+	end;
+
+S_exp:
+	if (!(map_exp & pow(2,getarg(0)))) {
+		BaseExp += 500;
+		JobExp += 500;
+		dispbottom "Gained  Base Exp and Job Exp for entering a new Map! (Currently only Towns)";
+		
+		map_exp = map_exp | pow(2,getarg(0));
+	}
+	end;
+}
+prontera	mapflag	loadevent
+alberta	mapflag	loadevent
+izlude	mapflag	loadevent
+aldebaran	mapflag	loadevent
+amatsu	mapflag	loadevent
+ayothaya	mapflag	loadevent
+comodo	mapflag	loadevent
+einbroch	mapflag	loadevent
+geffen	mapflag	loadevent
+hugel	mapflag	loadevent
+jawaii	mapflag	loadevent
+lighthalzen	mapflag	loadevent
+louyang	mapflag	loadevent
+xmas	mapflag	loadevent
+manuk	mapflag	loadevent
+morocc	mapflag	loadevent
+moscovia	mapflag	loadevent
+brasilis	mapflag	loadevent
+niflheim	mapflag	loadevent
+payon	mapflag	loadevent
+rachel	mapflag	loadevent
+splendide	mapflag	loadevent
+umbala	mapflag	loadevent	
+veins	mapflag	loadevent
+yuno	mapflag	loadevent

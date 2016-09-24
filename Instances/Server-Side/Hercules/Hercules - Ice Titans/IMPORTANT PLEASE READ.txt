@@ -1,0 +1,1 @@
+Take contents of "mp3nametable.txt" and "resnametable.txt" and COPY+PASTE into your own "mp3nametable.txt" or "resnametable.txt" DO NOT overwrite your own. As it only contains the information for my instances.

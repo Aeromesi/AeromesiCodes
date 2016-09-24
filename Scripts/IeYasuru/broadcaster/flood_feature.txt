@@ -1,0 +1,75 @@
+function	script	GM_FloodControl	{
+	next;
+	if($Flood_Control == 1 || $@Flood_Control == 1)
+	{
+		mes "[Valkyrie Controls]";
+		mes "Flood Control is active.";
+		mes "Would you like to disable it or change the settings??";
+		next;
+		switch(select("No:Yes:Run Flood Timer:Change Time")) {
+			case 1: callfunc "Func_Main";
+			case 2: 
+				mes "[Valkyrie Controls]";
+				mes "Disabling the Flood Control...";
+				$@Bcast = 0;
+				$Flood_Control = 0;
+				$@Flood_Control = 0;
+				$Flood = 0;
+				$FloodGM$ = strcharinfo(0);
+				next;
+				callfunc "Func_Main";
+			case 3:
+				close2;
+				callfunc "L_FloodTimer";
+				end;
+			case 4: callsub L_FloodSettings;
+		}
+	}
+	mes "[Valkyrie Controls]";
+	mes "Here you can activate the Flood control Feature.";
+	mes "If active, Multiple Broadcasting will be enabled, but players cannot spam broadcasts.";
+	next;
+	mes "[Valkyrie Controls]";
+	mes "You can set the timer to either 1, 2, 3, or 5 minutes.";
+	mes "Would you like to enable Flood Control?";
+	next;
+	if(select("Yes:No")&2) callfunc "Func_Main";
+L_FloodSettings:
+	mes "[Valkyrie Controls]";
+	mes "Would you like Flood Control to remain active after any server restart?";
+	next;
+	if(select("Yes:No")&2) $@Flood_Control = 1;
+	else $Flood_Control = 1;
+	mes "[Valkyrie Controls]";
+	mes "How long in-between broadcasts?";
+	switch(select("1 minute:2 minutes:3 minutes:5 minutes"))
+	{
+		case 1: $Flood = 1; break;
+		case 2: $Flood = 2; break;
+		case 3: $Flood = 3; break;
+		case 4: $Flood = 5; break;
+	}
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Here are your settings:";
+	mes "Flood Control: ^00AA00Active^000000";
+	mes ($Flood_Control) ? "^00AA00Active^000000 after restart" : "^00AA00Not active^000000 after restart";
+	mes "^00AA00"+$Flood+"^000000 minute(s)";
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Are these right?";
+	if(select("No:Yes")&1)
+	{
+		mes "The options will be reset.";
+		$Flood_Control = 0;
+		$@Flood_Control = 0;
+		$Flood = 0;
+		callfunc "Func_Main";
+	}
+	next;
+	$FloodGM$ = strcharinfo(0);
+	mes "[Valkyrie Controls]";
+	mes "Flood Control is now active.";
+	next;
+	callfunc "Func_Main";
+}

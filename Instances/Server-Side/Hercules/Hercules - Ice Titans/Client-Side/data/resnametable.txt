@@ -1,0 +1,5 @@
+//Antarctic Ice Titans Attack El Dicastes Instance
+d@eld.gnd#dicastes01.gnd#
+d@eld.gat#dicastes01.gat#
+d@eld.rsw#dicastes01.rsw#
+유저인터페이스\map\d@eld.bmp#유저인터페이스\map\dicastes01.bmp#
