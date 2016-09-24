@@ -1,0 +1,51 @@
+function	script	L_ServerCast	{
+	next;
+	mes "[Valkyrie]";
+	mes " - Price: ^0000FF"+$BcastPrice+"^000000";
+	mes (($Flood_Control || $@Flood_Control) ? " - Flood Control: ^33DD55Active^000000" : " - Flood Control: ^FF0000Disabled^000000");
+	next;
+	mes "[Valkyrie]";
+	mes "Would you still like to broadcast?";
+	next;
+	if(select("Yes:No")&2) callfunc "Func_Main";
+	if(Zeny < $BcastPrice)
+	{
+		mes "[Valkyrie]";
+		mes "You don't have enough Zeny.";
+		mes "Please come back with ^0000FF"+($BcastPrice - Zeny)+"^000000 more Zeny.";
+		next;
+		callfunc "Func_Main";
+	}
+	if($@Bcast == 1)
+	{
+		mes "[Valkyrie]";
+		mes "The flood timer is still active. Please wait...";
+		next;
+		callfunc "Func_Main";
+	}
+	mes "[Valkyrie]";
+	mes "Please enter your message.";
+	input .@message$;
+	next;
+	mes "[Valkyrie]";
+	mes "Your message is:";
+	mes "^3333FF"+.@message$+"^000000";
+	mes "Is this right?";
+	next;
+	if(select("Broadcast:Main menu")&2) callfunc "Func_Main";
+	if($Flood_Control == 1 || $@Flood_Control == 1)
+	{
+		Zeny -= $BcastPrice;
+		announce strcharinfo(0)+": "+.@message$,0;
+		$@Bcast = 1;
+		close2;
+		callfunc "L_FloodTimer",$Flood;
+		end;
+	}
+	else
+	{
+		Zeny -= $BcastPrice;
+		announce strcharinfo(0)+": "+.@message$,0;
+		close;
+	}
+}

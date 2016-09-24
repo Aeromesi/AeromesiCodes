@@ -1,0 +1,21 @@
+function	script	GM_NPCDisable	{
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Disabling me lets nobody, not even GMs use me until I'm reenabled by a GM.";
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Only disable me if players are abusing my generosity.";
+	mes "Do you wish to proceed?";
+	if(select("No:Yes")&1) callfunc "Func_Main";
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Input the GM Override Code to reactivate later.";
+	input $Override;
+	next;
+	mes "[Valkyrie Controls]";
+	mes "The code is ^FF0000"+$Override+"^000000";
+	mes "Please write this down as I cannot be reactivated without it.";
+	$ShutDown = 1;
+	$DisableGM$ = strcharinfo(0);
+	close;
+}

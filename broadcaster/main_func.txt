@@ -1,0 +1,81 @@
+function	script	Func_Main	{
+Func_Main:
+.@ServNam$ = "MyRO";
+	if($ShutDown == 1 && getgmlevel() >= 80)
+	{
+		mes "[Valkyrie]";
+		mes "Input the override code to activate.";
+		mes "Enter 0 to leave.";
+		input .@override;
+		if(.@override == 0) close;
+		if(.@override != $Override)
+		{
+			mes "That code is incorrect.";
+			next;
+			callsub Func_Main;
+		}
+		$ShutDown = 0;
+		$Override = 0;
+		mes "Enabled. It's good to be back.";
+		close;
+	}
+	else if($ShutDown == 1 && getgmlevel() < 1) end;
+
+	mes "[Valkyrie]";
+	mes "Hello, adventurer ^0000FF"+strcharinfo(0)+"^000000.";
+	mes "I'm the Announcer for ^FF0000"+.@ServNam$+"^000000.";
+	mes "What would you like to do?";
+	next;
+	if(getgmlevel() >= 80) callsub GM_Menu;
+
+L_Main:
+	if($Flood_Control == 0 && $@Flood_Control == 0)
+	{
+		menu	"Broadcast a message serverwide",-,
+			"Anonymously broadcast serverwide",-,
+			"What do these do?",-;
+			callsub L_Menu;
+	}
+	else
+	{
+		menu	"Broadcast a message serverwide",-,
+			"Anonymously broadcast serverwide",-,
+			"What do these do?",-,
+			"Broadcast up to 5 messages serverwide",-;
+	}
+
+L_Menu:
+	switch(@menu)
+	{
+		case 1: callfunc "L_ServerCast"; break;
+		case 2: callfunc "L_AnonCast"; break;
+
+		case 3: 
+				mes "[Valkyrie]";
+				mes "A broadcast is a message that appears to every person on the server.";
+				mes "It's very useful if you want to get a quick word to everyone.";
+				mes "Broadcasts can be used with your name attached, or anonymously.";
+				mes "GMs use broadcasts to talk to the players, and sometimes for events.";
+				mes "I can broadcast messages for normal, non GM players, but I require a fee.";
+				next;
+				break;
+
+		case 4: callfunc "L_MultiCast"; break;
+	}
+	callsub L_Main;
+
+GM_Menu:
+	menu	"Activate Flood Control",-,
+		"Change Broadcasting Price",-,
+		"Disable NPC (Only if abused)",-,
+		"Last Edited By",-,
+		"Player's Menu",L_Main;
+
+	switch(@menu)
+	{
+		case 1: callfunc "GM_FloodControl"; break;
+		case 2: callfunc "GM_BcastPrice"; break;
+		case 3: callfunc "GM_NPCDisable"; break;
+		case 4: callfunc "GM_EditedList"; break;
+	}
+}

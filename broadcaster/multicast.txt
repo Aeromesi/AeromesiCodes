@@ -1,0 +1,13 @@
+function	script	L_MultiCast_Cast	{
+
+	for( .@i = 1; .@i<=getarg(0); .@i += 1)
+	{
+		if(.@i<=getarg(0))
+		{
+			announce $@messages$[0]+": "+$@messages$[.@i],0;
+			sleep2 5000;
+		}
+	}
+	deletearray $@messages$[0],127;
+	callfunc "L_FloodTimer",$Flood;
+}

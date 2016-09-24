@@ -1,0 +1,71 @@
+function	script	GM_BcastPrice	{
+	next;
+	mes "[valkyrie Controls]";
+	mes "The current prices are:";
+	mes "Serverwide Broadcast: ^0000FF"+$BcastPrice+"^000000";
+	mes "Anonymous Broadcast: ^0000FF"+$AnonPrice+"^000000";
+	mes "Multi-Broadcast: ^0000FF"+$MultiPrice+"^000000";
+	mes "Last edited by ^00AA00"+$PriceGM$+"^000000";
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Would you like to change the price?";
+	next;
+	if(select("No:Yes")&1) callfunc "Func_Main";
+	mes "[Valkyrie Controls]";
+	mes "What do you want to change?";
+	switch(select("Broadcast Price:Anonymous Price:Multi Price:Main Menu"))
+	{
+		case 1: S_Bcast:
+			next;
+			mes "[Valkyrie Controls]";
+			mes "Please input the new price.";
+			input .@BcastPrice,50000,1000000000;
+			next;
+			mes "[Valkyrie Controls]";
+			mes "Set Broadcast Price to ^0000FF"+.@BcastPrice+"^000000?";
+			if(select("No:Yes")&1) callsub S_Bcast;
+			next;
+			$BcastPrice = .@BcastPrice;
+			$PriceGM$ = strcharinfo(0);
+			mes "[Valkyrie Controls]";
+			mes "Price set.";
+			next;
+			callfunc "Func_Main";
+
+		case 2: S_Anon:
+			next;
+			mes "[Valkyrie Controls]";
+			mes "Please input the new price.";
+			input .@AnonPrice,50000,1000000000;
+			next;
+			mes "[Valkyrie Controls]";
+			mes "Set Anonymous Price to ^0000FF"+.@AnonPrice+"^000000?";
+			if(select("No:Yes")&1) callsub S_Anon;
+			next;
+			$AnonPrice = .@AnonPrice;
+			$PriceGM$ = strcharinfo(0);
+			mes "[Valkyrie Controls]";
+			mes "Price set.";
+			next;
+			callfunc "Func_Main";
+
+		case 3: S_Multi:
+			next;
+			mes "[Valkyrie Controls]";
+			mes "Please input the new price.";
+			input .@MultiPrice,50000,200000000;
+			next;
+			mes "[Valkyrie Controls]";
+			mes "Set Multi-cast Price to ^0000FF"+.@MultiPrice+"^000000?";
+			if(select("No:Yes")&1) callsub S_Multi;
+			next;
+			$MultiPrice = .@MultiPrice;
+			$PriceGM$ = strcharinfo(0);
+			mes "[Valkyrie Controls]";
+			mes "Price set.";
+			next;
+			callfunc "Func_Main";
+
+		case 4: next; callfunc "Func_Main";
+	}
+}

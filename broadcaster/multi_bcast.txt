@@ -1,0 +1,64 @@
+function	script	L_MultiCast	{
+	next;
+	mes "[Valkyrie]";
+	mes " - Price (per message/max 5): ^0000FF"+$MultiPrice+"^000000";
+	mes (($Flood_Control || $@Flood_Control) ? " - Flood Control: ^33DD55Active^000000" : " - Flood Control: ^FF0000Disabled^000000");
+	next;
+	mes "[Valkyrie]";
+	mes "Would you still like to broadcast?";
+	switch(select("2 messages:3 messages:4 messages:5 messages:Main Menu"))
+	{
+		case 1: .@msgs = 2; break;
+		case 2: .@msgs = 3; break;
+		case 3: .@msgs = 4; break;
+		case 4: .@msgs = 5; break;
+		case 5: callfunc "Func_Main";
+	}
+	if(Zeny < $MultiPrice*.@msgs)
+	{
+		mes "[Valkyrie]";
+		mes "You don't have enough Zeny to use to use this feature.";
+		mes "Try sending one broadcast instead.";
+		next;
+		callfunc "Func_Main";
+	}
+	if($@Bcast == 1)
+	{
+		mes "[Valkyrie]";
+		mes "The flood timer is still active. Please wait...";
+		next;
+		callfunc "Func_Main";
+	}
+	.@i = 1;
+	while(.@msgs)
+	{
+		next;
+		mes "[Valkyrie]";
+		mes "Please enter message #"+.@i;
+		input .@msg$;
+		setd ".@msg"+.@i+"$",.@msg$;
+		.@i += 1;
+		.@msgs -= 1;
+	}
+	next;
+	mes "[Valkyrie]";
+	.@msgs += 1;
+	.@i -=1 ;
+	while(.@i)
+	{
+		mes "Broadcast "+(.@msgs)+":";
+		mes "^0000FF"+getd(".@msg"+(.@msgs)+"$")+"^000000";
+		.@msgs += 1;
+		.@i-=1;
+	}
+	next;
+	mes "[Valkyrie]";
+	mes "The total price comes to ^0000FF"+(.@msgs*$MultiPrice)+"^000000 Zeny.";
+	mes "Are you ready to start broadcasting?";
+	if(select("Broadcast:Main Menu")&2) callfunc "Func_Main";
+	close2;
+	$@Bcast = 1;
+	setarray $@messages$[0],strcharinfo(0),.@msg1$,.@msg2$,.@msg3$,.@msg4$,.@msg5$;
+	$@args = .@msgs-1;
+	callfunc "L_MultiCast_Cast",$@args;
+}
