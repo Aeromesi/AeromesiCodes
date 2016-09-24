@@ -1,0 +1,259 @@
+/*= Devil Square =*/
+/*= Coded by: IeYasuru =*/
+/*= Date: April 8, 2015 =*/
+/*= Revision: 4 =*/
+/*= External Functions:
+	None
+=*/
+
+////////////////////////////////////////
+
+/*= DS Organizer =*/
+-	script	Ringmaster::DSORG	-1,{
+	.npc$ = "[Devil's Square Ringmaster]";
+	if(getgmlevel() >= 60) callsub GM_Menu;
+	
+	mes .npc$;
+	mes "Welcome to our special event!";
+	mes "For only ^0000FF200,000z^000000 you can challenge this wonderful ring of trials and tribulationa!";
+	next;
+	while(1)
+	{
+		mes .npc$;
+		mes "So, would you care to join and try your luck?";
+		mes "Please note: You must be at least level ^FF0000150^000000 to enter.";
+		switch(select("Sure!:No thanks, I value my life:Um, what am I getting into?"))
+		{
+			case 1:
+				if(!$@DS_Open)
+				{
+					mes "I'm sorry, but the Devil's Square is not currwntly open.";
+					mes "Please try back later.";
+					close;
+				}
+				if(BaseLevel < 150 || Zeny < 200000)
+				{
+					mes "I'm sorry, but you are either too low leveled or don't have the required amount of zeny.";
+					close;
+				}
+				if(getmapusers("ordeal_1-1") >= 10)
+				{
+					mes "I'm sorry, but we are at capacity. Please try again next time.";
+					close;
+				}
+				Zeny-=200000;
+				announce strcharinfo(0) + "has decided to take on the Devil's Square for fame and glory! Wish " + ((Sex)?"him":"her") + " luck!",8;
+				percentheal 100,100;
+				warp "ordeal_1-1",149,149;
+				end;
+			
+			case 2:
+				mes "I'm sorry to hear that. Please come back if you change your mind.";
+				close;
+			
+			case 3:
+				next;
+				mes .npc$;
+				mes "Devil's Square is a horde mode event consisting of 10 rounds.";
+				mes "The rounds start off eaay vut get progressivly harder.";
+				mes "The final round consists of a single MVP mob.";
+				next;
+				mes .npc$;
+				mes "Once the door is opened, you have 5 minutes to enter.";
+				mes "If you do not enter in time, you miss that round.";
+				mes "If everybody participating dies, the round is cancelled.";
+				next;
+				break;
+		}
+	}
+	
+GM_Menu:
+	switch(select("Start Devil's Square", "Continue"))
+	{
+		case 1:
+			donpcevent "DS_Event::OnStartDS";
+					
+		case 2: 
+			break;
+	}
+	return;
+}
+/*= End Organizer =*/
+
+////////////////////////////////////////
+
+/*= DS Escapist =*/
+-	script	Eacape Artist::DSEXIT	-1,{
+	mes "[Escape Artist]";
+	mes "Wow, I can't believe you survived. You must be pretty strong.";
+	mes "I'm going to have a chat with my boss. He can't keep charging people to risk their life.";
+	next;
+	mes "[Escape Artist]";
+	mes "Anyway, congratulations for beating his twisted idea of fun. I'll help you out of here.";
+	next;
+	warp "SavePoint",0,0;
+	end;
+}
+/*= End Escapist =*/
+
+////////////////////////////////////////
+
+/*= Event Code =*/
+ordeal_1-1,0,0,0	script	DS_Event::DSMAIN	-1,{
+
+	function DS_CheckDup;
+	
+OnInIt:
+	disablenpc "DSEXIT";
+	$@DS_Open = 0;
+	setarray $@DS1[0],1002,1113,1005,1010,1090,3604,3603,3602,3601,1076,1015,1094,1025;
+	setarray $@DS2[0],1068,1052,1019,1077,1089,1088,1018,1028,1176,1128,1056,1169;
+	setarray $@DS3[0],1073,1057,1234,1686,1138,1212,1629,1323,1074,1016,1144,1317;
+	setarray $@DS4[0],1248,1099,1129,1880,1881,1151,1264,1108,1409,1069,1045,1271;
+	setarray $@DS5[0],1101,1061,1412,1291,1109,1699,1299,1065,1165,1180,1127;
+	setarray $@DS6[0],1302,1865,1297,1752,1753,1870,1283,1773,2313,2204,1989;
+	setarray $@DS7[0],1678,1679,1705,1704,1707,1706,2204,2092,1867,2137;
+	setarray $@DS8[0],2083,2084,2085,3608,1117,1291,1200,2084,2083,1838;
+	setarray $@DS9[0],1993,1992,1986,2016,2018,2017,1268,2136,2134,2133;
+	setarray $@DSMVP[0],1511,1039,1418,1768,1373,2022,1087,1190,1157,1623,1312,1685,1159,1147,1059,1150,1492,1251,1252,1272;
+	setarray $@DSC[0],132,137,167,159, 54,54,110,110, 26,138,95,182, 109,189,54,245, 138,204,162,273, 190,190,246,246, 208,137,273,181, 189,110,245,52, 137,90,161,26;
+	end;
+
+OnMinute00:
+	if(gettime(3) % 2)
+		end;
+OnStartDS:
+	removemapflag "ordeal_1-1",mf_noskill;
+	mapwarp "ordeal_1-1","SavePoint",0,0;
+	killmonsterall "ordeal_1-1";
+	hideonnpc "DSEXIT";
+	$@DS_Open = 1;
+	announce "The door to Devil's Square is NOW OPEN! You have 5 minutes to get in before it starts! Speak to the Ringmaster in Prontera to join!",0;
+	sleep 60000;
+	for(.@i = 4; .@i > 0; .@i--)
+	{
+		announce "Devil Square will begin in " + .@i + "minutes!", 0;
+		sleep 60000;
+	}
+	$@DS_Open = 0;
+	$@DS_Round = 1;
+	donpcevent "DevilSquare::OnBeginRound";
+	announce "Devil Square has BEGUN!",0;
+	end;
+
+OnBeginRound:
+	if($@DS_Round == 10)
+	{
+		mapannounce "ordeal_1-1","Please move to the center of the map for the boss round.", 0;
+		while(getareausers("ordeal_1-1", 142, 142, 157, 157) < getmapusers("ordeal_1-1"))
+			sleep 25;
+		.@MVP = $@DSMVP[rand(getarraysize($@DSMVP))];
+		areamonster "ordeal_1-1", 132, 137, 167, 159, "[DS]" + getmonsterinfo(.@MVP, MOB_NAME), .@MVP, 1, "DevilSquare::OnDSMVPDead";
+		end;
+	}
+	callsub DS_GetRoundMobs;
+	for(.@i = 0; .@i < getarraysize($@RoundMobs); .@i++)
+		areamonster $@DSC[0 + (4 * ($@DS_Round - 1))], $@DSC[1 + (4 * ($@DS_Round - 1))], $@DSC[2 + (4 * ($@DS_Round - 1))], $@DSC[3 + (4 * ($@DS_Round - 1))], getmonsterinfo($@RoundMobs[.@i], MOB_NAME), $@RoundMobs[.@i], rand(3,5) * (((11 - $@DS_Round) / 2) + (12 - $@DS_Round)), "DevilSquare::OnDSDead";
+	mapannounce "ordeal_1-1","Round" + $@DS_Round + "has begun!", 0;
+	deletearray $@RoundMobs[0],getarraysize($@RoundMobs);
+	end;
+
+DS_GetRoundMobs:
+	while(getarraysize($@RoundMobs) < 5)
+	{
+		set .@mob, getd("$@DS" + $@DS_Round + "[" + rand(getarraysize(getd("$@DS" + $@DS_Round))) + "]");
+		if(DS_CheckDup(.@mob)) 
+			continue;
+		$@RoundMobs[getarraysize($@RoundMobs)] = @mob;
+	}
+	return;
+
+	function	DS_CheckDup	{
+		for(.@i = 0; .@i < getarraysize($@RoundMobs); .@i++)
+		{
+			if(getarg(0) == $@RoundMobs[.@i])
+				return 1;
+		}
+		return 0;
+	}
+
+OnDSDead:
+	switch(mobcount("ordeal_1-1","DS_Event::OnDSDead"))
+	{
+		case 25:
+		case 5:
+			mapannounce "ordeal_1-1","Monsters remaining: " + mobcount("ordeal_1-1","DS_Event::OnDSDead"),0;
+			break;
+		
+		case 0:
+			$@DS_Round++;
+			mapannounce "ordeal_1-1","All monsters in round " + ($@DS_Round - 1) + "have been defeated!",0;
+			donpcevent "DS_Event::OnBeginRound";
+		default:
+			if(mobcount("ordeal_1-1","DS_Event::OnDSDead") < 5)
+			{
+			mapannounce "ordeal_1-1",mobcount("ordeal_1-1","DS_Event::OnDSDead") + "monsters remaining.",0;
+			}
+	}
+	end;
+
+OnDSMVPDead:
+	mapannounce "ordeal_1-1", "Congratulations! You may now open your treasure boxes!", 0;
+	setmapflag "ordeal_1-1",mf_noskill;
+	if(getmapusers("ordeal_1-1") <= 5)
+	{
+		monster "ordeal_1-1",54, 54, "[DS] Treasure Box",1324,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",26, 150,"[DS] Treasure Box",1328,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",54, 245,"[DS] Treasure Box",1332,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",149,273,"[DS] Treasure Box",1336,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",245,245,"[DS] Treasure Box",1340,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",273,150,"[DS] Treasure Box",1344,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",245,51, "[DS] Treasure Box",1348,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",149,26, "[DS] Treasure Box",1352,1,"DevilSquare::OnBoxOpened";
+	}
+	else
+	{
+		monster "ordeal_1-1",54,55,  "[DS] Treasure Box",1324,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",55,54,  "[DS] Treasure Box",1328,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",27,151, "[DS] Treasure Box",1332,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",26,149, "[DS] Treasure Box",1336,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",54,244, "[DS] Treasure Box",1340,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",55,245, "[DS] Treasure Box",1344,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",148,272,"[DS] Treasure Box",1348,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",150,272,"[DS] Treasure Box",1352,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",245,245,"[DS] Treasure Box",1356,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",246,244,"[DS] Treasure Box",1360,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",273,150,"[DS] Treasure Box",1324,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",274,149,"[DS] Treasure Box",1328,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",246,52, "[DS] Treasure Box",1324,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",245,51, "[DS] Treasure Box",1328,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",148,27, "[DS] Treasure Box",1340,1,"DevilSquare::OnBoxOpened";
+		monster "ordeal_1-1",151,27, "[DS] Treasure Box",1344,1,"DevilSquare::OnBoxOpened";
+	}
+	end;
+
+OnBoxOpened:
+	announce "Devil's Square: " + strcharinfo(0) + "has opened the treasure boxes at Devil Square!", 0;
+	if(!mobcount("ordeal_1-1","DevilSquare::OnBoxOpened"))
+		enablenpc "DSEXIT";
+	end;
+
+OnPCDieEvent:
+	if(strcharinfo(3) == "ordeal_1-1")
+		warp "SavePoint",0,0;
+	end;
+}
+/*= End Event Code =*/
+
+////////////////////////////////////////
+
+/*= Mapflags and External Functions =*/
+ordeal_1-1	mapflag	nowarp
+ordeal_1-1	mapflag	nowarpto
+ordeal_1-1	mapflag	noteleport
+ordeal_1-1	mapflag	monster_noteleport
+ordeal_1-1	mapflag	nosave	SavePoint
+ordeal_1-1	mapflag	nomemo
+ordeal_1-1	mapflag	nobranch
+ordeal_1-1	mapflag	nopenalty
+/*= End Mapflags and Ext Funcs =*/
