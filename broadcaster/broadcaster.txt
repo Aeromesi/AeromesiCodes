@@ -1,3 +1,0 @@
-prontera,152,151,6	script	Broadcaster	4_F_FAIRY,{
-	callfunc "Func_Main";
-}
