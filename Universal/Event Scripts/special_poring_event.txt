@@ -1,0 +1,566 @@
+prontera,150,150,4	script	Poring Event Manager	PORING,{
+if(getgmlevel() >= 99) {
+
+	mes "[^ff69b4Poring Event Manager^000000]";
+	mes "Hello GM "+strcharinfo(0)+".";
+	mes "What would you like to manage with the Special Poring Event?";
+	next;
+switch(select("Create Poring Event:Delete Previous Setup:Repeat Poring Event:Disable Poring Event:Exit")) {
+
+	case 1:
+	callfunc ("CREATE_PORING");
+	close;
+	
+	case 2:
+	callfunc ("DELETE_PORING");
+	close;
+
+	case 3:
+	callfunc ("REPEAT_PORING");
+	close;
+	case 4:
+	callfunc ("DISABLE_PORING");
+	close;
+	case 5:
+	close;
+}
+
+} else
+end;
+}
+-	script	PoringEvent#sp	-,{
+	mes .poring_name$ = "[Special Poring Event]";
+
+OnAtStartPoringEvent:
+if ($@Poring_Active)
+{
+	mes "Currently there is a Poring Event in session. Please wait until it is over or type '^F00000@disableporing^000000' to end the Special Prong Event prematurely.";
+	close;
+}
+if ($Last_Setup >= 1 )
+{
+	mes "Please proceed to deleting your Last Special Poring Event with '^FF0000@deleteporing^000000'Command.";
+	close;
+}
+if(getgmlevel() >= 99) {
+	mes .poring_name$;
+	mes "Please input the map you want to start the Special Poring Event.";
+MAP_DETAILS:
+if ( input( $MapDetails$, 4, 23 ) ) { 
+	dispbottom " Please input a valid map name with length between 4~23";
+	callsub MAP_DETAILS;
+	end;
+}
+if ( getmapusers($MapDetails$) == -1 ) { 
+	dispbottom "Please input a valid mapname.";
+	callsub MAP_DETAILS;
+	end;
+}
+	mes .poring_name$ = "[Special Poring Event]";
+	mes "Alright, so the map we chose is ^FF0000"+$MapDetails$+"^000000.";
+	next;
+
+	mes @poring_name$;
+	mes "How many of Normal Porings  would you like to spawn?";
+	next;
+NORMAL_INPUT:
+	input $NormalPoringAM;
+	if($NormalPoringAM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 Normal Porings.";
+	dispbottom "Please reinput Normal Poring's amount.";
+	callsub NORMAL_INPUT;
+	end;
+}
+	mes .poring_name$;
+	mes "Alright, Normal Poring amount will be Normal Poring x ("+$NormalPoringAM+").";
+next;
+	mes @poring_name$;
+	mes "How many of Special Porings  would you like to spawn?";
+
+SPECIAL_INPUT:
+	input $SpecialPoringAM;
+	if($SpecialPoringAM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 Special Porings.";
+	dispbottom "Please reinput Special Poring's amount.";
+	callsub SPECIAL_INPUT;
+	end;
+}
+	mes "Alright, Special Poring amount will be Normal Poring x ("+$SpecialPoringAM+").";
+next;
+	mes .poring_name$;
+	mes "Now input amount of Coins you would like player to receive.";
+
+COIN_AMOUNT:
+	input $COIN_AMOUNT;
+	if($COIN_AMOUNT == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 Coins.";
+	dispbottom "Please reinput the total amount of coins you'd like players to get per-kill.";
+	callsub COIN_AMOUNT;
+	end;
+}
+next;
+	mes .poring_name$;
+	mes "Now activating Special Poring Event.";
+	close2;
+$Last_Setup++;
+$@Poring_Active++;
+$SpecialPoringCount = $SpecialPoringAM;
+donpcevent ("PoringEvent#sp::OnStartEvent");
+end;
+OnStartEvent:
+	announce "The Special Poring Event has started on "+$MapDetails$+" go there at once to get some Coins!",bc_all;
+
+	// Normal Poring
+
+	monster $MapDetails$,0,0,"Poring",1002,$NormalPoringAM,("PoringEvent#sp::OnKillNormal");
+
+	// Special Poring
+
+	monster $MapDetails$,0,0,"Poring",1002,$SpecialPoringAM,("PoringEvent#sp::OnKillSpecial");
+
+end;
+
+
+OnKillNormal:
+announce "That's not the right Poring! Keep looking more!",bc_self;
+end;
+
+OnKillSpecial:
+
+	if($SpecialPoringCount <= 1) {
+	$@Poring_Active = 0;
+	getitem 502, 1;
+//	$SpecialPoringCount = $SpecialPoringAM;
+	killmonster $MapDetails$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	announce ""+strcharinfo(0)+" has killed the Super Special Poring! Congratulations!",bc_all;
+	sleep2 2500;
+	announce "The Special Poring Event has ended. Thanks for all who participated! Hope you enjoyed!",bc_all;
+	donpcevent ("PoringEvent#sp::OnCounterReset");
+//	announce "Poring Event has ended.",bc_all;
+	end;
+} else
+
+	$SpecialPoringCount--;
+	announce ""+strcharinfo(0)+" has killed a Special Poring! Only "+$SpecialPoringCount+" are left!",bc_all;
+	getitem 501, $COIN_AMOUNT;
+//	donpcevent ("PoringEvent#sp::OnFinishCheck");
+	end;
+
+OnCounterReset:
+$SpecialPoringCount = $SpecialPoringAM;
+end;
+/*OnFinishCheck:
+	if($SpecialPoringCount <= 1) {
+	announce ""+strcharinfo(0)+" has killed the Super Special Poring! Congratulations!",bc_all;
+	sleep2 2500;
+	announce "The Special Poring Event has ended. Thanks for all who participated! Hope you enjoyed!",bc_all;
+	sleep2 1000;
+	$@Poring_Active = 0;
+	getitem 502, 1;
+//	$SpecialPoringCount = $SpecialPoringAM;
+	killmonster $MapDetails$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+//	announce "Poring Event has ended.",bc_all;
+	end;
+} else
+	dispbottom "error";
+	end;
+*/
+OnInit:
+/*
+
+	//********************************************************************
+	//********************************************************************
+	//Centralized Script Command - (C) Aeromesi (Subjective to many changes.)
+	//********************************************************************
+	//********************************************************************
+	//GM Commands
+	'@startporing' - You are able to start configuring your Special Poring Event via @startporing. Note when  Special Poring Event is going on, you cannot start another one.
+	'@repeatporing' - Allows you to run your previous Poring Event! Just like Invasion Summoner!
+	'@deleteporing' - It will ask you to delete your previously configurations so you can start anew with your Special Poring Event Configuration.
+	'@disableporing' - It allows the GM to disable the Poring event.
+
+	//Player Commands
+	'@joinporing'` - Allows you to enter the map the event is going on in.
+	'@quitporing' - Allows you to quit and leave (Warps to SavePoint) the Special Poring Event.
+	NOTE: ALL THE COMMANDS ARE SCRIPTED INTO AN NPC INTERPHASE, SO IF YOU DON'T LIKE THE COMMANDS, TALK TO THE PORING EVENT MANAGER!
+*/
+	//GM Commands
+	bindatcmd "startporing",strnpcinfo(0)+"::OnAtStartPoringEvent";
+	bindatcmd "repeatporing",strnpcinfo(0)+"::OnAtRepeatPoringEvent";
+	bindatcmd "deleteporing",strnpcinfo(0)+"::OnAtDeletePoringEvent";
+	bindatcmd "disableporing",strnpcinfo(0)+"::OnAtDisablePoringEvent";
+	bindatcmd "ritem",strnpcinfo(0)+"::OnAtRandomItem";
+
+	//Player Commands
+	bindatcmd "joinporing",strnpcinfo(0)+"::OnAtJoinPoring";
+	bindatcmd "quitporing",strnpcinfo(0)+"::OnAtQuitPoring";
+	end;
+
+OnAtRandomItem:
+while(1) {
+sleep2 1;
+$@item_randz = rand(20000,29332);
+sleep2 1;
+if($@Item_Obtained >= 100) {
+$@Item_Obtained = 0;
+break;
+} else
+getitem $@item_randz, 1;
+Item_Obtained++;
+continue;
+}
+OnAtAerosEvents:
+if(getgmlevel() >= 99) {
+showscript "Aeromesi's Script Manager loaded.";
+dispbottom "Welcome to Aeromesi's '@aeroevent' command where you may view and modify tons of my script data.";
+} else
+if(getgmlevel() <= 1) {
+showscript "[Event Manager System]";
+dispbottom "Welcome to the Event Manager System, where you can view details about current events, view activity as well as warp to the area the Event is being held.";
+}
+mes ""+ (( getgmlevel() >= 99 )?"^9B30FFAeromesi's Script Manager^000000":"^9B30FFAeromesi's Event Manager^000000")+"";
+AEROS_EVENTMENU:
+switch(select(""+ (( getgmlevel() >= 99 )?"^9B30FFManage NPC Scripts^000000":"")+""
+	,"- [^5DFC0AEvent ^000000^f94a32Statuses^000000]"
+	,"- [^E066FFEvent Shop^000000]"
+	,"- [View Details]")) {
+	case 1:
+	close;
+	case 2:
+	switch(select(
+	"Special Poring Event - "+ (($@Poring_Active  && getgmlevel() < 100 )?"^5DFC0A Active^000000 - WARP NOW!":"^f94a32 In-Active")+ "^000000"
+	,"Invasion Summoner Event - "+ (($@Inv_Active  && getgmlevel() < 100 )?"^5DFC0A Active^000000 - WARP NOW!":"^f94a32 In-Active")+ "^000000"
+	,"Exit to Main Menu")) {
+	case 1:
+	if( $@Poring_Active )
+	{
+		warp $MapDetails$,0,0;
+		end;
+	} else
+	if ( !$@Poring_Active )
+	{
+	dispbottom "No Special Poring Event in-progress.";
+	close;
+	}
+	
+	case 2:
+	if( $@Inv_Active )
+	{
+		warp $MapInput$,0,0;
+		end;
+	} else
+	if ( !$@Inc_Active )
+	{
+	dispbottom "No invasion in-progress.";
+	close;
+	}
+	case 3:
+	close2;
+	callsub AEROS_EVENTMENU;
+	end;
+}
+	case 3:
+	close;
+	case 4:
+	mes "- ^9B30FFManage NPC Scripts^000000 will allow you to configure everything regarding installed scripts.";
+	mes "";
+	mes "- ^5DFC0AEvent ^000000^f94a32Statuses^000000 will allow you to view whether event is currently Active or not, and able to warp to them.";
+	mes "";
+	mes "- ^E066FFEvent Shop^000000 will be Custom Currencies for event.";
+	close2;
+	callsub AEROS_EVENTMENU;
+	end;
+}
+
+OnAtRepeatPoringEvent:
+	if(getgmlevel() >=  99) {
+	if( $@Poring_Active ) {
+	dispbottom "Special Poring event is currently active.";
+	end;
+} else
+	if($Last_Setup) {
+	$@Poring_Active++;
+	donpcevent ("PoringEvent#sp::OnCounterReset");
+	dispbottom "Special Poring event has been restarted.";
+	announce "Special Poring event has been restarted! Enjoy!",bc_all;
+	sleep2 2500;
+	donpcevent ("PoringEvent#sp::OnStartEvent");
+	end;
+} else
+	dispbottom "You haven't setup a Special Poring event before, or your server restarted.";
+	end;
+} else
+end;
+
+OnAtDeletePoringEvent:
+if(getgmlevel() >= 99) {
+if($@Poring_Active) {
+	dispbottom "Currently the Poring event is activated.";
+	end;
+}
+if(!$@Poring_Active && $Last_Setup >= 1) {
+	mes "Your Last Special Poring Setup still exists. Delete your Last Setup so you can Create a new configured Special Poring Event?";
+	switch(select("Delete Last Setup:No thanks.")) {
+	case 1:
+	mes "Last Setup deleted. Proceed using '^FF0000@startporing^000000' to create new Poring event.";
+	$Last_Setup = 0;
+//	$SpecialPoringCount = $SpecialPoringAM;
+	sleep2 200;
+//	atcommand "@startporing";
+	close;
+	case 2:
+	mes "Alright, type '^FF0000@repeatporing^000000' to play your Custom Special Poring Event!";
+	close;
+}
+
+} else
+	dispbottom "There is no Last Setup of the Special Poring event currently setup yet. Please create one via '@startporing'. Thank you.";
+	end;
+
+OnAtDisablePoringEvent:
+if(getgmlevel() >= 99) {
+	if( $@Poring_Active ) {
+	$@Poring_Active = 0;
+	donpcevent ("PoringEvent#sp::OnCounterReset");
+//	$Last_Setup = 0
+//	$SpecialPoringCount = $SpecialPoringAM;
+	killmonster $MapDetails$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	announce "Special Poring Event disabled by [GM] "+strcharinfo(0)+"",bc_all;
+	end;
+} else
+	dispbottom "No Special Poring Event in Progress.";
+	end;
+} else
+end;
+OnAtJoinPoring:
+	if( !$@Poring_Active  ) {
+	dispbottom "No Special Poring Event in Progress.";
+	end;
+} else
+	warp $MapDetails$, 0 ,0;
+	dispbottom "Successfully joined Special Poring Event.";
+	end;
+
+OnAtQuitPoring:
+if ($@Poring_Active) {
+	warp "SavePoint",0,0;
+	end;
+} else
+	dispbottom "No Special Poring Event in Progress.";
+	end;
+}
+} else
+end;
+}
+function	script	CREATE_PORING	{
+if ($@Poring_Active)
+{
+	mes "Currently there is a Poring Event in session. Please wait until it is over or type '^FF0000@disableporing^000000' to end the Special Proing Event prematurely.";
+	close;
+}
+if ($Last_Setup >= 1 )
+{
+	mes .poring_name$ = "[Special Poring Event]";
+	mes "Please proceed to deleting your Last Special Poring Event with '^FF0000@deleteporing^000000'Command.";
+	close;
+}
+if(getgmlevel() >= 99) {
+	mes .poring_name$;
+	mes "Please input the map you want to start the Special Poring Event.";
+MAP_DETAILS:
+if ( input( $MapDetails$, 4, 23 ) ) { 
+	dispbottom " Please input a valid map name with length between 4~23";
+	callsub MAP_DETAILS;
+	end;
+}
+if ( getmapusers($MapDetails$) == -1 ) { 
+	dispbottom "Please input a valid mapname.";
+	callsub MAP_DETAILS;
+	end;
+}
+	mes .poring_name$ = "[Special Poring Event]";
+	mes "Alright, so the map we chose is ^FF0000"+$MapDetails$+"^000000.";
+	next;
+
+	mes @poring_name$;
+	mes "How many of Normal Porings  would you like to spawn?";
+	next;
+NORMAL_INPUT:
+	input $NormalPoringAM;
+	if($NormalPoringAM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 Normal Porings.";
+	dispbottom "Please reinput Normal Poring's amount.";
+	callsub NORMAL_INPUT;
+	end;
+}
+	mes .poring_name$ = "[Special Poring Event]";
+	mes "Alright, Normal Poring amount will be Normal Poring x ("+$NormalPoringAM+").";
+next;
+	mes @poring_name$;
+	mes "How many of Special Porings  would you like to spawn?";
+
+SPECIAL_INPUT:
+	input $SpecialPoringAM;
+	if($SpecialPoringAM == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 Special Porings.";
+	dispbottom "Please reinput Special Poring's amount.";
+	callsub SPECIAL_INPUT;
+	end;
+}
+	$SpecialPoringCount = $SpecialPoringAM;
+	mes "Alright, Special Poring amount will be Normal Poring x ("+$SpecialPoringAM+").";
+next;
+	mes .poring_name$ = "[Special Poring Event]";
+	mes "Now input amount of Coins you would like player to receive.";
+
+COIN_AMOUNT:
+	input $COIN_AMOUNT;
+	if($COIN_AMOUNT == 0) {
+	dispbottom "Sorry, but it's impossible to enter 0 Coins.";
+	dispbottom "Please reinput the total amount of coins you'd like players to get per-kill.";
+	callsub COIN_AMOUNT;
+	end;
+}
+	mes .poring_name$ = "[Special Poring Event]";
+	mes "Now activating Special Poring Event.";
+	close2;
+$SpecialPoringCount = $SpecialPoringAM;
+$Last_Setup++;
+$@Poring_Active++;
+donpcevent ("PoringEvent#sp::OnStartEvent");
+end;
+OnStartEvent:
+	announce "The Special Poring Event has started on "+$MapDetails$+" go there at once to get W`z Coins!",bc_all;
+
+	// Normal Poring
+
+	monster $MapDetails$,0,0,"Poring",1002,$NormalPoringAM,("PoringEvent#sp::OnKillNormal");
+
+	// Special Poring
+
+	monster $MapDetails$,0,0,"Poring",1002,$SpecialPoringAM,("PoringEvent#sp::OnKillSpecial");
+
+end;
+
+
+OnKillNormal:
+announce "That's not the right Poring! Keep looking more!",bc_self;
+end;
+
+OnKillSpecial:
+
+if($SpecialPoringCount <= 1) {
+
+	announce ""+strcharinfo(0)+" has killed the Super Special Poring!",bc_self;
+	getitem 501, $COIN_AMOUNT;
+	$@Poring_Active = 0;
+	killmonster $MapDetails$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	mapwarp "SavePoint", 0, 0, 0;
+	announce "Special Poring Event has ended.",bc_all;
+	end;
+} else
+
+	$SpecialPoringCount--;
+	announce ""+strcharinfo(0)+" has killed a Special Poring! Only "+$SpecialPoringCount+" are left!",bc_all;
+	getitem 501, $COIN_AMOUNT;
+	donpcevent ("PoringEvent#sp::OnFinishCheck");
+
+OnFinishCheck:
+	if($SpecialPoringCount == 0) {
+
+	announce "The Special Poring Event has ended. Thanks for all who participated! Hope you enjoyed!",bc_self;
+	$@Poring_Active = 0;
+	killmonster $MapDetails$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	announce "Poring Event has ended.",bc_all;
+	end;
+} else
+end;
+} else
+end;
+}
+-	script	OnEventManagerAdd	-,{
+	OnPCLoginEvent:
+	if(getgmlevel() >= 99) {
+	bindatcmd ""+ (( getgmlevel() >= 99 )?"aerosevents":"")+"",("PoringEvent#sp")+"::OnAtAerosEvents";
+	end;
+	} else
+	if(getgmlevel() <= 1) {
+	bindatcmd ""+ (( getgmlevel() <= 1 )?"joinevent":"")+"",("PoringEvent#sp")+"::OnAtAerosEvents";
+	end;
+}
+}
+function	script	REPEAT_PORING	{
+	if(getgmlevel() >=  99) {
+	if( $@Poring_Active ) {
+	mes "Special Poring event is currently active.";
+	close;
+} else
+	if($Last_Setup) {
+	$@Poring_Active++;
+	donpcevent ("PoringEvent#sp::OnCounterReset");
+	mes "Special Poring event has been restarted.";
+	announce "Special Poring event has been restarted! Enjoy!",bc_all;
+	sleep2 2500;
+	donpcevent ("PoringEvent#sp::OnStartEvent");
+	close;
+} else
+	mes "You haven't setup a Special Poring event before, or your server restarted.";
+	close;
+} else
+close;
+}
+function	script	DELETE_PORING	{
+
+if(getgmlevel() >= 99) {
+if($@Poring_Active) {
+	mes "Currently the Poring event is activated.";
+	close;
+}
+if(!$@Poring_Active && $Last_Setup >= 1) {
+	mes "Your Last Special Poring Setup still exists. Delete your Last Setup so you can Create a new configured Special Poring Event?";
+	switch(select("Delete Last Setup:No thanks.")) {
+	case 1:
+	mes "Last Setup deleted. Proceed using '^FF0000@startporing^000000' to create new Poring event.";
+	$Last_Setup = 0;
+	sleep2 200;
+//	atcommand "@startporing";
+	close;
+	case 2:
+	mes "Alright, type '^FF0000@repeatporing^000000' to play your Custom Special Poring Event!";
+	close;
+}
+
+} else
+	mes "There is no Last Setup of the Special Poring event currently setup yet. Please create one via '@startporing'. Thank you.";
+	close;
+} else
+close;
+}
+
+function	script	DISABLE_PORING	{
+
+	if( $@Poring_Active ) {
+	mes "Disabled Special Poring Event.";
+	close2;
+	$@Poring_Active = 0;
+//	$Last_Setup = 0
+	donpcevent ("PoringEvent#sp::OnCounterReset");
+	killmonster $MapDetails$,"All";
+	sleep2 1000;
+	atcommand "@cleanmap";
+	announce "Special Poring Event disabled by [GM] "+strcharinfo(0)+"",bc_all;
+	end;
+} else
+	mes "No Special Poring Event in Progress.";
+	close;
+}

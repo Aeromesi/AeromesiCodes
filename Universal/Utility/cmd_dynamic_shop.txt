@@ -1,0 +1,855 @@
+/*------------------------------------------------------------------------------------------------------
+The Ultimate Dynamic Shop Script by Aeromesi
+Built for Hercules
+1.0
+// Details:
+// When first loading the script you get dummy data installed in your default shop, Red Potion x 1.
+// The shop is disabled by default so once you're comfortable with setting up your shops, you'll be good to go!
+// You have 5 save slots, which means you can load up to a total of 5 shops!
+// PLEASE SETUP YOUR SHOP BEFORE ENABLING YOUR NPC! CURRENCY USED IS CASHPOINTS BUT CAN EASILY BE CHANGED!
+--------------------------------------------------------------------------------------------------------*/
+function	script	ItemAmountList	{
+mes "Item Amounts List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+" x "+$DynShopAM2[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+" x "+$DynShopAM3[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+" x "+$DynShopAM4[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+" x "+$DynShopAM5[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+" x "+$DynShopAM6[.i]+"^000000";
+}
+}
+close;
+}
+function	script	ItemPriceList	{
+mes "Item Price List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+" Price: "+$DynShopCOST2[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+" Price: "+$DynShopCOST3[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+" Price: "+$DynShopCOST4[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+" Price: "+$DynShopCOST5[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+" Price: "+$DynShopCOST6[.i]+"^000000";
+}
+}
+close;
+}
+
+function	script	LoadDynShop	{
+mes "Item ID List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+"^000000";
+}
+}
+		.i2 = .i-1;
+		dispbottom "Please enter 0 ~ "+.i2+" for the item you want to purchase.";
+		DynSHOPPURCHASE:
+		input .selection;
+		if (.selection > .i2 ) {
+		dispbottom "Non-Existant item input.";
+		callsub DynSHOPPURCHASE;
+}
+if ( $ShopUsed == 1 ) {
+		getitem $DynShopID2[.selection], $DynShopAM2[.selection];
+		#CASHPOINTS-= $DynShopCOST2[.selection];
+}
+if ( $ShopUsed == 2 ) {
+		getitem $DynShopID3[.selection], $DynShopAM3[.selection];
+		#CASHPOINTS-= $DynShopCOST3[.selection];
+}
+if ( $ShopUsed == 3 ) {
+		getitem $DynShopID4[.selection], $DynShopAM4[.selection];
+		#CASHPOINTS-= $DynShopCOST4[.selection];
+}
+if ( $ShopUsed == 4 ) {
+		getitem $DynShopID5[.selection], $DynShopAM5[.selection];
+		#CASHPOINTS-= $DynShopCOST5[.selection];
+}
+if ( $ShopUsed == 5 ) {
+		getitem $DynShopID6[.selection], $DynShopAM6[.selection];
+		#CASHPOINTS-= $DynShopCOST6[.selection];
+}
+	setarray .msg$,
+		"Didn't think you'd buy that!",
+		"Smart Purchase "+strcharinfo(0)+"!",
+		"If you keep buying things off me I won't have anything left to sell!",
+		"Now you're a smart shopper indeed "+strcharinfo(0)+"!";
+		.@msg_total = getarraysize(.msg$);
+		npctalk ""+.msg$[rand(1,.@msg_total)];
+		close;
+}
+prontera,150,166,6	script	Mysterious Shop Man	4_M_TRAINEE,{
+
+mes $ShopNPC$ = "[^551a8bMysterious Shop Man^000000]";
+if ( $@DynEditMode ) {
+mes "I'm sorry but a GM is currently editing the shop. Wait until they are finished to see the new items!";
+close;
+}
+if ( $DynDisable ) {
+mes "I'm sorry but the Shop is currently disabled.";
+mes "You'll probably have to wait until the GM is done editing the shop, when they are, they usually re-enable it!";
+close;
+}
+mes "What would you like to do ^FF0000"+strcharinfo(0)+"^000000?";
+mes " ";
+mes " ";
+mes "Total used Currency for purchases - "+ ((#CASHPOINTS == 0)?"^f94a32":"^0000ff")+ ""+#CASHPOINTS+"^000000";
+next;
+SHOP_MENU:
+mes $ShopNPC$;
+switch(select(""+ (( $ShopUsed$ == "null")?"":""+$ShopUsed$+""),"Check Prices","Exit")) {
+case 1:
+callfunc ("LoadDynShop");
+case 2:
+if ( $ShopUsed$ == "null") {
+mes "Shop hasn't been named and reloaded. Please wait until a GM fully loads shop.";
+close;
+}
+callfunc ("ItemPriceList");
+case 3:
+	mes "Alright "+strcharinfo(0)+".";
+	mes "If you decide to change your mind, come again!";
+	close;
+}
+OnInit:
+	$DynNPC$ = "[ ^CCC000 Dynamic Shop NPC^000000 ]";
+	bindatcmd "editshop",strnpcinfo(0)+"::OnAtEditShop";
+	bindatcmd "saveshop",strnpcinfo(0)+"::OnAtSaveShop";
+	bindatcmd "loadshop",strnpcinfo(0)+"::OnAtLoadShop";
+// When first loading Dynamic Shop it will automatically disable the shop (recommended because you haven't setup the shop for your players yet.)
+// Don't edit the Dummy data, there's no need to seeing as you will more than likely be setting up the shop.
+// Also gives 99 for GM privileges with functionality of the commands etc.
+if ( !$DynShopFirstLoad ) {
+	$DynDisable = 1;
+	$@DynGM = 99;
+	$DynShopID2[0] = 501; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopID3[0] = 501; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopID4[0] = 501; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopID5[0] = 501; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopID6[0] = 501; // Dummy data upon loading your first shop to edit. Ignore this.
+
+	$DynShopAM2[0] = 1; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopAM3[0] = 1; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopAM4[0] = 1; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopAM5[0] = 1; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopAM6[0] = 1; // Dummy data upon loading your first shop to edit. Ignore this.
+
+	$DynShopCOST2[0] = 100; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopCOST3[0] = 100; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopCOST4[0] = 100; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopCOST5[0] = 100; // Dummy data upon loading your first shop to edit. Ignore this.
+	$DynShopCOST6[0] = 100; // Dummy data upon loading your first shop to edit. Ignore this.
+}
+end;
+OnAtEditShop:
+if (getgmlevel () < $@DynGM) {
+end;
+}
+	mes $DynNPC$;
+	if ( !$DynShopFirstLoad ) {
+	mes "Please load and select a shop via `@loadshop` to start creating your own shop!";
+	dispbottom "[Reminder] Shop is automatically disabled, ONLY enable it to your players once you fully setup your own shops and tested them!";
+	$DynShopFirstLoad++; // Now since this is added, the whole speech about this will never occur again and you can continue to load a shop.
+close;
+}
+
+	mes "Select which option you would like to edit of an item in the shop:";
+		if ( !$ShopUsed ) {
+		mes "REMINDER: Please load a shop via `@loadshop` to start creating your own shop!";
+		close;
+}
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+"^000000";
+}
+}
+	next;
+	switch(select("Item IDs","Item Amounts","Item Prices","Max Item Amount",""+ (( !$DynDisable )?"[^FF0000Disable^000000] Dynamic Shop":"[^006400Enable^000000] Dynamic Shop")+ "","[Check] item Amounts","[Check] item Prices"))
+	{
+	case 1:
+	$@DynEditMode++;
+mes "Item ID List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+"^000000";
+}
+}
+		.i2 = .i-1;
+		dispbottom "Please enter 0 ~ "+.i2+" for the item you want to edit.";
+		DynIDSELECT:
+		input .selection;
+		if (.selection > .i2 ) {
+		dispbottom "Non-Existant item input.";
+		callsub DynIDSELECT;
+}
+		DynIDNULL:
+		if ( $ShopUsed == 1 ) {
+		dispbottom "Please input the item ID you want to change for item # "+.selection+" - "+getitemname($DynShopID2[.selection] )+".";
+		input .id;
+}
+		if ( $ShopUsed == 2 ) {
+		dispbottom "Please input the item ID you want to change for item # "+.selection+" - "+getitemname($DynShopID3[.selection] )+".";
+		input .id;
+}
+		if ( $ShopUsed == 3 ) {
+		dispbottom "Please input the item ID you want to change for item # "+.selection+" - "+getitemname($DynShopID4[.selection] )+".";
+		input .id;
+}
+		if ( $ShopUsed == 4 ) {
+		dispbottom "Please input the item ID you want to change for item # "+.selection+" - "+getitemname($DynShopID5[.selection] )+".";
+		input .id;
+}
+		if ( $ShopUsed == 5 ) {
+		dispbottom "Please input the item ID you want to change for item # "+.selection+" - "+getitemname($DynShopID6[.selection] )+".";
+		input .id;
+}
+		if( getitemname( .id ) == "null" ){
+		dispbottom "Enter valid item id";
+		callsub DynIDNULL;
+}
+		if ( $ShopUsed == 1 ) {
+		$DynShopID2[.selection] = .id;
+		dispbottom "Item ID successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID2[.selection] )+".";
+}
+		if ( $ShopUsed == 2 ) {
+		$DynShopID3[.selection] = .id;
+		dispbottom "Item ID successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID3[.selection] )+".";
+}
+		if ( $ShopUsed == 3 ) {
+		$DynShopID4[.selection] = .id;
+		dispbottom "Item ID successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID4[.selection] )+".";
+}
+		if ( $ShopUsed == 4 ) {
+		$DynShopID5[.selection] = .id;
+		dispbottom "Item ID successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID5[.selection] )+".";
+}
+		if ( $ShopUsed == 5 ) {
+		$DynShopID6[.selection] = .id;
+		dispbottom "Item ID successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID6[.selection] )+".";
+}
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+		case 2:
+	$@DynEditMode++;
+mes "Item Amounts List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+" x "+$DynShopAM2[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+" x "+$DynShopAM3[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+" x "+$DynShopAM4[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+" x "+$DynShopAM5[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+" x "+$DynShopAM6[.i]+"^000000";
+}
+}
+		.i2 = .i-1;
+		dispbottom "Please enter 0 ~ "+.i2+" for the item you want to edit the amounts of.";
+		DynAMSELECT:
+		input .selection;
+		if (.selection > .i2 ) {
+		dispbottom "Non-Existant item input.";
+		callsub DynAMSELECT;
+}
+		DynAMNULL:
+if ( $ShopUsed == 1) {
+		dispbottom "Please input the item Amount you want to change for item # "+.selection+" - "+getitemname($DynShopID2[.selection] )+" x "+$DynShopAM2[.selection]+".";
+		input .am;
+		if( .am  <= 0 ) {
+		dispbottom "You cannot enter 0 for an amount.";
+		callsub DynAMNULL;
+}
+}
+if ( $ShopUsed == 2) {
+		dispbottom "Please input the item Amount you want to change for item # "+.selection+" - "+getitemname($DynShopID3[.selection] )+" x "+$DynShopAM3[.selection]+".";
+		input .am;
+		if( .am  <= 0 ) {
+		dispbottom "You cannot enter 0 for an amount.";
+		callsub DynAMNULL;
+}
+}
+if ( $ShopUsed == 3) {
+		dispbottom "Please input the item Amount you want to change for item # "+.selection+" - "+getitemname($DynShopID4[.selection] )+" x "+$DynShopAM4[.selection]+".";
+		input .am;
+		if( .am  <= 0 ) {
+		dispbottom "You cannot enter 0 for an amount.";
+		callsub DynAMNULL;
+}
+}
+if ( $ShopUsed == 4) {
+		dispbottom "Please input the item Amount you want to change for item # "+.selection+" - "+getitemname($DynShopID5[.selection] )+" x "+$DynShopAM5[.selection]+".";
+		input .am;
+		if( .am  <= 0 ) {
+		dispbottom "You cannot enter 0 for an amount.";
+		callsub DynAMNULL;
+}
+}
+if ( $ShopUsed == 5) {
+		dispbottom "Please input the item Amount you want to change for item # "+.selection+" - "+getitemname($DynShopID6[.selection] )+" x "+$DynShopAM6[.selection]+".";
+		input .am;
+		if( .am  <= 0 ) {
+		dispbottom "You cannot enter 0 for an amount.";
+		callsub DynAMNULL;
+}
+}
+if ( $ShopUsed == 1) {
+		$DynShopAM2[.selection] = .am;
+		dispbottom "Item Amount successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID2[.selection] )+" x "+$DynShopAM2[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 2) {
+		$DynShopAM3[.selection] = .am;
+		dispbottom "Item Amount successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID3[.selection] )+" x "+$DynShopAM3[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 3) {
+		$DynShopAM4[.selection] = .am;
+		dispbottom "Item Amount successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID4[.selection] )+" x "+$DynShopAM4[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 4) {
+		$DynShopAM5[.selection] = .am;
+		dispbottom "Item Amount successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID5[.selection] )+" x "+$DynShopAM5[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 5) {
+		$DynShopAM6[.selection] = .am;
+		dispbottom "Item Amount successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID6[.selection] )+" x "+$DynShopAM6[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+		case 3:
+	$@DynEditMode++;
+mes "Item Price List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+" Price: "+$DynShopCOST2[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+" Price: "+$DynShopCOST3[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+" Price: "+$DynShopCOST4[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+" Price: "+$DynShopCOST5[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+" Price: "+$DynShopCOST6[.i]+"^000000";
+}
+}
+		.i2 = .i-1;
+		dispbottom "Please enter 0 ~ "+.i2+" for the item you want to edit the prices of.";
+		DynCOSTSELECT:
+		input .selection;
+		if (.selection > .i2 ) {
+		dispbottom "Non-Existant item input.";
+		callsub DynCOSTSELECT;
+}
+		DynCOSTNULL:
+if ( $ShopUsed == 1) {
+		dispbottom "Please input the Item Price for the item # "+.selection+" - "+getitemname($DynShopID2[.selection] )+" Price: "+$DynShopCOST2[.selection]+".";
+}
+if ( $ShopUsed == 2) {
+		dispbottom "Please input the Item Price for the item # "+.selection+" - "+getitemname($DynShopID3[.selection] )+" Price: "+$DynShopCOST3[.selection]+".";
+}
+if ( $ShopUsed == 3) {
+		dispbottom "Please input the Item Price for the item # "+.selection+" - "+getitemname($DynShopID4[.selection] )+" Price: "+$DynShopCOST4[.selection]+".";
+}
+if ( $ShopUsed == 4) {
+		dispbottom "Please input the Item Price for the item # "+.selection+" - "+getitemname($DynShopID5[.selection] )+" Price: "+$DynShopCOST5[.selection]+".";
+}
+if ( $ShopUsed == 5) {
+		dispbottom "Please input the Item Price for the item # "+.selection+" - "+getitemname($DynShopID6[.selection] )+" Price: "+$DynShopCOST6[.selection]+".";
+}
+		input .pr;
+		if( .pr  <= 0 ) {
+		dispbottom "You cannot enter 0 for a Price.";
+		callsub DynCOSTNULL;
+}
+if ( $ShopUsed == 1) {
+		$DynShopCOST2[.selection] = .pr;
+		dispbottom "Item Price successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID2[.selection] )+" Price: "+$DynShopCOST2[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 2) {
+		$DynShopCOST3[.selection] = .pr;
+		dispbottom "Item Price successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID3[.selection] )+" Price: "+$DynShopCOST3[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 3) {
+		$DynShopCOST4[.selection] = .pr;
+		dispbottom "Item Price successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID4[.selection] )+" Price: "+$DynShopCOST4[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 4) {
+		$DynShopCOST5[.selection] = .pr;
+		dispbottom "Item Price successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID5[.selection] )+" Price: "+$DynShopCOST5[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+if ( $ShopUsed == 5) {
+		$DynShopCOST6[.selection] = .pr;
+		dispbottom "Item Price successfully changed.";
+		dispbottom "Item # "+.selection+" changed to "+getitemname($DynShopID6[.selection] )+" Price: "+$DynShopCOST6[.selection]+".";
+		next;
+		$@DynEditMode = 0;
+		callsub OnAtEditShop;
+}
+		case 4:
+	dispbottom "Reminder, 0 still counts as an item. Example: An input of 1 would be 2 total items.";
+	input .DynItemAmount;
+	if ( $ShopUsed == 1) {
+
+	$DynMaxItemFile1 = .DynItemAmount;
+	$DynMaxItem = $DynMaxItemFile1+1;
+	dispbottom "Max item supported inside shop 1: "+$DynMaxItem+"";
+}
+	if ( $ShopUsed == 2) {
+	$DynMaxItemFile2 = .DynItemAmount;
+	$DynMaxItem = $DynMaxItemFile2+1;
+	dispbottom "Max item supported inside shop 2: "+$DynMaxItem+"";
+}
+	if ( $ShopUsed == 3) {
+	$DynMaxItemFile3 = .DynItemAmount;
+	$DynMaxItem = $DynMaxItemFile3+1;
+	dispbottom "Max item supported inside shop 3: "+$DynMaxItem+"";
+}
+	if ( $ShopUsed == 4) {
+	$DynMaxItemFile4 = .DynItemAmount;
+	$DynMaxItem = $DynMaxItemFile4+1;
+	dispbottom "Max item supported inside shop 4: "+$DynMaxItem+"";
+}
+	if ( $ShopUsed == 5) {
+	$DynMaxItemFile5 = .DynItemAmount;
+	$DynMaxItem = $DynMaxItemFile5+1;
+	dispbottom "Max item supported inside shop 5: "+$DynMaxItem+"";
+}
+		next;
+		callsub OnAtEditShop;
+		case 5:
+		if ( !$DynDisable ) {
+		mes $DynNPC$;
+		mes "Would you like to disable the shop?";
+		switch(select("Yes please.","No thanks.")) {
+		case 1:
+		$DynDisable = 1;
+		dispbottom "Dynamic Shop disabled.";
+		close;
+		case 2:
+		close;
+}
+} else
+		mes $DynNPC$;
+		mes "Would you like to enable the shop?";
+		switch(select("Yes please.","No thanks.")) {
+		case 1:
+		$DynDisable = 0;
+		dispbottom "Dynamic Shop enabled.";
+		close;
+		case 2:
+		close;
+}
+		case 6:
+mes "Item Amounts List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+" x "+$DynShopAM2[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+" x "+$DynShopAM3[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+" x "+$DynShopAM4[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+" x "+$DynShopAM5[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+" x "+$DynShopAM6[.i]+"^000000";
+}
+}
+next;
+callsub OnAtEditShop;
+		case 7:
+mes "Item Price List:";
+if ( $ShopUsed == 1) {
+	for( .i = 0; .i <= $DynMaxItemFile1; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID2[.i] )+" Price: "+$DynShopCOST2[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 2) {
+	for( .i = 0; .i <= $DynMaxItemFile2; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID3[.i] )+" Price: "+$DynShopCOST3[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 3) {
+	for( .i = 0; .i <= $DynMaxItemFile3; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID4[.i] )+" Price: "+$DynShopCOST4[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 4) {
+	for( .i = 0; .i <= $DynMaxItemFile4; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID5[.i] )+" Price: "+$DynShopCOST5[.i]+"^000000";
+}
+}
+if ( $ShopUsed == 5) {
+	for( .i = 0; .i <= $DynMaxItemFile5; .i++ ) {
+		mes "Item "+.i+" - "+$Colors$[rand(.@i,$@MaxColors)]+""+getitemname($DynShopID6[.i] )+" Price: "+$DynShopCOST6[.i]+"^000000";
+}
+}
+next;
+callsub OnAtEditShop;
+}
+OnAtSaveShop:
+if (getgmlevel () >= $@DynGM) {
+		if ( !$ShopUsed ) {
+		mes "Please load a shop via `@loadshop` to save your shop to the specified slot.";
+		close;
+}
+switch(select(
+"" + (( !$ShopFile1 )?"[Create] No Save Data":"[1] "+$Shop1Name$+""),
+"" + (( !$ShopFile2 )?"[Create] No Save Data":"[2] "+$Shop2Name$+""),
+"" + (( !$ShopFile3 )?"[Create] No Save Data":"[3] "+$Shop3Name$+""),
+"" + (( !$ShopFile4 )?"[Create] No Save Data":"[4] "+$Shop4Name$+""),
+"" + (( !$ShopFile5 )?"[Create] No Save Data":"[5] "+$Shop5Name$+""))) {
+case 1:
+	if ( $Shop1OverWritable ) {
+	mes $DynNPC$;
+	mes "Would you like to Overwrite "+$Shop1Name$+"?";
+	next;
+	switch(select("Yes please.","No thanks.")) {
+	case 1:
+	callsub Shop1OverWrite;
+	case 2:
+	close;
+}
+}
+	if ( !$ShopFile1 ) {
+Shop1OverWrite:
+if ( $ShopUsed != 1) {
+	mes"Switch to Shop 1 to overwrite Shop 1";
+close;
+}
+	dispbottom "Please type out a filename for Shop 1.";
+if ( input( $Shop1Name$, 1, 24 ) ) { 
+	dispbottom " Please input a valid shop name with length between 1~24";
+	callsub Shop1OverWrite;
+	end;
+}
+	dispbottom "Shop saved as "+$Shop1Name$+".";
+	$ShopFile1 = 1;
+	$Shop1OverWritable = 1;
+	callsub OnAtSaveShop;
+}
+	case 2:
+	if ( $Shop2OverWritable ) {
+	mes $DynNPC$;
+	mes "Would you like to Overwrite "+$Shop2Name$+"?";
+	next;
+	switch(select("Yes please.","No thanks.")) {
+	case 1:
+	callsub Shop2OverWrite;
+	case 2:
+	close;
+}
+}
+	if ( !$ShopFile2 ) {
+Shop2OverWrite:
+if ( $ShopUsed != 2) {
+	mes "Switch to Shop 2 to overwrite Shop 2";
+close;
+}
+	dispbottom "Please type out a filename for Shop 2.";
+if ( input( $Shop2Name$, 1, 24 ) ) { 
+	dispbottom " Please input a valid shop name with length between 1~24";
+	callsub Shop2OverWrite;
+	end;
+}
+	dispbottom "Shop saved as "+$Shop2Name$+".";
+	$ShopFile2 = 1;
+	$Shop2OverWritable = 1;
+	callsub OnAtSaveShop;
+}
+	case 3:
+	if ( $Shop3OverWritable ) {
+	mes $DynNPC$;
+	mes "Would you like to Overwrite "+$Shop3Name$+"?";
+	next;
+	switch(select("Yes please.","No thanks.")) {
+	case 1:
+	callsub Shop3OverWrite;
+	case 2:
+	close;
+}
+}
+	if ( !$ShopFile3 ) {
+Shop3OverWrite:
+if ( $ShopUsed != 3) {
+	mes "Switch to Shop 3 to overwrite Shop 3";
+close;
+}
+	dispbottom "Please type out a filename for Shop 3.";
+if ( input( $Shop3Name$, 1, 24 ) ) { 
+	dispbottom " Please input a valid shop name with length between 1~24";
+	callsub Shop3OverWrite;
+	end;
+}
+	dispbottom "Shop saved as "+$Shop3Name$+".";
+	$ShopFile3 = 1;
+	$Shop3OverWritable = 1;
+	callsub OnAtSaveShop;
+}
+	case 4:
+	if ( $Shop4OverWritable ) {
+	mes $DynNPC$;
+	mes "Would you like to Overwrite "+$Shop4Name$+"?";
+	next;
+	switch(select("Yes please.","No thanks.")) {
+	case 1:
+	callsub Shop4OverWrite;
+	case 2:
+	close;
+}
+}
+	if ( !$ShopFile4 ) {
+Shop4OverWrite:
+if ( $ShopUsed != 4) {
+	mes "Switch to Shop 4 to overwrite Shop 4";
+close;
+}
+	dispbottom "Please type out a filename for Shop 4.";
+if ( input( $Shop4Name$, 1, 24 ) ) { 
+	dispbottom " Please input a valid shop name with length between 1~24";
+	callsub Shop4OverWrite;
+	end;
+}
+	dispbottom "Shop saved as "+$Shop4Name$+".";
+	$ShopFile4 = 1;
+	$Shop4OverWritable = 1;
+	callsub OnAtSaveShop;
+}
+	case 5:
+	if ( $Shop5OverWritable ) {
+	mes $DynNPC$;
+	mes "Would you like to Overwrite "+$Shop5Name$+"?";
+	next;
+	switch(select("Yes please.","No thanks.")) {
+	case 1:
+	callsub Shop5OverWrite;
+	case 2:
+	close;
+}
+}
+	if ( !$ShopFile5 ) {
+Shop5OverWrite:
+if ( $ShopUsed != 5) {
+	mes "Switch to Shop 5 to overwrite Shop 5";
+close;
+}
+	dispbottom "Please type out a filename for Shop 5.";
+if ( input( $Shop5Name$, 1, 24 ) ) { 
+	dispbottom " Please input a valid shop name with length between 1~24";
+	callsub Shop5OverWrite;
+	end;
+}
+	dispbottom "Shop saved as "+$Shop5Name$+".";
+	$ShopFile5 = 1;
+	$Shop5OverWritable = 1;
+	callsub OnAtSaveShop;
+}
+}
+} else
+end;
+OnAtLoadShop:
+dispbottom "Input 1-5 for the shop you want to use for all features.";
+InputShopSelect:
+input .ShopSelection;
+if ( .ShopSelection < 1 || .ShopSelection > 5 ) {
+dispbottom "You can only input 1-5 for the shop you want to use for all features.";
+callsub InputShopSelect;
+}
+$ShopUsed = .ShopSelection;
+if ( $ShopUsed == 1) {
+$ShopUsed$ = $Shop1Name$;
+dispbottom "Shop selected: Shop # "+$ShopUsed+" - "+$Shop1Name$+"";
+}
+if ( $ShopUsed == 2) {
+$ShopUsed$ = $Shop2Name$;
+dispbottom "Shop selected: Shop # "+$ShopUsed+" - "+$Shop2Name$+"";
+}
+if ( $ShopUsed == 3) {
+$ShopUsed$ = $Shop3Name$;
+dispbottom "Shop selected: Shop # "+$ShopUsed+" - "+$Shop3Name$+"";
+}
+if ( $ShopUsed == 4) {
+$ShopUsed$ = $Shop4Name$;
+dispbottom "Shop selected: Shop # "+$ShopUsed+" - "+$Shop4Name$+"";
+}
+if ( $ShopUsed == 5) {
+$ShopUsed$ = $Shop5Name$;
+dispbottom "Shop selected: Shop # "+$ShopUsed+" - "+$Shop5Name$+"";
+}
+end;
+OnPCLogoutEvent:
+if (getgmlevel () >= $@DynGM ) {
+debugmes "GM disconnected during edit of Dynamic Shop, disabling edit mode...";
+	$@DynEditMode = 0;
+end;
+}
+
+}

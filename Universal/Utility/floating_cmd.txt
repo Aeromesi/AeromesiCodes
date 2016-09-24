@@ -1,0 +1,277 @@
+// Created by: Aeromesi
+// Floating Rates script
+// @hourlyrates @floatingrates
+// Input amount of hours you want hourly rates to go on for.
+// Able to edit the multipliers easily to start your floating rates.
+// Version 1.0
+// Works with Hercules/rAthena
+//	~~~~~ show time left in days, hours, minutes and seconds ~~~~~
+/*function	script	timeleft__	{
+	if ( ( .@left = getarg(0) ) <= 0 ) return getarg(0);
+	set .@day, .@left / 86400;
+	set .@hour, .@left % 86400 / 3600;
+	set .@min, .@left % 3600 / 60;
+	set .@SEC, .@left % 60;
+	if ( .@day )
+		return .@day +" day "+ .@hour +" hour";
+	else if ( .@hour )
+		return .@hour +" hour "+ .@min +" min";
+	else if ( .@min )
+		return .@min +" min "+ .@SEC +" sec";
+	else
+		return .@SEC +" sec";
+}*/
+-	script	FloatingRates#CMD	-,{
+OnInit:
+	bindatcmd "floatingrates",strnpcinfo(0)+"::OnAtFloatingRates";
+	bindatcmd "hourlyrates",strnpcinfo(0)+"::OnAtHourlyRates";
+
+	.bexp_rate = 10; // Set this to your servers Base EXP Rate; 10 would be 10x, 20 would be 20x, etc..
+	.jexp_rate = 10; // Set this to your servers Base EXP Rate; 10 would be 10x, 20 would be 20x, etc..
+
+	.BMultiplier = 2; // The Default rates multiplier for Base EXP upon server starting up.
+	.JMultiplier = 2; // The Default rates multiplier for Job EXP upon server starting up.
+
+	.FrName$ = "[^551a8b Floating Rates CMD System^000000 ]";
+    setbattleflag "base_exp_rate", .bexp_rate * 100 * 1;
+    setbattleflag "job_exp_rate", .jexp_rate * 100 * 1;
+	atcommand "@reloadmobdb";
+end;
+
+OnAtFloatingRates:
+if(getgmlevel() >= 99 ) {
+FR_BEGIN:
+mes .FrName$;
+if(.HourlyActive || .FloatingActive ) {
+mes "Disable your Floating Rates?";
+mes " ";
+mes "Floating Rates total time: "+ callfunc( "timeleft__", gettimetick(2) - .FloatStart );
+switch(select("Disable Floating Rates:Continue Floating Rates")) 
+	{
+		case 1:
+		mes "Floating Rates disabled.";
+		close2;
+		.HourlyActive = 0;
+		.FloatingActive = 0;
+		donpcevent("FloatingRates#CMD")+"::OnRatesDisable";
+		end;
+		case 2:
+		mes "Floating rates is continued.";
+		close;
+	}
+} else
+mes "Current setup:";
+mes " ";
+mes "Base Multiplier: ^0000FF"+.BMultiplier+"^000000x";
+mes "Job Multiplier: ^0000FF"+.JMultiplier+"^000000x";
+next;
+switch(select("Start Floating Rates","Edit Multipliers")) {
+case 1:
+	mes "Enabling Floating Rates.";
+		close2;
+		.FloatStart = gettimetick(2);
+		donpcevent ("FloatingRates#CMD")+"::OnRatesBegin";
+		.FloatingActive++;
+		end;
+case 2:
+	mes .FrName$;
+	mes "Please input the Base Multiplier.";
+	mes " ";
+	mes "2 = 2 multiplied by your Original Base EXP Rate";
+	mes "etc...";
+	next;
+BASE_MULT:
+input .BMultiplier;
+if( .BMultiplier == 0 || .BMultiplier == 1) {
+dispbottom "It is impossible to enter 0 or multiply your Base Exp by 1 for your multiplied Base Exp.";
+callsub BASE_MULT;
+}
+	next;
+	mes .FrName$;
+	mes "Completed.";
+	mes " ";
+	mes "Base Multiplier: ^0000FF"+.BMultiplier+"^000000x";
+	next;
+	mes .FrName$;
+	mes "Please input the Job Multiplier.";
+	mes " ";
+	mes "2 = 2 multiplied by your Original Job EXP Rate";
+	mes "etc...";
+JOB_MULT:
+input .JMultiplier;
+if( .JMultiplier == 0 || .JMultiplier == 1) {
+dispbottom "It is impossible to enter 0 or multiply your Job Exp by 1 for your multiplied Job Exp.";
+callsub JOB_MULT;
+}
+	next;
+	mes "Completed.";
+	mes " ";
+	mes "Job Multiplier: ^0000FF"+.JMultiplier+"^000000x";
+	close2;
+	callsub FR_BEGIN;
+	end;
+}	
+} else
+end;
+OnAtHourlyRates:
+if(getgmlevel() >= 99) {
+HOURLY_SETUP:
+mes .FrName$;
+if(.HourlyActive || .FloatingActive ) {
+mes "Disable your Floating Rates?";
+mes " ";
+mes "Floating Rates total time: "+ callfunc( "timeleft__", gettimetick(2) - .FloatStart );
+switch(select("Disable Floating Rates","Exit")) 
+	{
+		case 1:
+		mes "Floating Rates disabled.";
+		close2;
+		donpcevent("FloatingRates#CMD")+"::OnRatesHourlyDisable2";
+		end;
+		case 2:
+		mes "Floating rates continued.";
+		close;
+	}
+} else
+mes "Current setup:";
+mes " ";
+mes "Base Multiplier: ^0000FF"+.BMultiplier+"^000000x";
+mes "Job Multiplier: ^0000FF"+.JMultiplier+"^000000x";
+mes "Hourly Duration: "+ ((.HourlyRate == 0)?"^f94a32":"^0000ff")+ ""+.HourlyRate+"^000000 hours";
+next;
+switch(select("Start Hourly Floating Rates","Set Hourly Timer","Edit Multipliers",""+ ((.HourlyTimer == 0)?"":"Reset Hourly Timer"))) {
+case 1:
+if( !.HourlyRate ) {
+	mes .FrName$;
+	mes "You haven't set how many hours you want your Floating Rates to do.";
+	mes "Switching back to Main Menu.";
+	next;
+	callsub HOURLY_SETUP;
+	end;
+}
+	mes "Enabling Hourly Floating Rates.";
+		close2;
+		.FloatStart = gettimetick(2);
+		donpcevent ("FloatingRates#CMD")+"::OnRatesHourlyBegin";
+		donpcevent ("FloatingRates#CMD")+"::OnRatesHourlyDisable";
+		.HourlyActive++;
+		end;
+case 2:
+	mes .FrName$;
+	mes "Please input the Hourly Timer.";
+	mes " ";
+	mes "1 = 1 hours";
+	mes "2 = 2 hours";
+	mes "3 = 3 hours";
+	mes "etc...";
+TIMER_SETUP:
+	input .HourlyRate;
+	if( !.HourlyRate )
+	{
+		dispbottom "It is impossible to enter 0 as the hourly timer.";
+		callsub TIMER_SETUP;
+		end;
+	}
+	if (.HourlyRate > 600) {
+		dispbottom "You cannot exceed 600 hours (25 days) as an input for the hourly timer.";
+		callsub TIMER_SETUP;
+		end;
+}
+		next;
+		mes .FrName$;
+		mes "Alright, the hourly timer is now set to ^0000FF"+.HourlyRate+"^000000 hours.";
+		close2;
+		.HourlyTimer++;
+		callsub HOURLY_SETUP;
+		end;
+case 3:
+	mes .FrName$;
+	mes "Please input the Base Multiplier.";
+	mes " ";
+	mes "2 = 2 multiplied by your Original Base EXP Rate";
+	mes "etc...";
+	next;
+BASE_MULTH:
+input .BMultiplier;
+if( .BMultiplier == 0 || .BMultiplier == 1) {
+dispbottom "It is impossible to enter 0 or multiply your Base Exp by 1 for your multiplied Base Exp.";
+callsub BASE_MULTH;
+}
+	next;
+	mes .FrName$;
+	mes "Completed.";
+	mes " ";
+	mes "Base Multiplier: ^0000FF"+.BMultiplier+"^000000x";
+	next;
+	mes .FrName$;
+	mes "Please input the Job Multiplier.";
+	mes " ";
+	mes "2 = 2 multiplied by your Original Job EXP Rate";
+	mes "etc...";
+JOB_MULTH:
+input .JMultiplier;
+if( .JMultiplier == 0 || .JMultiplier == 1) {
+dispbottom "It is impossible to enter 0 or multiply your Job Exp by 1 for your multiplied Job Exp.";
+callsub JOB_MULTH;
+}
+	next;
+	mes "Completed.";
+	mes " ";
+	mes "Job Multiplier: ^0000FF"+.JMultiplier+"^000000x";
+	close2;
+	callsub HOURLY_SETUP;
+	end;
+case 4:
+		next;
+		mes .FrName$;
+		mes "Now resetting Hourly Timer.";
+		next;
+		.HourlyTimer = 0;
+		.HourlyRate = 0;
+		callsub HOURLY_SETUP;
+		end;
+	}
+} else
+end;
+
+OnRatesBegin:
+    setbattleflag "base_exp_rate", .bexp_rate * 100 * .BMultiplier;
+    setbattleflag "job_exp_rate", .jexp_rate * 100 * .JMultiplier;
+    atcommand "@reloadmobdb";
+	announce "Floating Rates has begun.",bc_all;
+	sleep 3000;
+	announce "Base EXP: "+getbattleflag("base_exp_rate") / 100+"x || Job EXP: "+getbattleflag("job_exp_rate") / 100+"x! Have fun!",bc_all;
+    end;
+
+OnRatesHourlyBegin:
+    setbattleflag "base_exp_rate", .bexp_rate * 100 * .BMultiplier;
+    setbattleflag "job_exp_rate", .jexp_rate * 100 * .JMultiplier;
+    atcommand "@reloadmobdb";
+	announce "Hourly Floating Rates has begun for "+.HourlyRate+" hours.",bc_all;
+	sleep 3000;
+	announce "Base EXP: "+getbattleflag("base_exp_rate") / 100+"x || Job EXP: "+getbattleflag("job_exp_rate") / 100+"x! Have fun!",bc_all;
+    end;
+
+OnRatesDisable:
+	.HourlyActive = 0;
+	.FloatingActive = 0;
+    setbattleflag "base_exp_rate", .bexp_rate * 100 * 1;
+    setbattleflag "job_exp_rate", .jexp_rate * 100 * 1;
+    atcommand "@reloadmobdb";
+	announce "Floating Rates has ended.",bc_all;
+    end;
+
+OnRatesHourlyDisable:
+sleep 3600000*.HourlyRate;
+if( !.HourlyActive ) { // This check is in place if you prematurely ended Hourly Rates.
+	end;
+}
+OnRatesHourlyDisable2:
+	.HourlyActive = 0;
+	.FloatingActive = 0;
+    setbattleflag "base_exp_rate", .bexp_rate * 100 * 1;
+    setbattleflag "job_exp_rate", .jexp_rate * 100 * 1;
+	atcommand "@reloadmobdb";
+	announce "Floating Rates has ended.",bc_all;
+    end;
+}

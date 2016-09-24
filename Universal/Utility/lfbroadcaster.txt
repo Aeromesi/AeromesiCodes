@@ -1,0 +1,150 @@
+/*	Looking for Party/Member/Leecher Script
+	Created by: Aeromesi
+	Version 1.0
+*/
+prontera,159,180,6	script	P-M-L Broadcaster	4_F_NYDHOG,{
+	mes "[^FF0000P-M-L Broadcaster^000000]";
+	mes "What would you like to do?";
+	next;
+	switch(select("Search for Party Members:Inquire Party:Look for Leecher")) {
+		case 1:
+			mes .bcastn$;
+			callfunc ("LFPM_MENU");
+	
+		case 2:
+			mes .bcastn$;
+			callfunc ("INQ_PARTY");
+	
+		case 3:
+			mes .bcastn$;
+			callfunc ("L_LEECH");
+	}
+OnInit:
+
+}
+function	script	LFPM_MENU	{
+	mes .bcastn$ = "[^FF0000P-M-L Broadcaster^000000]";
+	setarray .@classlist$[0],"Lord Knight","High Priest","High Wizard","Whitesmith","Sniper","Assassin Cross","Paladin","Champion","Professor","Stalker","Creator","Clown","Gypsy";
+	.@levelGap = 10;
+	.@maxLevel = 99;
+	.itemID = 501;
+	.itemIDAM = 100;
+	tDelay = 2;
+	if( AnnounceDelay > gettimetick(2)) {
+	mes "You must wait "+tDelay+" minutes between announcements.";
+	close;
+}
+	if(countitem(.itemID) < .itemIDAM) {
+	mes "Sorry, but you need "+getitemname(.itemID)+" x "+.itemIDAM+" to use my Services.";
+	close;
+} else
+	mes "Input the Character Level you would recommend to hire in your Party.";
+	input .@mMin,1,.@maxLevel -.@levelGap;
+	.@mMax = .@mMin + .@levelGap;
+	next;
+	mes .bcastn$;
+	mes "So you chose ^FF0000"+.@mMin+"^000000 - ^0000FF"+.@mMax+"^000000 as the Level Gap.";
+	mes "Is this correct?";
+	next;
+	switch(select("Yes:No")-1) {
+		case 1:
+			mes .bcastn$;
+			mes "Re-input your level gap.";
+			next;
+			callfunc ("LFPM_MENU");
+	}
+	mes .bcastn$;
+	mes "How many players would you like to search for?";
+	select("1:2:3:4:5:6:7:8:9:10:11");
+	.@choice = @menu;
+	deletearray @jobList$;
+	for(.@i = 0; .@i < .@choice; .@i++) {
+		next;
+		mes .bcastn$;
+		mes "Now which class are you looking to hire in your party?";
+		mes "Selection "+ (.@i + 1) +" of "+ .@choice;
+		switch(select(implode(.@classlist$,":"))) {
+			default:
+				.@job = @menu - 1;
+				next;
+				mes .bcastn$;
+				mes "Alright, you chose ^0000FF"+ .@classlist$[.@job] + "^000000.";
+				mes "Is this okay?";
+				switch(select("Yes:No")-1) {						
+					case 1:
+						mes .bcastn$;
+						mes "Alright, re-enter your details.";
+						next;
+						callfunc ("LFPM_MENU");
+				}
+				@jobList$[.@i] = .@classlist$[.@job];
+		}
+	}
+	next;
+	mes .bcastn$;
+	mes "I will now broadcast your message.";
+	delitem .itemID, .itemIDAM;
+	close2;
+	sleep2 1000;
+	announce strcharinfo(0) +" shouts: I am looking for a party, with levels "+ .@mMin +"-"+ .@mMax +".",0;
+	sleep2 1000;
+	announce "and with jobs: "+ implode(@jobList$,","),0;
+	AnnounceDelay = gettimetick(2) + 120;
+end;
+}
+
+function	script	INQ_PARTY	{
+	tDelay = 2;
+	.@CharLVL = BaseLevel;
+	mes .bcastn$ = "[^FF0000P-M-L Broadcaster^000000]";
+	mes "Would you like to Inquire for a Party?";
+	next;
+	switch(select("Yes:No")) {
+		case 1:
+		if( AnnounceIPDelay > gettimetick(2)) {
+			mes .bcastn$;
+			mes "You must wait "+tDelay+" minutes between announcements.";
+			close;
+} else
+			mes .bcastn$;
+			mes "I will now broadcast your Inquiry for a Party.";
+			sleep2 2000;
+			announce strcharinfo(0)+" shouts: Looking for Party, my job is "+jobname(Class)+" and I'm Level "+.@CharLVL+".",0;
+			AnnounceIPDelay = gettimetick(2) + 120;
+			close;
+
+		case 2:
+			mes .bcastn$;
+			mes "Alright, come again if you changed your mind!";
+			close;
+	}
+}
+
+function	script	L_LEECH	{
+	tDelay = 2;
+	.@LCharLVL = BaseLevel;
+
+	mes .bcastn$ = "[^FF0000P-M-L Broadcaster^000000]";
+	mes "Would you like to Look for a Leecher?";
+	next;
+	switch(select("Yes:No")) {
+		case 1:
+			if( AnnounceLDelay > gettimetick(2)) {
+			mes .bcastn$;
+			mes "You must wait "+tDelay+" minutes between announcements.";
+			close;
+} else
+			mes .bcastn$;
+			mes "I will now broadcast that you need a Leecher.";
+			sleep2 2000;
+			announce strcharinfo(0)+" shouts: Looking for Leecher, my job is "+jobname(Class)+" and I'm Level "+.@LCharLVL+".",0;
+			AnnounceLDelay = gettimetick(2) + 120;
+			
+			close;
+
+		case 2:
+			mes .bcastn$;
+			mes "Alright, come again if you changed your mind!";
+			close;
+	}
+}
