@@ -1,0 +1,5 @@
+function	script	L_FloodTimer	{
+	sleep 60000*$Flood;
+	$@Bcast = 0;
+	end;
+}

@@ -1,0 +1,9 @@
+function	script	GM_EditedList	{
+	next;
+	mes "[Valkyrie Controls]";
+	mes "Flood Control last edited by: ^FF0000"+$FloodGM$+"^000000";
+	mes "Pricing last edited by: ^FF0000"+$PriceGM$+"^000000";
+	mes "NPC last disabled by: ^FF0000"+$DisableGM$+"^000000";
+	next;
+	callfunc "Func_Main";
+}
