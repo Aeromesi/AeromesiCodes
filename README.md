@@ -5,7 +5,7 @@ Feel free to use anything from my repo!
 
 Contact information:
 
-Business email: aeromesi@protonmail.com
+Business/Donation email: aeromesi@protonmail.com
 
 Skype: itzmichaelmorici
 
