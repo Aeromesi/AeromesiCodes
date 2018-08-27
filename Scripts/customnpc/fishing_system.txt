@@ -1,0 +1,255 @@
+function	script	ROD_CAST	{
+if(FishLvl <= 10) {
+	.@Encounter1 = rand(1,10);
+	dispbottom "Casting Fishing Pole";
+	cutin "2013_summer_fish_1", 4;
+	sleep2 2000;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	dispbottom "All the jerking is starting to fatigue you.";
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	if (.@Encounter1 >= 5) {
+	mes "You have encountered a fish. Fight or Let go?";
+	next;
+	switch(select("Fight:Let go")) {
+	case 1:
+	dispbottom "You start jerking left, right, and right back to left!";
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	.@EncSum = rand(1,50)+FishLvl;
+	if(	rand(100) < .@EncSum) {
+	
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_5", 4;
+	dispbottom "Congratulations! You caught something!";
+	sleep2 1500;
+	RodExp += rand(1,50);
+	dispbottom "Total Rod Experience: "+RodExp+".";
+	getitem 501, 1;
+	cutin 0, 255;
+	close;
+} else
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_2", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_3", 4;
+	sleep2 1000;
+	cutin "2013_summer_fish_4", 4;
+	sleep2 500;
+	cutin "2013_summer_fish_6", 4;
+	dispbottom "You lost the fish..";
+	RodExp += rand(1,20);
+	dispbottom "Total Rod Experience: "+RodExp+".";
+	close;
+	case 2:
+	mes "oh";
+	cutin 0, 255;
+	close;
+}
+} else
+	RodExp += rand(1,3);
+	dispbottom "Total Rod Experience: "+RodExp+".";
+	cutin 0, 255;
+	close2;
+	end;
+} else
+end;
+}
+function	script	FishingInfo	{
+mes .fsname$;
+mes "Fishing Level - "+FishLvl+"";
+mes "Fishing Exp - "+FishExp+"";
+mes "Rod Level - "+RodLvl+"";
+mes "Rod Exp - "+RodExp+"";
+mes "Fishing Pole Durability - ^FF0000"+RodDur+"^000000/100";
+close2;
+//callsub ("FishingSystem::FISH_SYS_MENU");
+end;
+}
+function	script	FishingSystem	{
+FISH_SYS_MENU:
+switch(select("Commence Casting:View Fishing Card Info:Practice Casting (Increase Rod Exp):"""+ ((RodDur >= 100)?"Upgrade Rod":"Repair Rod")+":Cancel")) {
+	case 1:
+	callsub OnCast;
+	end;
+	
+	case 2:
+	callfunc ("FishingInfo");
+	end;
+
+	case 3:
+callfunc ("ROD_CAST");
+	end;
+
+	case 4:
+	if(RodDur == 100) {
+		mes "Please repair your Rod before you can Upgrade.";
+		close;
+} else
+	if(RodExp <= 1000) {
+		mes "You need 1000 to Upgrade.";
+	close;
+} else
+close2;
+end;
+
+	case 5:
+	close2;
+	end;
+}
+OnCast:
+RodDur += rand(1,50);
+if(RodDur >= 100) {
+dispbottom "Oh no! Your Fishing Pole just broke. Please get it repaired!";
+close2;
+end;
+}
+FishExp += rand(1,3);
+if(FishLvl <= 10) {
+if( rand(100) < .F_Lvl1WinRate ) {
+if(FishExp >= 1000 && FishLvl == 0) {
+FishLvl++;
+}
+dispbottom "Total Fish Experience: "+FishExp+".";
+getitem 501, 1;
+//close2;
+callfunc ("FishingInfo");
+end;
+}
+else
+if(FishExp >= 1000 && FishLvl == 0) {
+FishLvl++;
+}
+dispbottom "Total Fish Experience: "+FishExp+".";
+close2;
+end;
+}
+}
+
+
+prontera,150,153,4	script	Fishing Spot#1	HIDDEN_NPC,{
+if (.F_Enabled == 1) {
+mes "What would you like to do?";
+next;
+switch(select("Sit here.","Find a different Spot.")) {
+
+	case 1:
+	if(!issit()) {
+	dispbottom "You must be sitting to use the Fishing System.";
+	close2;
+	end;
+} else
+	if(RodDur >= 100) {
+	dispbottom "Your Fishing Pole's Durability is at 100%, please repair it.";
+	close2;
+	callfunc ("FishingSystem");
+	end;
+} else
+	callfunc ("FishingSystem");
+	end;
+	case 2:
+	mes "kk";
+	close;
+}
+
+} else
+end;
+	
+
+OnInit:
+    .fsname$ = "^FF0000[Fishing System]^000000";
+    .FServName$ = "^00ff00eSperiaRO^000000";
+	.F_Enabled = 1;
+	.F_Lvl1WinRate = 99;
+//	.F_Lvl2WinRate = rand(1,100);
+	.F_Lvl1Chance = 20;
+	.F_Lvl2Chance = 100;
+	
+    setarray .F_Lvl1Rew[0],2410,2629,1530,1161,5013,2630,4121,4128,4129,4131,4132,4134,4135,4137,4142,4143,4144,4145,4146,4147,4148,4168,4263,4276,4302,4305,4318,4324,4330,4342,4352,4357,4359,4361,4363,4365,4367,4372,4374,4376,4386,4399,4403,4407,4408,4419,4425,4430,4441;
+    setarray .F_Lvl2Rew[0],2410,2629,1530,1161,5013,2630,4121,4128,4129,4131,4132,4134,4135,4137,4142,4143,4144,4145,4146,4147,4148,4168,4263,4276,4302,4305,4318,4324,4330,4342,4352,4357,4359,4361,4363,4365,4367,4372,4374,4376,4386,4399,4403,4407,4408,4419,4425,4430,4441;
+}
