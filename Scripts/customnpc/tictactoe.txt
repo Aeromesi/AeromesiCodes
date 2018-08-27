@@ -1,0 +1,473 @@
+/*
+_________________________________________________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+		Tic... Tac... �TOE!	[+] Version: 1.1
+_________________________________________________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[+] Author: Leeg (rAthena User)
+( http://rathena.org/board/user/310-leeg/ )
+
+[+] Description:
+Tic tac toe / Noughts and crosses / Xs and Os - minigame.
+2 player based game. Tokens are Porings for player 1 and
+Poporings for player 2.
+
+[+] Special features:
+- 1st turn selection is randomised.
+- Detects tied game.
+- Anti-AFK. Game ends within 80 seconds.
+- Specific custom map for playing. (tictactoe.rsw)
+
+[+] Changelog:
+	|12 - 01 - 2016| - Added Who Won most times ranking 
+						 winning reward and Draw Rewards.
+						Configuration option to enable DRAW reward 
+								[Aeromesi]
+	|10 - 07 - 2012| - Coded.
+	|05 - 01 - 2013| - BugFix: Not all variables being
+						deleted when game ends AFK.
+	|06 - 01 - 2013| - Released to public.
+
+       > �Please report any bugs and give feedback! <
+________________________________________________________
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*/
+
+prontera,156,138,4	script	Toeken Exchanger	2_COLAVEND,{
+	mes "[ Toeken Exchanger ]";
+	if ( !$@TokenType ) {
+	mes ("Current Token balance (char): "+TTTokens+"");
+}
+	if ( $@TokenType ) {
+	mes ("Current Token balance (acc): "+#TTTokens+"");
+}
+	mes ("You've won Tic Tac Toe: "+TTTRank+" times.");
+	mes ("Keep rising the ranks!");
+	next;
+	switch(select("[Shop] Token Exchanger","[Ranking] Top Winners" ))
+	{
+
+		case 1:
+		openshop ("ToekenShop");
+		end;
+
+		case 2:
+		mes "[ ^ee7600 Tic Tac Toe Ranks ^000000 ]";
+		mes "Tic Tac Toe Masters:";
+		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'TTTRank' ORDER BY CAST(`value` AS SIGNED) DESC LIMIT 5", .@id, .@name$, .@val);
+		for (.@i = 0; .@i < .LadderMax; .@i++)
+		mes "[Rank " + (.@i+1) + "]  " + ((.@name$[.@i] == "") ? "^777777None" : "^0055FF" + .@name$[.@i]+"^000000 : ^FF0000" + .@val[.@i] + "^000000x ") + "^000000";
+}
+		close;
+
+OnInit:
+
+	.LadderMax = 5;
+	$@TokenType = 0;
+	end();
+}
+
+//NPC main game system.
+-	script	System#sistema	HIDDEN_NPC,{
+	end();
+OnStartTimer: 
+	initnpctimer;
+	donpcevent "Game Agent#a::OnDisable";
+	donpcevent "Game Agent#b::OnDisable";
+	end();
+OnTimer5000:	
+	areaannounce "tictactoe",101,70,98,89, "Game is ready!",bc_blue|bc_all;
+	areaannounce "tictactoe",101,70,98,89, "1st turn has been decided.",bc_blue|bc_all;
+	if( !$@turno ) $@turno = rand(1,2);
+	areaannounce "tictactoe",101,70,98,89, "Player "+$@turno+" starts!",bc_blue|bc_all;
+	end();
+
+OnTimer80000:
+	areaannounce "tictactoe",101,70,98,89, "Maximum time has been exceeded, game is over. Thanks for playing... See ya!",bc_blue|bc_all;
+	$@player1 = 0;
+	$@player2 = 0;
+	donpcevent "Game Agent#a::OnEnable";
+	donpcevent "Game Agent#b::OnEnable";
+	areawarp "tictactoe",101,70,98,89,"prontera",149,171;
+Onhideall:
+	hideonnpc "r1";
+	hideonnpc "r2";
+	hideonnpc "r3";
+	hideonnpc "r4";
+	hideonnpc "r5";
+	hideonnpc "r6";
+	hideonnpc "r7";
+	hideonnpc "r8";
+	hideonnpc "r9";
+	hideonnpc "a1";
+	hideonnpc "a2";
+	hideonnpc "a3";
+	hideonnpc "a4";
+	hideonnpc "a5";
+	hideonnpc "a6";
+	hideonnpc "a7";
+	hideonnpc "a8";
+	hideonnpc "a9";
+	hideoffnpc "1";
+	hideoffnpc "2";
+	hideoffnpc "3";
+	hideoffnpc "4";
+	hideoffnpc "5";
+	hideoffnpc "6";
+	hideoffnpc "7";
+	hideoffnpc "8";
+	hideoffnpc "9";
+	end;
+	}
+
+
+	
+	
+//NPCs Waiting Room and Warper
+
+	//Player [1]
+prontera,154,143,4	script	Game Agent#a	4_EP16_PETER,{
+
+end;
+OnInit:
+	waitingroom "Player 1",2,"Game Agent#a::OnStartArena",1;
+	enablewaitingroomevent;
+	end;
+OnStartArena:
+	if(getwaitingroomstate(0,"Game Agent#b") < 1)
+	end;
+	else
+	donpcevent "Game Agent#b::OnCheck";
+OnCheck:
+	warpwaitingpc "tictactoe",100,73;
+	$@victory1$ = $@victory1$ == "";
+	$@victory2$ = $@victory2$ == "";
+	$@turno = 0;
+	if (!$@player1)	$@player1 = $@warpwaitingpc[0];
+	disablewaitingroomevent;
+	donpcevent "System#sistema::OnStartTimer";
+	end();
+OnEnable:
+	enablewaitingroomevent;
+	end();
+OnDisable:
+	disablewaitingroomevent;
+	end();
+}
+
+	
+	
+	//Player [2]
+prontera,159,143,4	script	Game Agent#b	4_EP16_PETER,{
+end;
+OnInit:
+	waitingroom "Player 2",2,"Game Agent#b::OnStartArena",1;
+	enablewaitingroomevent;
+	end();
+OnStartArena:
+	if(getwaitingroomstate(0,"Game Agent#a") < 1 )
+	end();
+	else
+	donpcevent "Game Agent#a::OnCheck";
+OnCheck:
+	warpwaitingpc "tictactoe",100,86;
+    $@victory1$ =  $@victory1$ == "";
+	$@victory2$ =  $@victory2$ == "";
+	$@turno = 0;
+	if ( !$@player2 )	$@player2 = $@warpwaitingpc[0];
+    disablewaitingroomevent;
+	end();
+OnEnable:
+	enablewaitingroomevent;
+	end();
+OnDisable:
+	disablewaitingroomevent;
+	end();
+}
+
+
+
+	
+//Shift system
+tictactoe,98,82,5	script	Square n�1::1	1_SHADOW_NPC,{
+	if	( $@turno ==	1 )	
+			{
+			if ( $@player1 == getcharid(3) )	
+				{
+				donpcevent strnpcinfo(3)+"::OnCircle";
+				if ($@victory1$ == "" )	$@victory1$ = "r"+strnpcinfo(3);
+					else
+						{
+						$@victory1$ = $@victory1$ + "r"+strnpcinfo(3);
+						}	
+				if (
+						(compare($@victory1$,"r1") && compare($@victory1$,"r2") && compare($@victory1$,"r3")) ||  
+						(compare($@victory1$,"r4") && compare($@victory1$,"r5") && compare($@victory1$,"r6")) ||
+						(compare($@victory1$,"r7") && compare($@victory1$,"r8") && compare($@victory1$,"r9")) ||
+						(compare($@victory1$,"r1") && compare($@victory1$,"r4") && compare($@victory1$,"r7")) ||
+						(compare($@victory1$,"r2") && compare($@victory1$,"r5") && compare($@victory1$,"r8")) ||
+						(compare($@victory1$,"r3") && compare($@victory1$,"r6") && compare($@victory1$,"r9")) ||
+						(compare($@victory1$,"r1") && compare($@victory1$,"r5") && compare($@victory1$,"r9")) ||
+						(compare($@victory1$,"r7") && compare($@victory1$,"r5") && compare($@victory1$,"r3"))							
+					)
+					{
+						areaannounce "tictactoe",101,70,98,89, "Player 1 WINS!",bc_blue|bc_all;
+						sleep2 600;
+						TTTRank++;
+						donpcevent "System#sistema::Onhideall";
+						donpcevent "Game Agent#a::OnEnable";
+						donpcevent "Game Agent#b::OnEnable";
+						$@victory1$ = $@victory1$ == "";
+						$@victory2$ = $@victory2$ == "";
+						$@turno = 0;
+						$@player1 = 0;
+						$@player2 = 0;					
+						getitem 6480,1;
+						areawarp "tictactoe",101,70,98,89,"prontera",149,171;
+						end();
+					}
+				if ( getstrlen($@victory1$) >= 10 )
+						{
+						areaannounce "tictactoe",101,70,98,89, "DRAW!",bc_blue|bc_all;
+						donpcevent "System#sistema::Onhideall";
+						donpcevent "Game Agent#a::OnEnable";
+						donpcevent "Game Agent#b::OnEnable";
+						$@victory1$ = $@victory1$ == "";
+						$@victory2$ = $@victory2$ == "";
+						$@turno = 0;
+						$@player1 = 0;
+						$@player2 = 0;
+						areawarp "tictactoe",101,70,98,89,"prontera",149,171;
+						end();
+						}
+				$@turno = 2;
+				end();
+				}
+			else
+				{
+				mes ("Wait for your turn...");
+				close();
+				}
+			
+			}
+			
+		else	{
+		if	( $@turno == 2 )	
+			{
+				if ( $@player2 == getcharid(3) )
+				{
+				donpcevent strnpcinfo(3)+"::OnEx";
+				if ( $@victory2$ == "" )	$@victory2$ = "a"+strnpcinfo(3);
+						else
+						{
+						$@victory2$ = $@victory2$ + "a"+strnpcinfo(3);
+						}
+				if (
+						(compare($@victory2$,"a1") && compare($@victory2$,"a2") && compare($@victory2$,"a3")) || 
+						(compare($@victory2$,"a4") && compare($@victory2$,"a5") && compare($@victory2$,"a6")) ||
+						(compare($@victory2$,"a7") && compare($@victory2$,"a8") && compare($@victory2$,"a9")) ||
+						(compare($@victory2$,"a1") && compare($@victory2$,"a4") && compare($@victory2$,"a7")) ||
+						(compare($@victory2$,"a2") && compare($@victory2$,"a5") && compare($@victory2$,"a8")) ||
+						(compare($@victory2$,"a3") && compare($@victory2$,"a6") && compare($@victory2$,"a9")) ||
+						(compare($@victory2$,"a1") && compare($@victory2$,"a5") && compare($@victory2$,"a9")) ||
+						(compare($@victory2$,"a7") && compare($@victory2$,"a5") && compare($@victory2$,"a3"))							
+					)
+					{
+						areaannounce "tictactoe",101,70,98,89, "Player 2 WINS!",bc_blue|bc_all;
+						sleep2 600;
+						TTTRank++;
+						donpcevent "System#sistema::Onhideall";
+						donpcevent "Game Agent#a::OnEnable";
+						donpcevent "Game Agent#b::OnEnable";
+						$@victory1$ = $@victory1$ == "";
+						$@victory2$ = $@victory2$ == "";
+						$@player1 = 0;
+						$@player2 = 0;
+						$@turno = 0;
+						getitem 6480,1;
+						areawarp "tictactoe",101,70,98,89,"prontera",149,171;
+
+						end();
+					}
+				if ( getstrlen($@victory2$) >= 10 )
+						{
+						areaannounce "tictactoe",101,70,98,89, "DRAW!",bc_blue|bc_all;
+						sleep 600;
+						donpcevent "System#sistema::Onhideall";
+						donpcevent "Game Agent#a::OnEnable";
+						donpcevent "Game Agent#b::OnEnable";
+						$@victory1$ = $@victory1$ == "";
+						$@victory2$ = $@victory2$ == "";
+						$@turno = 0;
+						$@player1 = 0;
+						$@player2 = 0;
+						areawarp "tictactoe",101,70,98,89,"prontera",149,171;
+
+						end();
+						}
+				$@turno = 1;
+				end();
+				}
+			else	
+				{
+				mes ("Wait for your turn...");
+				close;
+				}
+			
+			}
+		}
+end();		
+
+
+
+
+	
+OnCircle: 
+	hideonnpc strnpcinfo(3);
+	hideoffnpc "r"+strnpcinfo(3);
+	end();
+OnEx:
+	hideonnpc strnpcinfo(3);
+	hideoffnpc "a"+strnpcinfo(3);
+	end();
+OnInit:
+	hideonnpc "r"+strnpcinfo(3);
+	hideonnpc "a"+strnpcinfo(3);
+	end();
+
+	}
+	
+	//NPCr1	
+	tictactoe,98,82,5	script	Poring::r1	4_M_ANTONIO,{
+	end();
+	}
+	
+	//NPCa1
+	tictactoe,98,82,5	script	Poporing::a1	4_M_COOKIE,{
+	end();
+	}
+
+prontera,1,1,1	trader	ToekenShop	HIDDEN_NPC,{
+OnInit:
+
+	.ServName$ = "MyRO";
+	setarray $@HmSpecPromoID[0]
+		,7040
+		,12919
+		,14361
+		,14362
+		,14602
+		,14603
+		,14597
+		,14598
+		,13605
+		,13573
+		,13597
+		,13579
+		,13593
+		,12100;
+
+	setarray $@HmSpecPromoPrice[0]
+		,200
+		,1800
+		,120
+		,240
+		,5000
+		,200
+		,500
+		,500
+		,100
+		,100
+		,100
+		,100
+		,100
+		,50;
+
+   tradertype(NST_CUSTOM); // make this shop a custom shop
+	.@size = getarraysize($@HmSpecPromoID);
+	for ( .@i = 0; .@i < .@size; .@i++ ) 
+	{
+		sellitem $@HmSpecPromoID[.@i], $@HmSpecPromoPrice[.@i];
+}
+end;
+
+OnCountFunds:
+	if ( !$@TokenType ) {
+    setcurrency(TTTokens); // your custom shop's curreny.
+}
+	if ( $@TokenType ) {
+	setcurrency(#TTTokens);
+}
+
+    end;
+
+OnPayFunds:
+	
+    if( #ROKPOINTS < @price ) // check points if sufficient.
+        end;
+
+	if ( !$@TokenType ) {
+
+	TTTOldBalance = TTTokens; // retain your old balance
+    TTTokens -= @price; // reduce points on purchase
+	TTTotal += @price; // count total amount that you've ever spent in points.
+	dispbottom "       ============ [ Toeken Exchanger ] ============";
+	dispbottom "==========================================";
+	dispbottom "You used to have "+TTTOldBalance+" Toekens.";
+	dispbottom "==========================================";
+	dispbottom "You spent "+@price+" Toekens Points all in all!";
+	dispbottom "==========================================";
+	dispbottom "Current Toeken Balance: "+TTTokens+".";
+	dispbottom "==========================================";
+	dispbottom "In your whole lifetime you've spent "+TTTotal+" here at "+.ServName$+".";
+    purchaseok();
+    end;
+}
+	if ( $@TokenType ) {
+	#TTTOldBalance = #TTTokens; // retain your old balance
+    #TTTokens -= @price; // reduce points on purchase
+	#TTTotal += @price; // count total amount that you've ever spent in points.
+	dispbottom "       ============ [ Toeken Exchanger ] ============";
+	dispbottom "==========================================";
+	dispbottom "You used to have "+#TTTOldBalance+" Toekens.";
+	dispbottom "==========================================";
+	dispbottom "You spent "+@price+" Toekens Points all in all!";
+	dispbottom "==========================================";
+	dispbottom "Current Toeken Balance: "+#TTTokens+".";
+	dispbottom "==========================================";
+	dispbottom "In your whole lifetime you've spent "+#TTTotal+" here at "+.ServName$+".";
+    purchaseok();
+    end;
+}
+}
+//Duplicates
+// Shadow Warp
+tictactoe,100,82,5	duplicate(1)	Square n�2::2	1_SHADOW_NPC
+tictactoe,102,82,5	duplicate(1)	Square n�3::3	1_SHADOW_NPC
+tictactoe,98,80,5	duplicate(1)	Square n�4::4	1_SHADOW_NPC
+tictactoe,100,80,5	duplicate(1)	Square n�5::5	1_SHADOW_NPC
+tictactoe,102,80,5	duplicate(1)	Square n�6::6	1_SHADOW_NPC
+tictactoe,98,78,5	duplicate(1)	Square n�7::7	1_SHADOW_NPC
+tictactoe,100,78,5	duplicate(1)	Square n�8::8	1_SHADOW_NPC
+tictactoe,102,78,5	duplicate(1)	Square n�9::9	1_SHADOW_NPC
+
+// Santa
+tictactoe,100,82,5	duplicate(r1)	Poring::r2	4_M_ANTONIO
+tictactoe,102,82,5	duplicate(r1)	Poring::r3	4_M_ANTONIO
+tictactoe,98,80,5	duplicate(r1)	Poring::r4	4_M_ANTONIO
+tictactoe,100,80,5	duplicate(r1)	Poring::r5	4_M_ANTONIO
+tictactoe,102,80,5	duplicate(r1)	Poring::r6	4_M_ANTONIO
+tictactoe,98,78,5	duplicate(r1)	Poring::r7	4_M_ANTONIO
+tictactoe,100,78,5	duplicate(r1)	Poring::r8	4_M_ANTONIO
+tictactoe,102,78,5	duplicate(r1)	Poring::r9	4_M_ANTONIO
+
+// Cookie
+tictactoe,100,82,5	duplicate(a1)	Poporing::a2	4_M_COOKIE
+tictactoe,102,82,5	duplicate(a1)	Poporing::a3	4_M_COOKIE
+tictactoe,98,80,5	duplicate(a1)	Poporing::a4	4_M_COOKIE
+tictactoe,100,80,5	duplicate(a1)	Poporing::a5	4_M_COOKIE
+tictactoe,102,80,5	duplicate(a1)	Poporing::a6	4_M_COOKIE
+tictactoe,98,78,5	duplicate(a1)	Poporing::a7	4_M_COOKIE
+tictactoe,100,78,5	duplicate(a1)	Poporing::a8	4_M_COOKIE
+tictactoe,102,78,5	duplicate(a1)	Poporing::a9	4_M_COOKIE
