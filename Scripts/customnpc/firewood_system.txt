@@ -1,0 +1,128 @@
+geffen,183,150,0	duplicate(Firewood#1)	Firewood#2	2_board1,6,6
+izlude,78,246,0	duplicate(Firewood#1)	Firewood#3	2_board1,6,6
+prontera,149,171,4	script	Firewood#1	2_board1,6,6,{
+for ( .n = 1; .n <= $@MaxDups; .n++ ) {
+	if ( strnpcinfo(0) == "Firewood#"+.n+"" && $@Lit[.n] == 0) {
+	callsub OnStartFire;
+end;
+} else
+	if ( strnpcinfo(0) == "Firewood#"+.n+"" && $@Lit[.n] == 1) {
+	callsub OnEndFire;
+end;
+}
+}
+
+OnStartFire:
+		mes "[Firewood]";
+		switch(select("Light firewood","Exit"))
+		{
+			
+			case 1:
+			if ( countitem(7035) >= 1 )
+		{
+			delitem 7035, 1;
+			mes "Matchstick consumed. Lighting fire.";
+			$@Lit[.n] = 1;
+			donpcevent strnpcinfo(0)+"::OnEnableFire";
+			close;
+		} else
+			mes "Firewood needs 1 Matchstick to be lit.";
+			close;
+
+			case 2:
+			mes "Fire was not lit.";
+			close;
+		}
+
+OnEndFire:
+mes "[Firewood]";
+if ($@Lit[.n] && !issit() ) {
+	mes "Please proceed to sitting down to heal your HP/SP or to put out the fire.";
+	close;
+}
+		switch(select("Put out firewood","Exit"))
+		{
+			
+			case 1:
+			$@Lit[.n] = 0;
+			dispbottom "You put out the fire.";
+			donpcevent strnpcinfo(0)+"::OnDisableFire";
+			close;
+			
+			case 2:
+			close;
+		}
+
+OnEnableFire:
+	initnpctimer;
+	end;
+
+OnDisableFire:
+	stopnpctimer;
+	end;
+
+OnTimer500:
+	specialeffect 25;
+	initnpctimer;
+	end;
+
+OnAtFireLoc:
+for ( .@i = 1; .@i <= 3; .@i++ ) {
+	mes ""+$@FireMap$[.@i]+","+$@FireX[.@i]+","+$@FireY[.@i]+".";
+}
+	close;
+
+OnInit:
+$@MaxRange = 6;
+// Change this to how many duplicate fire's you make.
+	$@MaxDups = 3;
+// Command '@fireloc' to view the locations of your fires.
+// For players to use this command, just get rid of the 99 requirement below.
+	bindatcmd "fireloc",strnpcinfo(0)+"::OnAtFireLoc",99;
+
+ for ( .@i = 1; .@i <= $@MaxDups; .@i++ ) {
+getmapxy .@mapname$[.@i],.@mapx[.@i],.@mapy[.@i], 1, "Firewood#"+.@i+"";
+// debugmes "NPC Firewood#"+.@i+": "+.@mapname$[.@i]+","+.@mapx[.@i]+","+.@mapy[.@i]+".";
+	$@FireMap$[.@i] = .@mapname$[.@i];
+	$@FireX[.@i] = .@mapx[.@i];
+	$@FireY[.@i] = .@mapy[.@i];
+}
+end;
+	OnTouch:
+	while ( $@Lit[.n] || !$@Lit[.n] ) {
+for ( .n = 1; .n <= $@MaxDups; .n++ ) {
+	if ( strnpcinfo(0) == "Firewood#"+.n+"" && $@Lit[.n] == 0) {
+	callsub OnCheckFail;
+end;
+} else
+	if ( strnpcinfo(0) == "Firewood#"+.n+"" && $@Lit[.n] == 1) {
+	callsub OnCheckSuccess;
+end;
+}
+}
+}
+OnCheckFail:
+end;
+//		getmapxy @mapname$, @mapx, @mapy, 0;
+//		if ( @mapx > $@FireX[.n]+$@MaxRange && @mapy > $@FireY[.n]+$@MaxRange ) {//$@FireY[.n]+6 || $@FireX[.n]-6 && $@FireY[.n]-6 ) {
+		
+//		dispbottom "omg too far.";
+//		end;
+//}
+OnCheckSuccess:
+if ( Hp == MaxHp && Sp == MaxSp ) {
+	end;
+}
+if ( !issit() ) {
+	addtimer 3000,strnpcinfo(0)+"::OnTouch";
+	end;
+}
+		percentheal 5,5; // 5% HP / 5% SP healing
+		addtimer 3000,strnpcinfo(0)+"::OnTouch";
+
+		if ( Hp == MaxHp && Sp == MaxSp ) {
+		dispbottom "Health fully recovered.";
+		end;
+}
+		end;
+}
