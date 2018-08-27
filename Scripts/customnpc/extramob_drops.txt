@@ -1,25 +1,153 @@
 // Created by Aeromesi
-// Version 1.0
-// Works with Hercules & rAthena
--	script	ExtraDrop	-1,{
+// Version 2.0
+// Works with Hercules/rAthena
+-	script	ExtraDropSystem	FAKE_NPC,{
 OnNPCKillEvent:
-
+		if (!$EnableSystem) {
+			dispbottom "Disabled System";
+			end;
+		}
 	.@killedRID = killedrid;
-	for ( .@i = 1; .@i <= $@SelectedMob; .@i++ ) {
-	if ( .@killedRID == $@MonsterID[.@i]) {
-		if ( rand(100) > $@DropRate[.@i] ) {
-	getitem $@ItemRewards[.@i], $@RewardAmount[.@i];
-	Zeny += $@ZenyAmount[.@i];
-	#CASHPOINTS += $@CashAmount[.@i];
-	dispbottom "Obtained "+$@ZenyAmount[.@i]+" Zeny.";
-	dispbottom "Obtained "+$@CashAmount[.@i]+" Cash Points.";
-	end;
-} else
-dispbottom "Did not get reward at "+$@DropRate[.@i]+"% drop rate.";
-	end;
-} else
-	end;
+	for(.@i = 1; .@i <= .SelectedMob; .@i++) {
+		if (.@killedRID == $MonsterID[.@i]) {
+			if (rand(100) > $DropRate[.@i]) {
+				if ( .EnableItem ) {
+					if ( $RewardAmount[.@i] == 0 ) {
+						debugmes "[Warning] Did not recieve Item reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Item is currently 0!";  
+						.@errorcode1 = 1;
+					}
+					if ( !.@errorcode1 ) {
+					getitem $ItemRewards[.@i], $RewardAmount[.@i];
+					dispbottom "Obtained "+getitemname($ItemRewards[.@i])+" x "+$RewardAmount[.@i]+".";
+					}
+				}
+				if ( .EnableZeny ) {
+					if ( $ZenyAmount[.@i] == 0 ) {
+						debugmes "[Warning] Did not recieve Zeny reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Zeny is currently 0!";
+						.@errorcode2 = 1; 
+					}
+					if ( !.@errorcode2 ) {
+					Zeny += $ZenyAmount[.@i];
+					dispbottom "Obtained "+$ZenyAmount[.@i]+" Zeny.";
+					}
+				}
+				if ( .EnableCash ) {
+					if ( $CashAmount[.@i] == 0 ) {
+						debugmes "[Warning] Did not recieve Cash reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Cash is currently 0!";
+						.@errorcode3 = 1;
+					}
+					if ( !.@errorcode3 ) {
+					#CASHPOINTS += $CashAmount[.@i];
+					dispbottom "Obtained "+$CashAmount[.@i]+" Cash Points.";
+					end;
+					}
+				}
+			} else {
+				dispbottom "Did not get rewards at "+$DropRate[.@i]+"% drop rate.";
+			end;
+			}
+		}
 	}
+end;
+PlayerMenu:
+	if (!.EnableSystem) {
+		mes "System is currently disabled.";
+		end;
+	}
+	mes "Extra Mob Drop Information:";
+	for(.@i = 1; .@i <= .SelectedMob; .@i++) {
+		dispbottom " || :Monster: "+strmobinfo( 1, $MonsterID[.@i])+" :Item: "+getitemname($ItemRewards[.@i])+"/ID:"+$ItemRewards[.@i]+" :Zeny: "+$ZenyAmount[.@i]+" :Cash: "+CashAmount[.@i]+" ||";
+	}
+	end;
+
+GMMenu:
+	mes .npc$;
+	mes "Select Monster to edit data:";
+	for ( .@i = 1; .@i <= .SelectedMob; .@i++ ) {
+		setarray $MonsterName$[.@i],""+strmobinfo (1,$MonsterID[.@i]);
+		debugmes ""+$MonsterName$[.@i]+" loaded.";
+	}
+
+	.@choice = select(implode( $MonsterName$ ,":")) - 1;
+	next;
+	mes .npc$;
+	mes "Currently editing: "+strmobinfo( 1, $MonsterID[.@choice])+ ".";
+	switch(select("[Edit] Item data","[Edit] Zeny data","[Edit] Cash data")) {
+	case 1:
+		dispbottom "Input Item ID.";
+		input .@TempChoice;
+		dispbottom "Input Item Amount.";
+		input .@TempChoice2;
+		next;
+		mes .npc$;
+		mes "Previous: ^FF0000"+getitemname($ItemRewards[.@choice])+"^000000(ID:"+$ItemRewards[.@choice]+" x "+$RewardAmount[.@choice]+"^000000.";
+		mes "New: ^0000FF"+getitemname(.@TempChoice)+"^000000(ID:"+.@TempChoice+") x "+.@TempChoice2+".";
+		mes "Is this okay?";
+		next;
+		switch (select("Confirm","Main Menu")) {
+		case 1:
+			$ItemRewards[.@choice] = .@TempChoice;
+			$RewardAmount[.@choice] = .@TempChoice2;
+			mes .npc$;
+			mes ""+strmobinfo( 1, $MonsterID[.@choice])+ ":";
+			mes "New item: ^0000FF"+getitemname(.@TempChoice)+"^000000(ID:"+.@TempChoice+").";
+			mes " ";
+			mes "Confirmed.";
+			$EditStarted = 1;	
+			close2;
+			callsub GMMenu;
+			end;
+
+		case 2:
+			callsub GMMenu;
+			end;
+		}
+	case 2:
+		dispbottom "Input new amount of Zeny.";
+		input .@TempChoice;
+		next;
+		mes .npc$;
+		mes "Previous: ^FF0000"+$ZenyAmount[.@choice]+"^000000 zeny.";
+		mes "New: ^0000FF"+.@TempChoice+"^000000 zeny.";
+		mes "Is this okay?";
+		next;
+		switch (select("Confirm","Main Menu")) {
+		case 1:
+			$ZenyAmount[.@choice] = .@TempChoice;
+			$EditStarted = 1;
+			mes .npc$;
+			mes ""+strmobinfo( 1, $MonsterID[.@choice])+ ": ^0000FF"+.@TempChoice+"^000000 zeny.";
+			close2;
+			callsub GMMenu;
+			end;
+
+		case 2:
+			callsub GMMenu;
+			end;
+		}
+	case 3:
+		dispbottom "Input Cash Amount.";
+		input .@TempChoice;
+		next;
+		mes .npc$;
+		mes "Previous: ^FF0000"+$CashAmount[.@choice]+"^000000 cash.";
+		mes "New: ^0000FF"+.@TempChoice+"^000000 cash.";
+		mes "Is this okay?";
+		next;
+		switch (select("Confirm","Main Menu")) { // open switch 4
+		case 1:
+			$CashAmount[.@choice] = .@TempChoice;
+			$EditStarted = 1;
+			mes .npc$;
+			mes ""+strmobinfo( 1, $MonsterID[.@choice])+ ": ^0000FF"+.@TempChoice+"^000000 cash.";
+			close2;
+			callsub GMMenu;
+			end;
+		case 2:
+			callsub GMMenu;
+			end;
+		} // close switch 4
+	} // close switch 1
 				/* --- 		Format: 	
 						Poring(1002)
 						Zeny: 5000
@@ -27,14 +155,62 @@ dispbottom "Did not get reward at "+$@DropRate[.@i]+"% drop rate.";
 						Item: Red Potion (501)
 						Amount of Red Potion: 6
 												--- */
-									
+							
 OnInit:
-	setarray $@SelectedMob,4; // Edit this to the max amount of monsters you have, currently in $@MonsterID we have a total of 4 monsters, so we put 4.
-	setarray $@MonsterID[1],1002,1004,1005,1007; // Monster ID's, make sure to keep count of how many you're adding for $@SelectedMob array.
-	setarray $@ZenyAmount[1],5000,3000,4000,1000; // 1002 would be poring, so he would get 5000 zeny, set the item rewards/cash amounts in accordance to each monster.
-	setarray $@CashAmount[1],10,5,10,5; // Same for Cash, 1002 (Poring) would get 10 Cash Points.
-	setarray $@ItemRewards[1],501,502,503,504; // Poring would drop a Red Potion.
-	setarray $@RewardAmount[1],6,5,5,5;
-	setarray $@DropRate[1],50,5,5,1;
-end;
+
+	// NPC name
+	.npc$ = "[ ^ffa500Extra Drops System^000000 ]";
+	/* START CONFIGURATION */
+	.MinGM = 99; // Minimum GM level to access Mob edit system via @extradrops
+	.SelectedMob = 4; // Edit this to the max amount of monsters you have, currently in $MonsterID we have a total of 4 monsters, so we put 4.
+	bindatcmd "extradrops",strnpcinfo(0)+"::OnAtExtraDrops"; // Command '@extradrops' allows player to view extra mob drop data, but GM can edit extra mob drop data in real-time ingame!
+	bindatcmd "onoffdrops",strnpcinfo(0)+"::OnAtOnOffDrops",99; // ON / OFF toggle for GM to disable / enable the Extra Drops System.
+	bindatcmd "viewdrops",strnpcinfo(0)+"::OnAtViewDrops",99; // View the current drops (Will load in Map-server console)
+
+	// Enable Item / Zeny / Cash Points - Enter 0 for all to disable the whole script essentially.
+	.EnableItem = 1; // 1 for True, 0 for False -- Enable Item feature, will your mob give an specified item or not?
+	.EnableZeny = 1; // 1 for True, 0 for False -- Enable Zeny feature, will mob give zeny or not?
+	.EnableCash = 1; // 1 for True, 0 for False -- Enable Cash feature, will mob give Cash Points or not?(HINT: Change the variable to any other variable you want to use).
+	.EnableSystem = 1; // 1 for True, 0 for False -- Enable/Disable whole system or not.
+	
+	/* END OF CONFIGURATION */
+	
+	if ($EditStarted)
+		end;
+
+	setarray $MonsterID[1],1002,1004,1005,1007; // Monster ID's, make sure to keep count of how many you're adding for .SelectedMob array.
+	setarray $ZenyAmount[1],5000,3000,4000,1000; // 1002 would be poring, so he would get 5000 zeny, set the item rewards/cash amounts in accordance to each monster.
+	setarray $ItemRewards[1],501,502,503,504; // Poring would drop a Red Potion.
+	setarray $RewardAmount[1],6,5,5,5; // Reward Amounts for items
+	setarray $CashAmount[1],5,6,7,8; // Cash Amounts
+	setarray $DropRate[1],50,5,5,1; // Drop Rates for each specified monster ;)
+	end;
+
+	OnAtExtraDrops:
+	if (getgmlevel() >= .MinGM)
+		callsub GMMenu;
+	if (getgmlevel() < .MinGM)
+		callsub PlayerMenu;
+	end;
+
+	OnAtOnOffDrops:
+	if (!$EnableSystem) {
+		$EnableSystem = 1;
+		dispbottom "Enabled Extra Drops System";
+		end;
+	}
+	if ($EnableSystem) {
+		$EnableSystem = 0;
+		dispbottom "Disabled Extra Drops System";
+		end;
+	}
+
+	// View monster information
+	OnAtViewDrops:
+		dispbottom "Please view Map-Server console to view Extra Drops information.";
+		for ( .@i = 1; .@i <= 4; .@i++ )
+		{
+			debugmes ""+ strmobinfo( 1,$MonsterID[.@i] )+" - Zeny: "+$ZenyAmount[.@i]+" || Item: "+getitemname($ItemRewards[.@i])+" x ("+$RewardAmount[.@i]+") || Cash: ("+$CashAmount[.@i]+") Drop Rates: "+$DropRate[.@i]+"% chance.";
+		}
+		end;
 }
