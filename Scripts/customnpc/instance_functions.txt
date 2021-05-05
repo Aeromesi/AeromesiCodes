@@ -90,15 +90,15 @@ function	script	ArrayShuffle	{ // Used for Dicastes & Fiery Fairy Forest Instanc
 	// Usage: callfunc("ArrayShuffle") - return number;
 	// callfunc("ArrayShuffle",n) - initialize array of n numbers
 	if(getarg(0,-1) <= 0) {
-		if( !getarraysize($ShuffleArray) )
+		if( !getarraysize($@ShuffleArray) )
 		return -1; // Array is not initialized or nothing left of previous initialized one
-		.@i = rand(getarraysize($ShuffleArray));
-		.@num = $ShuffleArray[.@i];
-		deletearray $ShuffleArray[.@i],1;
+		.@i = rand(getarraysize($@ShuffleArray));
+		.@num = $@ShuffleArray[.@i];
+		deletearray $@ShuffleArray[.@i],1;
 		return .@num;
 	} else {
 		for( .@i = 0; .@i < getarg(0); .@i++)
-		$ShuffleArray[.@i] = .@i + 1;
+		$@ShuffleArray[.@i] = .@i + 1;
 		return 1;
 	}
 	return -1;
