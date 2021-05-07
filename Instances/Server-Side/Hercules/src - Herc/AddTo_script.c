@@ -15,7 +15,7 @@ int viewpointmap_sub(struct block_list *bl, va_list ap)
 	return 0;
 }
 
-BUILDIN(viewpointmap)
+static BUILDIN(viewpointmap)
 {
 	int type,x,y,id,color,m;
 	const char *map_name;
