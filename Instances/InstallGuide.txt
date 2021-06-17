@@ -25,7 +25,7 @@
 
 2) Install .mcache files to your maps/re(pre-re) folders
 
-3) All files labeled with "AddTo_" simply ADD meaning Copy and Paste the contents inside of your emulators file! Example: Copy and paste contents of "/db/AddTo_map_index.txt" to "/db/map_index.txt"
+3) All files within the "AddToFiles"  folder means to Copy and Paste the contents of the specified file name after the prefix "AddTo_" Example: Copy and paste contents of "AddToFiles/db/AddTo_map_index.txt" to "/db/map_index.txt" inside your Ragnarok folder!
 
 Contact information:
 
