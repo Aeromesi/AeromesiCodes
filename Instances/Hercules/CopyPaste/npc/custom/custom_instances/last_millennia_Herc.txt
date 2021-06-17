@@ -1,0 +1,1306 @@
+/*
+	Dracula's Last Millennia Instance V1.0
+	Created by: Aeromesi
+	Thanks to all Hercules members who helped me understand creating instances.
+	http://herc.ws/board/user/4149-aeromesi/
+
+
+	CLIENT SIDE INSTALL INSTRUCTIONS
+	INSTALL THESE LINES INTO `resnametable.txt` then use WeeMapCache, select your map_cache.dat,
+	LOAD RNT(resnametable.txt)
+	SAVE MAPCACHE
+	
+//Dracula's Last Millennia Instance (Aeromesi)
+haunt_h.gnd#1@haunt.gnd#
+haunt_h.gat#1@haunt.gat#
+haunt_h.rsw#1@haunt.rsw#
+유저인터페이스\map\1@haunt.bmp#유저인터페이스\map\blank.bmp#
+
+haunt_e.gnd#2@haunt.gnd#
+haunt_e.gat#2@haunt.gat#
+haunt_e.rsw#2@haunt.rsw#
+유저인터페이스\map\2@haunt.bmp#유저인터페이스\map\blank.bmp#
+
+Also, make sure to add the BGM music into your mp3nametable so the instance plays the Music BGM.
+
+// NOTE: Use function if you don't already have it for this script!
+function	script	__Time2Str	{
+	set .@time_left, getarg(0) - gettimetick(2);
+	
+	set .@Days, .@time_left / 86400;
+	set .@time_left, .@time_left - (.@Days * 86400);
+	set .@Hours, .@time_left / 3600;
+	set .@time_left, .@time_left - (.@Hours * 3600);
+	set .@Minutes, .@time_left / 60;
+	set .@time_left, .@time_left - (.@Minutes * 60);
+	
+	set .@Time$, "";
+	if( .@Days > 1 )
+		set .@Time$, .@Time$ + .@Days + " days, ";
+	else if( .@Days > 0 )
+		set .@Time$, .@Time$ + .@Days + " day, ";
+
+	if( .@Hours > 1 )
+		set .@Time$, .@Time$ + .@Hours + " hours, ";
+	else if( .@Hours > 0 )
+		set .@Time$, .@Time$ + .@Hours + " hour, ";
+
+	if( .@Minutes > 1 )
+		set .@Time$, .@Time$ + .@Minutes + " minutes, ";
+	else if( .@Minutes > 0 )
+		set .@Time$, .@Time$ + .@Minutes + " minute, ";
+
+	if( .@time_left > 1 || .@time_left == 0 )
+		set .@Time$, .@Time$ + .@time_left + " seconds";
+	else if( .@time_left == 1 )
+		set .@Time$, .@Time$ + .@time_left + " second";
+	
+	return .@Time$;
+}
+*/
+prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
+	if( has_instance( "1@haunt" ) != "" ) {
+		cutin "3rd_gn_dbris02", 2;
+		mes .md_namenpc$;
+		mes "Dracula is still alive! I'm glad you were able to recover. Go back at in there!";
+		next;
+		if(getcharid(1) ) {
+		announce strcharinfo(0)+" of the party "+ getpartyname( getcharid(1) ) +" is coming back into "+$@dlabel$+"!",bc_party;
+	}
+		cutin "", 255;
+		warp has_instance("1@haunt"),152,153;
+	}
+
+	cutin "3rd_gn_dbris04", 2;
+	.@md_name$ = "^551A8BDrac's Last Millennia^000000";
+	.md_namenpc$ = "[ ^551A8BDrac's Last Millennia^000000 ]";
+	mes .md_namenpc$;
+	mes "Hello there "+strcharinfo(0)+".";
+	mes "It has been told after a millennium a old evil soul far from the lands of Midgard has come to wreak havoc.";
+	next;
+	mes .md_namenpc$;
+	mes "We need you to secure him and put him back in his coffin from where he came at his Castle we've spotted called Dracula's Lair.";
+	next;
+	mes .md_namenpc$;
+	cutin "3rd_gn_dbris05", 2;
+	mes "Every night his thirst for blood becomes ever so more drenched in darker red. Don't make it too late..";
+	next;
+	mes .md_namenpc$;
+	cutin "3rd_gn_dbris01", 2;
+	mes "Would you be willing to eradicate this mad experiment gone wrong?";
+	mes "";
+	mes"~~^FF0000EXTREME-DIFFUCULTY^000000~~";
+	mes "~~^FF0000GHOST / UNDEAD!^000000~~";
+	next;
+	switch(select("[Create] "+.@md_name$+" Solo","[Create] "+.@md_name$+" Party","[Solo Ranking] "+.@md_name$+"","[Party Ranking] "+.@md_name$+"","[Exit] Changed my mind.")) {
+	case 1:
+		mes .md_namenpc$;
+		if (getcharid(1) != 0 ) {
+			mes "You must not be in a party to join by yourself.";
+			close2;
+			cutin "", 255;
+			end;
+		}
+			if( gettimetick(2) < DraDelaySolo ) {
+				.@name$ = strcharinfo(0);
+				.@time = DraDelaySolo - gettimetick(2);
+				attachrid( .@self );
+				mes "Sorry "+ .@name$ +" you must wait "+ callfunc( "timeleft__", .@time ) +" before entering the "+.md_namenpc$+" Dungeon again.";
+				close2;
+				cutin "", 255;
+				end;
+			}
+			DraDelaySolo = gettimetick(2) + 3600 * .delay_time;
+		announce "[Entering Dracula's Last Millennia ]",bc_self;
+		sleep2 300;
+			.@instance = instance_create( .@md_name$, getcharid( 3 ), IOT_CHAR);
+			if( .@instance < 0 ) { 
+				debugmes "Instance Failed..";
+				close;
+			}
+				debugmes "Attempting to create Instance.";
+			if( instance_attachmap( "1@haunt",.@instance,1) == "" ) {
+				instance_destroy( .@instance );
+				debugmes "Failed to instance 1@haunt.";
+				end;
+			}
+			if ( instance_attachmap( "2@haunt",.@instance,1) == "" ) {
+				instance_destroy ( .@instance );
+				debugmes "Failed to instance 2@haunt.";
+				end;
+			}
+				debugmes "Attempt successful on Instance attach!";
+		instance_set_timeout( 3600, 300, .@instance );
+		instance_init( .@instance );
+		instance_attach .@instance;
+		
+			announce strcharinfo(0)+" is attempting Drac's Last Millennia! Wish them luck!",bc_all;
+			warp instance_mapname("1@haunt",.@instance),152,153;
+			'PlayType = 0;
+		end;
+
+	case 2:
+			mes .md_namenpc$;
+ 		if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
+			mes "Only the party leader can create a party instance.";
+			close2;
+			cutin "", 255;
+			end;
+		}
+	// Check delay of players in the party
+	getpartymember getcharid(1), 1;
+	getpartymember getcharid(1), 2;
+	.@self = getcharid(3);
+	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+			attachrid( $@partymemberaid[ .@i ] );
+			if( gettimetick(2) < DraDelay ) {
+				 .@name$ = strcharinfo(0);
+				 .@time = DraDelay - gettimetick(2);
+				attachrid( .@self );
+				mes "Sorry but player "+ .@name$ +" must wait "+ callfunc( "timeleft__", .@time ) +" before entering the "+.md_namenpc$+" Dungeon again.";
+				cutin "", 255;
+				close();
+			}
+		}
+	}
+	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+			attachrid( $@partymemberaid[ .@i ] );
+			if( gettimetick(2) >= DraDelay ) {
+				DraDelay = gettimetick(2) + 3600 * .delay_time;
+				.@size = getarraysize( getd( ".char_id"+ getcharid(1) ) );
+				setd( ".char_id"+ getcharid(1) +"[ "+ .@size +" ]", getcharid(0) );
+			}
+		}
+	}
+			announce $@dlabel$+" Alright, I hope your party is prepared!",bc_party;
+			.@instance = instance_create( .@md_name$, getcharid( 1 ), IOT_PARTY);
+			if( .@instance < 0 ) { 
+				debugmes "Instance Failed..";
+				close;
+			}
+				debugmes "Attempting to create Dracula's Last Millennia.";
+			if( instance_attachmap( "1@haunt",.@instance,1) == "" ) {
+				instance_destroy( .@instance );
+				debugmes "Failed to instance 1@haunt";
+				end;
+			}
+			if ( instance_attachmap( "2@haunt",.@instance,1) == "" ) {
+				instance_destroy ( .@instance );
+				debugmes "Failed to instance 2@haunt.";
+				end;
+			}
+		instance_set_timeout( 3600, 120, .@instance ); // 1 hour to finish, 2 minutes for re-entry
+		instance_init( .@instance );
+		instance_attach .@instance;
+		'PlayType = 1;
+		announce "The party "+ getpartyname( getcharid(1) ) +" is attempting the Drac's Last Millennia Dungeon! Wish them luck!",bc_all;
+		warpparty instance_mapname( "1@haunt",.@instance ),152,153,getcharid(1);
+		end;
+
+		case 3:
+		mes "[ ^ee7600 Drac's Millennia Ranking ^000000 ]";
+		mes "Total Times Beaten:";
+		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'DSoloRank' ORDER BY CAST(`value` AS SIGNED) DESC LIMIT 5", .@id, .@name$, .@val);
+		for (.@i = 0; .@i < .BeatenDraMax; .@i++)
+		mes "[Rank " + (.@i+1) + "]  " + ((.@name$[.@i] == "") ? "^777777None" : "^0055FF" + .@name$[.@i]+"^000000 : ^FF0000" + .@val[.@i] + "^000000x ") + "^000000";
+		next;
+		mes "[ ^ee7600 Drac's Millennia Ranking ^000000 ]";
+		mes "Best Raider:";
+		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'DNewRank' ORDER BY CAST(`value` AS SIGNED) ASC LIMIT 5", .@id, .@name$, .@val);
+		for (.@i = 0; .@i < .FastestDraMax; .@i++)
+		mes "[Rank " + (.@i+1) + "]  " + ((.@name$[.@i] == "") ? "^777777None" : "^0055FF" + .@name$[.@i]+"^000000 : Fastest time: ^FF0000 "+ callfunc( "Time2Str", .@val[.@i]+gettimetick(2))) + "^000000";
+		close2;
+		cutin "", 255;
+		end;
+
+		case 4:
+		mes "[ ^ee7600 Drac's Millennia Ranking ^000000 ]";
+		if ( !$draladdderparty_time ) {
+			mes "No party has finished this game yet.";
+			cutin "", 255;
+			close;
+		}
+		mes "The best record is";
+		mes "[ "+( $draladdderparty_time / 60 )+" min "+( $draladdderparty_time % 60 )+" sec ]";
+		mes "By the party ^FF0000"+ $draladdderparty_name$ +"^000000.";
+		.@size = getarraysize( $draladderparty_member$ );
+		for ( .@i = 0; .@i < .@size; .@i++ )
+			mes "^000000"+ ( .@i +1 ) +". ^0000FF"+ $draladderparty_member$[.@i];
+		if ( getgmlevel() < .gmlvlreset ) close;
+		next;
+		if ( select( "Close.", "Reset the record." ) == 1 ) /*cutin "", 255;*/ close2; cutin "", 255;
+		if ( select( "Never mind.", "I really want to reset it." ) == 1 ) close2; cutin "", 255;
+		$draladdderparty_time = 0;
+		$draladdderparty_name$ = "";
+		deletearray $draladderparty_member$[.@i];
+		mes "[ ^ee7600 Drac's Millennia Ranking ^000000 ]";
+		mes "Record reset successfully.";
+		close;
+		case 5:
+		mes .md_namenpc$;
+		mes "Well come again if you decide to change your mind.";
+		close2;
+		cutin "", 255;
+		end;
+	}
+	OnInit:
+	$@dlabel$ = "[Drac's Last Millennia]";
+	.delay_time = 1; // 2 = 2 hours, 3 = 3 hours, etc..
+	$@DRewMin = 500; // Randomized minimum amount they can get for reward for Cash Points. (Solo)
+	$@DRewMax = 3500; // Randomized maximum amount they can get for reward for Cash Points (Solo)
+	.BeatenDraMax = 10; // How many are displayed on the ladder for "Total Times Beaten"
+	.FastestDraMax = 5; // How many are displayed on the ladder for "Fastest Raider"
+	end;
+}
+1@haunt,1,4,1	script	InstanceBegin#Ins	HIDDEN_NPC,{
+
+	OnInstanceInit:
+	// After Instance initiating, it start to record the time duration you were/party were playing instance.
+	//===============================================================================================
+	'Start = gettimetick(2);
+	//===============================================================================================
+
+	// item reward for completing the entire ladder
+	//===============================================================================================
+	'Item_Reward = 501; // (When beat instance, get reward (Solo & Party, all members of party-mode recieve same item..)
+	'Item_Reward_Amount = 10; // The Amount of reward when beat Dungeon.
+	//===============================================================================================
+
+	// Bonus Reward (PARTY) if ladder completed within a certain time (in minutes)
+	//===============================================================================================
+	'bonus_time = 30; // if completed within 30 minutes, this reward is given.. ( Party-Only )
+	'bonus_item_id = 504; // ID of reward.
+	'bonus_item_amount = 10; // Amount of reward.
+	//===============================================================================================
+	
+	// Randomized amount of clicks you / party must make in order to start the first mob wave. ( 1st Wave / Floor )
+	//===============================================================================================
+	'MaxClicks = rand(1,10);
+	//===============================================================================================
+
+	// DO NOT EDIT
+	setarray 'Color$[1],"Red","Green","Blue","Yellow";
+	setarray 'ColorImg$[1],"nya_red","nya_green","nya_blue","nya_yellow";
+
+	// You can edit this if you want. Doesn't matter ( Just keep it at 4 values )
+	//===============================================================================================
+	setarray 'ColorInt[1],"3","7","9","8";
+	//===============================================================================================
+
+	// DO NOT EDIT
+	//===============================================================================================
+	setcell instance_mapname ("2@haunt"),50,148,51,158,cell_walkable,0;
+	//===============================================================================================
+
+	//Wave setup
+	// PS: You CAN remove the rand, if you choose to do so.
+	// Wave (1)
+	//=====================
+	//=====================
+	// Wave 1 ID's ========
+	setarray 'WaveId1[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 1 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm1[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (2) ===========
+	//=====================
+	//=====================
+	// Wave 2 ID's 
+	setarray 'WaveId2[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 2 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm2[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (3) ===========
+	//=====================
+	//=====================
+	// Wave 3 ID's 
+	setarray 'WaveId3[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 3 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm3[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (4) ===========
+	//=====================
+	//=====================
+	// Wave 4 ID's 
+	setarray 'WaveId4[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 4 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm4[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+	// Wave (5) ===========
+	//=====================
+	//=====================
+	// Wave 5 ID's 
+	setarray 'WaveId5[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 5 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm5[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (6) ===========
+	//=====================
+	//=====================
+	// Wave 6 ID's 
+	setarray 'WaveId6[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 6 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm6[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (7) ===========
+	//=====================
+	//=====================
+	// Wave 7 ID's 
+	setarray 'WaveId7[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 7 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm7[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (8) ===========
+	//=====================
+	//=====================
+	// Wave 8 ID's 
+	setarray 'WaveId8[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 8 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm8[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (9) ===========
+	//=====================
+	//=====================
+	// Wave 9 ID's 
+	setarray 'WaveId9[1]
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170)
+	,rand(1100,1170);
+
+	//Wave 9 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm9[1]
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2)
+	,rand(1,2);
+
+	// Wave (10) ===========
+	//=====================
+	//=====================
+	// Wave 10 ID's 
+	setarray 'WaveId10[1]
+	,1689
+	,2476
+	,1511
+	,1389; // Dracula
+
+	//Wave 10 AM's
+	//=====================
+	//=====================
+	setarray 'WaveAm10[1]
+	,2
+	,2
+	,2
+	,1;
+
+
+
+	'WaveSize1 = getarraysize( 'WaveId1 );
+	'WaveSize2 = getarraysize( 'WaveId2 );
+	'WaveSize3 = getarraysize( 'WaveId3 );
+	'WaveSize4 = getarraysize( 'WaveId4 );
+	'WaveSize5 = getarraysize( 'WaveId5 );
+	'WaveSize6 = getarraysize( 'WaveId6 );
+	'WaveSize7 = getarraysize( 'WaveId7 );
+	'WaveSize8 = getarraysize( 'WaveId8 );
+	'WaveSize9 = getarraysize( 'WaveId9 );
+	'WaveSize10 = getarraysize( 'WaveId10 );
+
+	for ( .@i = 1; .@i <= 'WaveSize1; .@i++ )
+	{
+	'Floor1 += 'WaveAm1[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize2; .@i++ )
+	{
+	'Floor2 += 'WaveAm2[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize3; .@i++ )
+	{
+	'Floor3 += 'WaveAm3[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize4; .@i++ )
+	{
+	'Floor4 += 'WaveAm4[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize5; .@i++ )
+	{
+	'Floor5 += 'WaveAm5[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize6; .@i++ )
+	{
+	'Floor6 += 'WaveAm6[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize7; .@i++ )
+	{
+	'Floor7 += 'WaveAm7[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize8; .@i++ )
+	{
+	'Floor8 += 'WaveAm8[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize9; .@i++ )
+	{
+	'Floor9 += 'WaveAm9[.@i];
+	}
+
+	for ( .@i = 1; .@i <= 'WaveSize10; .@i++ )
+	{
+	'Floor10 += 'WaveAm10[.@i];
+	}
+	
+	debugmes "[Floor] # 1 :: [Total mobs] : "+'Floor1+"";
+	debugmes "[Floor] # 2 :: [Total mobs] : "+'Floor2+"";
+	debugmes "[Floor] # 3 :: [Total mobs] : "+'Floor3+"";
+	debugmes "[Floor] # 4 :: [Total mobs] : "+'Floor4+"";
+	debugmes "[Floor] # 5 :: [Total mobs] : "+'Floor5+"";
+	debugmes "[Floor] # 6 :: [Total mobs] : "+'Floor6+"";
+	debugmes "[Floor] # 7 :: [Total mobs] : "+'Floor7+"";
+	debugmes "[Floor] # 8 :: [Total mobs] : "+'Floor8+"";
+	debugmes "[Floor] # 9 :: [Total mobs] : "+'Floor9+"";
+	debugmes "[Floor] # 10 :: [Total mobs] : "+'Floor10+"";
+
+	// No need for Floor 1, just use 'Floor1 as first count.
+	'F2Progression = 'Floor1+'Floor2;
+	'F3Progression = 'Floor1+'Floor2+'Floor3;
+	'F4Progression = 'Floor1+'Floor2+'Floor3+'Floor4;
+	'F5Progression = 'Floor1+'Floor2+'Floor3+'Floor4+'Floor5;
+	'F6Progression = 'Floor1+'Floor2+'Floor3+'Floor4+'Floor5+'Floor6;
+	'F7Progression = 'Floor1+'Floor2+'Floor3+'Floor4+'Floor5+'Floor6+'Floor7;
+	'F8Progression = 'Floor1+'Floor2+'Floor3+'Floor4+'Floor5+'Floor6+'Floor7+'Floor8;
+	'F9Progression = 'Floor1+'Floor2+'Floor3+'Floor4+'Floor5+'Floor6+'Floor7+'Floor8+'Floor9;
+	'FinalProgression = 'Floor1+'Floor2+'Floor3+'Floor4+'Floor5+'Floor6+'Floor7+'Floor8+'Floor9+'Floor10;
+
+	debugmes ""+'FinalProgression+" Total mobs.";
+	'Ins_Count =  0;
+	'Ins_Start = 0;;
+	if ( !'Ins_Start )
+	{
+	donpcevent instance_npcname("InstanceBegin#Ins")+"::OnPrologue";
+	enablenpc instance_npcname("Witch Picture#DracIns");
+	donpcevent instance_npcname("Witch Picture#DracIns")+"::OnEnableEffect";
+	disablenpc instance_npcname("Witch Statue#DracIns");
+	enablenpc instance_npcname("Witches Cauldron#DracIns");
+	donpcevent instance_npcname("Witches Cauldron#DracIns")+"::OnEnableEffect";
+	for ( .@i = 1; .@i <= 10; .@i++ )
+	{
+	enablenpc instance_npcname("Ingredient#"+.@i+"");
+	donpcevent instance_npcname("Ingredient#"+.@i+"")+"::OnEnableEffect";
+	}
+	for ( .@i = 1; .@i <= 9; .@i++ )
+	{
+	enablenpc instance_npcname("FireWallDrac#"+.@i+"");
+	donpcevent instance_npcname("FireWallDrac#"+.@i+"")+"::OnEnableEffect";
+	}
+	for ( .@i = 1; .@i <= 3; .@i++ )
+	{
+	disablenpc instance_npcname ("Hidden Key#"+.@i+"");
+	}
+	for ( .@i = 1; .@i <= 2; .@i++ )
+	{
+	enablenpc instance_npcname("SlidePass#"+.@i+"");
+	donpcevent instance_npcname("SlidePass#"+.@i+"")+"::OnEnableEffect";
+	}
+	'Ins_Start++;
+	end;
+	}
+	end;
+
+	OnPrologue:
+	sleep (4000);
+	instance_announce -1,$@dlabel$+" Hmmm... Mwuahahaha, I sense foul humans near my lair! Keep them locked outside my Witch!",bc_map;
+	sleep (2000);
+	instance_announce -1,$@dlabel$+" I should have kept my mouth shut....",bc_map;
+	sleep (5000);
+
+	if ( !'PlayType )
+	{
+		instance_announce -1,$@dlabel$+" [HINT] :: Approach the fountain!",bc_map;
+		while( getareausers ( has_instance("1@haunt"), 144, 182, 159, 194 ) < getmapusers ( instance_mapname("1@haunt")))
+			sleep 25;
+			enablenpc instance_npcname("Witch Statue#DracIns");
+			donpcevent instance_npcname("Witch Statue#DracIns")+"::OnEnableEffect";
+	}
+
+	if ( 'PlayType )
+	{
+		instance_announce -1,$@dlabel$+" [HINT] :: Gather around the fountain party!",bc_map;
+		while( getareausers ( has_instance("1@haunt"), 144, 182, 159, 194 ) < getmapusers ( instance_mapname("1@haunt")))
+			sleep 25;
+			enablenpc instance_npcname("Witch Statue#DracIns");
+			donpcevent instance_npcname("Witch Statue#DracIns")+"::OnEnableEffect";
+	}
+	end;
+
+	OnEvent1:
+	disablenpc instance_npcname("Hidden Key#1");
+	disablenpc instance_npcname("Hidden Key#2");
+	sleep (3000);
+	instance_announce -1,$@dlabel$+" You shouldn't have hurt the witch... Spawn my demons!",bc_map;
+	for ( .@i = 1; .@i <= 'WaveSize1; .@i++ ) 
+	{
+	monster instance_mapname("1@haunt"),145,187,"--ja--",'WaveId1[.@i],'WaveAm1[.@i],instance_npcname("InstanceBegin#Ins")+"::OnUnlockKeys";	
+	}
+	end;
+
+	OnUnlockKeys:
+	'Ins_Count++;
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'Floor1+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'Floor1 )
+	{
+	enablenpc instance_npcname ("Hidden Key#1");
+	enablenpc instance_npcname ("Hidden Key#2");
+	instance_announce -1,$@dlabel$+" Find both the two keys to unlock the door in the middle to proceed!",bc_map;
+	end;
+	}
+	end;
+
+	OnEvent2:
+	instance_announce -1,$@dlabel$+" Mwuahahah!!! I wasted your time! Now kill the demons my Witch!",bc_map;
+	for ( .@i = 1; .@i <= 'WaveSize2; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),37,174,38,175,"--ja--",'WaveId2[.@i],'WaveAm2[.@i],instance_npcname("InstanceBegin#Ins")+"::OnWallsDelete";
+	}
+	end;
+
+	OnWallsDelete:
+	'Ins_Count++;
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F2Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F2Progression )
+	{
+	sleep 2000;
+	instance_announce -1,$@dlabel$+" [HINT] :: The walls have disappeared!",bc_map;
+	setcell instance_mapname ("2@haunt"),50,148,51,158,cell_walkable,1;
+	for ( .@i = 1; .@i <= 9; .@i++ )
+	{
+	disablenpc instance_npcname("FireWallDrac#"+.@i+"");
+	}
+	}
+	end;
+
+	OnEvent3:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize3; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId3[.@i],'WaveAm3[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnEvent4:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize4; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId4[.@i],'WaveAm4[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnEvent5:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize5; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId5[.@i],'WaveAm5[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnEvent6:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize6; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId6[.@i],'WaveAm6[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	OnEvent7:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize7; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId7[.@i],'WaveAm7[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnEvent8:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize8; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId8[.@i],'WaveAm8[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnEvent9:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize9; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId9[.@i],'WaveAm9[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnDraculaFight:
+	'CurrentRound++;
+	for ( .@i = 1; .@i <= 'WaveSize10; .@i++ ) 
+	{
+	areamonster instance_mapname("2@haunt"),111,161,120,178,"--ja--",'WaveId10[.@i],'WaveAm10[.@i],instance_npcname("InstanceBegin#Ins")+"::OnEndRound";
+	}
+	end;
+
+	OnEndRound:
+	'Ins_Count++;
+	if ( 'CurrentRound == 1 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F3Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F3Progression )
+		{
+			donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent4";
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 2 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F4Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F4Progression )
+		{
+			donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent5";
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 3 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F5Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F5Progression )
+		{
+			donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent6";
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 4 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F6Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F6Progression )
+		{
+			donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent7";
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 5 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F7Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F7Progression )
+		{
+			donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent8";
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 6 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F8Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F8Progression )
+		{
+			donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent9";
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 7 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'F9Progression+" until all mobs are cleared.",bc_map;
+	if ( 'Ins_Count == 'F9Progression )
+		{
+			'FakePotion++;
+			instance_announce -1,$@dlabel$+ " You have obtained the Potion. Please Proceed to Draculas Coffin.",bc_party;
+			end;
+		}
+	}
+
+	if ( 'CurrentRound == 8 )
+	{
+	instance_announce -1,$@dlabel$+ ""+'Ins_Count+" out of "+'FinalProgression+" until you claim victory!",bc_map;
+	if ( 'Ins_Count == 'FinalProgression )
+		{
+			doevent instance_npcname("InstanceBegin#Ins")+"::OnEndReward";
+			end;
+		}
+	}
+	end;
+
+	OnEndReward:
+	if ( !'PlayType ) 
+	{
+	debugmes "Solo-Mode";
+	instance_announce -1,$@dlabel$+" Congratulations, you have slayed Dracula and secured his Lair in "+ callfunc( "timeleft__", gettimetick(2) - 'Start ),bc_map;
+	if( !DNewRank ) {
+	DNewRank = 'Start;
+	}
+	'DRaid_End = gettimetick(2);
+	'DRaid_End -= 'Start;
+	if ( 'DRaid_End < DNewRank ) 
+	{
+	DNewRank = 'DRaid_End;
+	announce $@dlabel$+" Congratulations to "+strcharinfo(0)+" for breaking their old record in "+ callfunc( "timeleft__",gettimetick(2) - 'Start ),bc_all;
+	}
+	warp instance_mapname( "1@haunt",.@instance),150,150;
+	end;
+	} else
+
+	if ( 'PlayType )
+	{
+		.@party_id = getcharid(1);
+		getpartymember .@party_id, 1;
+		getpartymember .@party_id, 2;
+		instance_announce 0, "Congratulations... You have slayed Dracula and secured his Lair!", bc_map;
+		for ( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+			if ( isloggedin( $@partymemberaid[.@i], $@partymembercid[.@i] ) ) {
+				attachrid $@partymemberaid[.@i];
+				if ( strcharinfo(3) == instance_mapname("2@haunt") )
+					getitem 'Item_Reward, 'Item_Reward_Amount;
+			}
+		}
+		debugmes "Party-Mode";
+		.@timeused = gettimetick(2) - 'Start;
+		if ( 'bonus_item_amount && .@timeused < 'bonus_time * 60 ) {
+			instance_announce 0, "You are rewarded a bonus item for having slayed Dracula and secured his Lair within "+ 'bonus_time +" minutes.", bc_map;
+			for ( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+				if ( isloggedin( $@partymemberaid[.@i], $@partymembercid[.@i] ) ) {
+					attachrid $@partymemberaid[.@i];
+					if ( strcharinfo(3) == instance_mapname("2@haunt") ) {
+						getitem 'bonus_item_id, 'bonus_item_amount;
+						.@name$[.@c++] = strcharinfo(0);
+					}
+				}
+			}
+		}
+
+		if ( !$draladdderparty_time || .@timeused < $draladdderparty_time ) {
+			instance_announce 0, "Wow you broke the record! [ "+( .@timeused / 60 )+" min "+( .@timeused % 60 )+" sec ]", bc_map;
+			$draladdderparty_time = .@timeused;
+			$draladdderparty_name$ = getpartyname( .@party_id );
+			copyarray $draladderparty_member$, .@name$, .@c;
+		}
+		else
+			instance_announce 0, "Time used [ "+( .@timeused / 60 )+" min "+( .@timeused % 60 )+" sec ]", bc_map;
+		sleep 10000;
+		announce "The party ["+ getpartyname( .@party_id ) +"] has slayed Dracula and secured his Lair!", bc_all;
+		instance_warpall "prontera",163,169;
+		instance_destroy();
+		end;
+	}
+	end;
+	}
+2@haunt,115,179,0	script	Draculas Coffin#DracIns	4_NFCOFFIN,0,0,{
+	
+	if ( 'PlayType )
+	{
+	 if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
+	mes "[ Dracula's Coffin ]";
+	mes "Dracula will only answer to a great leader....";
+			close;
+		}
+	}
+
+	if ( 'FakePotion )
+		{
+		disablenpc instance_npcname (""+strnpcinfo(0));
+		mes "* You pour the Potion into the Coffin to kill Dracula *";
+		close2;
+		instance_announce -1,$@dlabel$+" Who goes there? Who has given me my strength back? I thought I was going to be asleep forever..",bc_map;
+		sleep2 2000;
+		instance_announce -1,$@dlabel$+" You thought you could kill me? You only made me more stronger, now I need real blood...",bc_map;
+		sleep2 2000;
+	if ( 'PlayType )
+	{
+		instance_announce -1,"[ "+strcharinfo(0)+" ] :: Come on "+ getpartyname( getcharid(1) ) +" let's finish this guys!",bc_party;
+	}
+		donpcevent instance_npcname("InstanceBegin#Ins")+"::OnDraculaFight";
+		end;
+		}
+
+		mes "[ Weird Coffin ]";
+		mes "You see a slot that looks like you could pour some kind of liquid into it...";
+		close;
+}
+	
+
+1@haunt,120,205,0	script	Hidden Key#1	4_TREASURE_BOX,0,0,{
+
+	if ( !'PlayType )
+	{
+		callsub OnSkip;
+		end;
+	}
+
+	 if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
+	mes "[ Hidden Key ]";
+	mes "Only the party leader can obtain the key.";
+			close;
+		}
+
+		OnSkip:
+		'Keys++;
+		if ( 'Keys == 2)
+		{
+		instance_announce -1,$@dlabel$+" "+'Keys+" key has been obtained. Please head to the center door to unlock it!",bc_party;
+		enablenpc instance_npcname ("inshaunt01");
+		disablenpc instance_npcname (""+strnpcinfo(0)+"");
+		end;
+		}
+		instance_announce -1,$@dlabel$+" "+'Keys+" key has been obtained. Only 1 more left!",bc_party;
+		disablenpc instance_npcname (""+strnpcinfo(0)+"");
+		end;
+
+		OnInstanceInit:
+		disablenpc instance_npcname ("inshaunt01");
+		end;
+}
+1@haunt,181,210,0	duplicate(Hidden Key#1)	Hidden Key#2	4_TREASURE_BOX,0,0
+
+1@haunt,151,174,0	script	SlidePass#1	HIDDEN_WARP_NPC,0,0,{
+	
+	end;
+	OnTouch:
+	if ( !.SlideActive )
+		{
+		end;
+		}
+		
+	if ( .SlideActive )
+	{
+		pushpc ( DIR_SOUTH, rand (1,10));
+		end;
+	}
+	
+	OnEnableEffect:
+	initnpctimer;
+	end;
+
+	OnDisableEffect:
+	stopnpctimer;
+	end;
+
+	OnTimer500:
+	.SlideActive = 1;
+	specialeffect 181;
+	sleep 1000;
+	.SlideActive = 0;
+	initnpctimer;
+	end;
+}
+1@haunt,152,174,0	duplicate(SlidePass#1)	SlidePass#2	HIDDEN_WARP_NPC,0,0
+
+1@haunt,150,150,0	script	DracEnd#Ins	WARPNPC,1,1,{
+OnTouch:
+	if ( 'PlayType )
+	{
+	end;
+	}
+	if ( 'CurrentRound == 8 ) {
+	DSoloRank++;
+	.SoloReward = rand($@DRewMin,$@DRewMax);
+	#DIM_COIN += .SoloReward;
+	dispbottom "Gained : "+.SoloReward+" Instance Dimension Coins total : "+ #DIM_COIN+"";
+	sleep2 2500;
+	if ( DSoloRank == 1 ) {
+	query_sql("INSERT INTO `char_reg_num_db` (`char_id`,`key`,`index`,`value`) VALUES (" + getcharid(0) + ",'DSoloRank','0',1)");
+	}	else
+	query_sql("UPDATE `char_reg_num_db` SET `value` = " + DSoloRank + " WHERE `char_id` = " + getcharid(0) + " AND `key` = 'DSoloRank'");
+	instance_announce -1,$@dlabel$+" Exiting dungeon...",bc_map;
+	sleep2 2000;
+	instance_destroy ( .@instance );
+	end;	
+	} else
+	end;
+}
+1@haunt,152,188,4	script	Witch Statue#DracIns	HIDDEN_NPC,0,0,{
+
+	OnTouch:
+	if ( 'WitchComplete ) 
+	{
+		end;
+	}
+	'CurrentClicks++;
+	if ( 'CurrentClicks == 'MaxClicks ) 
+	{
+		'WitchComplete++;
+		donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent1";
+		donpcevent instance_npcname("Witch Statue#DracIns")+"::OnDisableEffect";
+		disablenpc strnpcinfo(0);
+		end;
+	}
+
+	instance_announce -1,$@dlabel$+" Quit hurting me! Don't make Dracula Angry! ( ONLY "+'CurrentClicks+" ~ "+'MaxClicks+") until first goal-objective completed!",bc_map; 
+	end;
+
+	OnEnableEffect:
+	initnpctimer;
+	end;
+
+	OnDisableEffect:
+	stopnpctimer;
+	end;
+
+	OnTimer750:
+	specialeffect 108;
+	initnpctimer;
+	end;
+}
+
+1@haunt,152,153,0	script	Begin#DracIns	HIDDEN_WARP_NPC,0,0,{
+OnTouch:
+	if( !'BeginLaugh ) 
+	{
+	'BeginLaugh++;
+	sleep2 10000;
+	if ( !PlayType )
+	{
+		atcommand "@sound mwuaha.wav";
+		specialeffect 563;
+		showscript "Yikes! o-o";
+	}
+	if ( 'PlayType ) 
+	{
+	atcommand "@sound mwuaha.wav";
+	specialeffect 563;
+	showscript "Did you all hear that?";
+	sleep2 2000;
+	showscript "Guys?";
+	sleep2 2000;
+	.@party_id = getcharid(1);
+	getpartymember .@party_id, 1;
+	getpartymember .@party_id, 2;
+	for ( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+	if ( isloggedin( $@partymemberaid[.@i], $@partymembercid[.@i] ) ) {
+		attachrid $@partymemberaid[.@i];
+			if ( strcharinfo(3) == instance_mapname("1@haunt") ) {
+				atcommand "@sound mwuaha.wav";
+				specialeffect 563;
+				showscript "Yikes! o-o";
+			}
+		}
+	}
+		end;
+	}
+	} else
+	end;
+}
+
+2@haunt,31,168,4	script	Hidden Key#3	4_TREASURE_BOX,{
+
+	if ( 'PlayType )
+	{
+	if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
+	mes "[ Hidden Key ]";
+	mes "Only the party leader can hold the Key.";
+		close;
+	}
+	}
+
+	'2nd_FloorKey++;
+	dispbottom "Key obtained.";
+	disablenpc instance_npcname (""+strnpcinfo(0));
+	sleep 2000;
+if ( 'PlayType )
+	{
+	instance_announce -1,$@dlabel$+" The party leader has obtained a Key... Now what to do with it...",bc_map;
+	end;
+}
+}
+2@haunt,136,176,0	script	Ingredient#1	HIDDEN_NPC,0,0,{
+
+
+	
+	'Ingredient++;
+	instance_announce -1,$@dlabel$+" ("+'Ingredient+"/10) Ingredients have been found.",bc_party;
+	disablenpc instance_npcname(""+strnpcinfo(0));
+	end;
+	
+	
+
+	OnEnableEffect:
+	initnpctimer;
+	end;
+
+	OnDisableEffect:
+	stopnpctimer;
+	end;
+
+	OnTimer750:
+	specialeffect 51;
+	initnpctimer;
+	end;
+}
+2@haunt,187,111,0	script	Witches Cauldron#DracIns	HIDDEN_NPC,0,0,{
+
+	if ( 'PlayType )
+	{
+	if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
+	mes "[ Witches Cauldron ]";
+	mes "Only the party leader will risk his life breathing those Witches toxic fumes...";
+		close;
+	}
+	}
+
+	if ( 'Ingredient < 10 )
+	{
+	mes "[ Witches Cauldron ]";
+	mes "It seem's you and your party hasn't gathered all the ingredients yet.";
+	close;
+	}
+	mes "* You put in the ingredients *";
+	close2;
+	instance_announce -1,$@dlabel$+" It seem's monsters have spawned near Draculas Coffin. Rush there at once to take them out while the Potion brews!",bc_party;
+	donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent3";
+	disablenpc instance_npcname(""+strnpcinfo(0));
+	end;
+
+	OnEnableEffect:
+	initnpctimer;
+	end;
+
+	OnDisableEffect:
+	stopnpctimer;
+	end;
+
+	OnTimer1000:
+	specialeffect 110;
+	initnpctimer;
+}
+2@haunt,66,173,0	duplicate(Ingredient#1)	Ingredient#2	HIDDEN_NPC,0,0
+2@haunt,77,99,0	duplicate(Ingredient#1)	Ingredient#3	HIDDEN_NPC,0,0
+2@haunt,78,74,0	duplicate(Ingredient#1)	Ingredient#4	HIDDEN_NPC,0,0
+2@haunt,110,84,0	duplicate(Ingredient#1)	Ingredient#5	HIDDEN_NPC,0,0
+2@haunt,110,75,0	duplicate(Ingredient#1)	Ingredient#6	HIDDEN_NPC,0,0
+2@haunt,142,34,0	duplicate(Ingredient#1)	Ingredient#7	HIDDEN_NPC,0,0
+2@haunt,159,20,0	duplicate(Ingredient#1)	Ingredient#8	HIDDEN_NPC,0,0
+2@haunt,136,79,0	duplicate(Ingredient#1)	Ingredient#9	HIDDEN_NPC,0,0
+2@haunt,180,115,0	duplicate(Ingredient#1)	Ingredient#10	HIDDEN_NPC,0,0
+
+2@haunt,31,167,4	script	Weird Machine#DracIns	2_VENDING_MACHINE1,{
+
+	// Restarting Preresult
+	setarray .@colors$[0], "Red", "Green", "Blue", "Yellow";
+	.@preResult = 0;
+	.@colorAnswer = 0;
+
+	if ('PlayType) 
+	{
+		if (getpartyleader(getcharid(1),2) != getcharid(0)) {
+			mes "[ Weird Machine ]";
+			mes "Only the party leader can activate this Machine.";
+			close;
+		}
+	}
+	for (.@i = 1; .@i <= getarraysize('ColorInt); ++.@i) 
+	{
+		.@preResult += 'ColorInt[rand(4)];
+	}
+	dispbottom "Answer is "+.@preResult+".";
+	dispbottom " RED - "+'ColorInt[1]+" || GREEN - "+'ColorInt[2]+" || BLUE - "+'ColorInt[3]+" || YELLOW - "+'ColorInt[4]+" ";
+	while(true) {
+		cutin "nya_off", 1;
+		if (.@colorAnswer > .@preResult) {
+			mes "[ Weird Machine ]";
+			mes "WRONG!";
+			mes "TRY AGAIN!";
+			close2;
+			cutin "", 255;
+			end;
+		}
+
+		if (.@colorAnswer == .@preResult) {
+			enablenpc instance_npcname("Hidden Key#3");
+			cutin "", 255;
+			disablenpc instance_npcname(""+strnpcinfo(0));
+			end;
+		}
+		.@color = select(implode(.@colors$, ":"));
+		cutin 'ColorImg$[.@color], 1;
+		mes .@colors$[.@color-1] +" answered.";
+		.@colorAnswer += 'ColorInt[.@color];
+		close2;
+		}
+}
+2@haunt,33,187,0	script	Witch Picture#DracIns	HIDDEN_NPC,0,0,{
+
+	if ( 'PlayType )
+	{
+	if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
+	mes "[ Witch Picture ]";
+	mes "Only the party leader can insert the Key inside the Keyhole.";
+		close;
+		}
+	}
+
+	if ( !'2nd_FloorKey )
+	{
+		mes "[ Witch Picture ]";
+		mes "You see a small key-hole right beneath the picture, there should be a key around here somewhere.";
+		close;
+	}
+
+		dispbottom "You insert the key...";
+		donpcevent instance_npcname("InstanceBegin#Ins")+"::OnEvent2";
+		donpcevent instance_npcname("Witch Picture#DracIns")+"::OnDisableEffect";
+		disablenpc instance_npcname(""+strnpcinfo(0));
+		end;
+
+	OnEnableEffect:
+	initnpctimer;
+	end;
+
+	OnDisableEffect:
+	stopnpctimer;
+	end;
+
+	OnTimer750:
+	specialeffect 108;
+	initnpctimer;
+	end;
+}
+2@haunt,50,156,0	script	FireWallDrac#1	HIDDEN_WARP_NPC,0,0,{
+	end;
+
+	OnEnableEffect:
+	initnpctimer;
+	end;
+
+	OnDisableEffect:
+	stopnpctimer;
+	end;
+
+	OnTimer750:
+	specialeffect 108;
+	initnpctimer;
+	end;
+}
+2@haunt,50,155,0	duplicate(FireWallDrac#1)	FireWallDrac#2	HIDDEN_WARP_NPC,0,0
+2@haunt,50,154,0	duplicate(FireWallDrac#1)	FireWallDrac#3	HIDDEN_WARP_NPC,0,0
+2@haunt,50,153,0	duplicate(FireWallDrac#1)	FireWallDrac#4	HIDDEN_WARP_NPC,0,0
+2@haunt,50,152,0	duplicate(FireWallDrac#1)	FireWallDrac#5	HIDDEN_WARP_NPC,0,0
+2@haunt,50,151,0	duplicate(FireWallDrac#1)	FireWallDrac#6	HIDDEN_WARP_NPC,0,0
+2@haunt,50,150,0	duplicate(FireWallDrac#1)	FireWallDrac#7	HIDDEN_WARP_NPC,0,0
+2@haunt,50,149,0	duplicate(FireWallDrac#1)	FireWallDrac#8	HIDDEN_WARP_NPC,0,0
+2@haunt,50,148,0	duplicate(FireWallDrac#1)	FireWallDrac#9	HIDDEN_WARP_NPC,0,0
+
+//Warps
+haunt_e,151,200,0	warp	haunt01	1,1,haunt_h,22,158
+haunt_h,172,82,0	warp	haunt03	1,1,haunt_h,191,105
+haunt_h,186,105,0	warp	haunt04	1,1,haunt_h,169,82
+
+1@haunt,151,200,0	warp	inshaunt01	1,1,2@haunt,22,158
+//2@haunt,19,155,0	warp	inshaunt02	1,1,1@haunt,151,194
+2@haunt,172,82,0	warp	inshaunt03	1,1,2@haunt,191,105
+2@haunt,186,105,0	warp	inshaunt04	1,1,2@haunt,169,82
+
+//Mapflags
+1@haunt	mapflag	nowarp
+1@haunt	mapflag	nowarpto
+1@haunt	mapflag	noteleport
+1@haunt	mapflag	nosave	SavePoint
+1@haunt	mapflag	nomemo
+1@haunt	mapflag	nobranch
+1@haunt	mapflag	noicewall
+1@haunt	mapflag	monster_noteleport
+1@haunt	mapflag	partylock
+1@haunt	mapflag	noicewall
+
+1@haunt	mapflag	src4instance
+1@haunt	mapflag	nightenabled
