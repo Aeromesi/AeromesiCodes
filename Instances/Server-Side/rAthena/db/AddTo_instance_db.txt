@@ -1,9 +1,0 @@
-14,Zombie Massacre Instance,7200,z@prt,158,191,z@prt
-15,Fiery Fairy Forest,7200,f@prt,170,373,f@prt
-16,Item Farming,7200,1@def01,46,50,1@def01
-17,Dead Branch Farming,7200,1@spa,50,50,1@spa
-18,Bloody Branch Farming,7200,1@def03,166,130,1@def03
-19,Gold Farming,7200,1@dth1,166,130,1@dth1
-20,Oridecon/Elunium Farming,7200,1@dth2,166,130,1@dth2
-21,Trivia Instance,14400,2@trivia,101,88,2@trivia,3@trivia,4@trivia,5@trivia,6@trivia
-22,Mastery Dungeon,14400,1@mor,203,182,1@mor
