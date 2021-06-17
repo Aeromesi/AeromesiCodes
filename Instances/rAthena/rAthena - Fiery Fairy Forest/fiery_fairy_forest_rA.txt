@@ -1,0 +1,502 @@
+/*Fiery Fairy Forest
+f@prt.gnd#prt_fild08.gnd#
+f@prt.gat#prt_fild08.gat#
+f@prt.rsw#prt_fild08.rsw#
+유저인터페이스\map\f@prt.bmp#유저인터페이스\map\prt_fild08.bmp# */
+// Fiery Fairy Forest
+// Created by: Aeromesi
+// Version 1.0
+// PS: I'm awesome :P
+// Control the amount of MOBS you want by simply editing the variables below the `OnInstanceInit:`!
+// Thank you Garr ^^
+function	script	ArrayShuffle	{
+// Usage: callfunc("ArrayShuffle") - return number;
+// callfunc("ArrayShuffle",n) - initialize array of n numbers
+	if(getarg(0,-1) <= 0) {
+		if( !getarraysize($ShuffleArray) )
+			return -1; // Array is not initialized or nothing left of previous initialized one
+		.@i = rand(getarraysize($ShuffleArray));
+		.@num = $ShuffleArray[.@i];
+		deletearray $ShuffleArray[.@i],1;
+		return .@num;
+	} else {
+		for( .@i = 0; .@i < getarg(0); .@i++)
+			$ShuffleArray[.@i] = .@i + 1;
+		return 1;
+	}
+	return -1;
+}
+prontera,149,147,2	script	Prontera Castle Guard#a	4_M_ROYALGUARD,{
+
+/*	if( has_instance("f@prt") != "" ) {
+		mes "Don't let the Fire reach Prontera!";
+		next;
+		warp has_instance("f@prt"),170,373;
+	}
+	.@md_namenpc$ = "[ ^ff0000 Fiery Fairy Forest^000000 ]";
+	.@md_name$ = "Fiery Fairy Forest";
+	mes .@md_namenpc$;
+	mes "Hello there "+strcharinfo(0)+".";
+	mes "There's been a recent word about the Fire Demons approaching Prontera from our Assassins.";
+	next;
+	mes .@md_namenpc$;
+	mes "Would you be willing to watch out for them in-case of an attack in the Southern Fields "+strcharinfo(0)+"?";
+	mes "It's not just the Forest, but the fairys that inhabit the forest in the trees that are in danger also!";
+	next;
+	mes .@md_namenpc$;
+	mes "~^FF0000 WARNING: SOLO INSTANCE^000000~";
+	mes"~~^FF0000EXTREME-DIFFUCULTY^000000~~";
+	mes "~~^FF0000DON'T BURN YOURSELF!^000000~~";
+	mes "";
+	mes "ELEMENT WEAKNESS:";
+	mes "";
+	mes " ^87CEEB Ice^000000/^0000ffWater^000000";
+	next;
+	switch(select("Sure thing!: Not interested.")) {
+	case 1:
+	mes .@md_namenpc$;
+	mes "You should get to the starting point of the Southern Fields, when Assassins give news that means it's urgent.";
+	sleep2 (2000);
+	mes "...";
+	sleep2 (2000);
+	.@instance = instance_create( .@md_name$, getcharid( 3 ), IOT_CHAR);
+	if( .@instance < 0 ) { 
+		dispbottom "Instance Failed.";
+		end;
+	}
+	dispbottom "^0000ff" + .@md_name$ + "^000000- Attempting to create Fiery Fairy Forest.";
+	if( instance_attachmap("f@prt",.@instance) == "" ) {
+		instance_destroy( .@instance );
+		dispbottom "Failed to instance prt_fild08/Instance Name: f@prt";
+		end;
+	}
+
+	dispbottom "^0000ff" + .@md_name$ + "^000000- Attempt successful on Fiery Fairy Forest attach!";
+	instance_set_timeout( 7200, 300, .@instance ); // 3 Hours to complete
+	instance_init( .@instance );
+	InsF_CD = gettimetick(2) + 14400; // 4 hour cooldown
+	warp instance_mapname("f@prt",.@instance),170,373;
+	end;
+
+	case 2:
+	mes .@md_namenpc$;
+	mes "If you decide to change your mind, please come again, we could use someone like you "+strcharinfo(0)+".";
+	close;
+}
+}
+*/
+	.@instance$ = "Fiery Fairy Forest";
+
+	if (instance_id()) {
+		mes "[Fiery Fairy Forest]";
+		mes "You are already part of an instance.";
+		next;
+		switch(select("Enter Instance.:Cancel.")) {
+		case 1:
+			break;
+		case 2:
+			mes "[Fiery Fairy Forest]";
+			mes "You don't want to try again?";
+			emotion e_sob;
+			close;
+		}
+	} else {
+		mes "[Fiery Fairy Forest]";
+		mes "Would you like to participate in the Fiery Fairy Forest?";
+		next;
+		switch(select("Create Instance.:Cancel.")) {
+		case 1:
+			.@create = instance_create(.@instance$);
+			if (.@create < 0) {
+				mes "[Sample Instance]";
+				switch (.@create) {
+					case -1: mes "ERROR: Invalid type."; break;
+					case -2: mes "ERROR: Party not found."; break;
+					case -3: mes "ERROR: Instance already exists."; break;
+					case -4: mes "ERROR: No free instances."; break;
+				}
+				mes " ";
+				mes "Instance creation ^FF0000failed^000000.";
+				emotion e_omg;
+				close;
+			}
+			mes "[Fiery Fairy Forest]";
+			mes "Instance created.";
+			mes " ";
+			mes "Now entering the instance...";
+			next;
+//			warp instance_warpall("z@prt"),148,197;
+			break;
+		case 2:
+			mes "[Fiery Fairy Forest]";
+			mes "Okay. Maybe next time!";
+			close;
+		}
+	}
+	.@enter = instance_enter(.@instance$);
+	if (.@enter != 0) {
+		mes "[Fiery Fairy Forest]";
+		switch (.@enter) {
+			case 1: mes "ERROR: Party not found."; break;
+			case 2: mes "ERROR: Party does not have an instance."; break;
+			case 3: mes "ERROR: Unknown error."; break;
+		}
+		mes " ";
+		mes "Instance entry ^FF0000failed^000000.";
+		emotion e_omg;
+		close;
+	}
+	close;
+}
+f@prt,1,1,1	script	SpwnMonsterF#Ins	-1,{
+OnInstanceInit:
+atcommand "@clouds";
+disablenpc instance_npcname("Prontera Castle Guard#b");
+//'ValuedTree = rand(1,102);
+	//Level 1
+	//1st mob amount
+	'1st_MobAML1 = 1;
+	'2nd_MobAML1 = 2;
+	'3rd_MobAML1 = 5;
+	'MOBAML1TOT = '1st_MobAML1+'2nd_MobAML1+'3rd_MobAML1;
+	//Level 2 Mob Amounts
+	'1st_MobAML2 = 1;
+	'2nd_MobAML2 = 1;
+	'3rd_MobAML2 = 1;
+	'MOBAML2TOT = '1st_MobAML2+'2nd_MobAML2+'3rd_MobAML2;
+	//Level 3 Mob Amounts
+	'1st_MobAML3 = 5;
+	'2nd_MobAML3 = 4;
+	'3rd_MobAML3 = 5;
+	'MOBAML3TOT = '1st_MobAML3+'2nd_MobAML3+'3rd_MobAML3;
+	//Level 4 Mob Amounts
+	'1st_MobAML4 = 100;
+	'2nd_MobAML4 = 50;
+	'3rd_MobAML4 = 20;
+	'MOBAML4TOT = '1st_MobAML4+'2nd_MobAML4+'3rd_MobAML4;
+	//Level 5 Mob Amounts
+	'1st_MobAML5 = 1; // 20
+	'2nd_MobAML5 = 1; // 20
+	'MOBAML5TOT = '1st_MobAML5+'2nd_MobAML5;
+	//Level 6 (Final Mob/Boss)
+	'1st_MobAML6 = 1;
+	'MOBAML6TOT = '1st_MobAML6;
+	'InsF_MobCount = 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT+'MOBAML6TOT;
+	'Tree_Total = 102;
+	'InsF_Count =  0;
+	'InsF_Start = 0;
+	'Fire_T = 0;
+
+	if ( !'InsF_Start ){
+	donpcevent instance_npcname("SpwnMonsterF#Ins")+"::OnEventF1";
+	'InsF_Start++;
+end;
+}
+	
+OnEventF1:
+instance_announce -1,"[Fiery Fairy Forest Instance] As you enter the Southern Field of Prontera, you start to hear wood popping and leaves sizzling.",bc_map;
+sleep2 5000;
+instance_announce -1,"[Fiery Fairy Forest Instance] Unaware and uprepared that the Fire Demons are marching forth, you ready your battle gear!",bc_map;
+sleep2 5000;
+instance_announce -1,"[Fiery Fairy Forest Instance] Step forward and protect the small fairys that inhabit the Southern Prontera Field as well as Prontera itself!",bc_map;
+specialeffect 563;
+sleep2 5000;
+instance_announce -1,"[Fiery Fairy Forest Instance] Remember, you MUST kill a certain amount of mobs and water down a certain amount of the trees to continue the Waves.",bc_map;
+sleep2 10000;
+instance_announce -1,"[Fiery Fairy Forest Instance] Prontera Guard Watch: Good luck!",bc_map;
+
+callfunc("ArrayShuffle",101);
+for (.@i = 0; .@i < 17; .@i++)
+	donpcevent instance_npcname("Fire#"+callfunc("ArrayShuffle"))+"::OnEnable";
+areamonster instance_mapname("f@prt"),29,76,327,361,"Blazzer",1598,'1st_MobAML1,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Explosion",1383,'2nd_MobAML1,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Ferus",1714,'3rd_MobAML1,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";  
+end;
+
+OnEventF2:
+callfunc("ArrayShuffle",101);
+for (.@i = 0; .@i < 17; .@i++)
+	donpcevent instance_npcname("Fire#"+callfunc("ArrayShuffle"))+"::OnEnable";
+instance_announce -1,"[Fiery Fairy Forest Instance] 2nd Wave begins. Be on the lookout!",bc_map;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Headless Mule",2071,'1st_MobAML2,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Fire Grizzly",1381,'2nd_MobAML2,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Gajomart",1309,'3rd_MobAML2,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF"; 
+end;
+
+OnEventF3:
+callfunc("ArrayShuffle",101);
+for (.@i = 0; .@i < 17; .@i++)
+	donpcevent instance_npcname("Fire#"+callfunc("ArrayShuffle"))+"::OnEnable";
+instance_announce -1,"[Fiery Fairy Forest Instance] 3rd Wave begins. The fires keep burning brighter and hotter!",bc_map;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Salamander",1831,'1st_MobAML3,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Nine Tail",1471,'2nd_MobAML3,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+monster instance_mapname("f@prt"),169,369,"Majorurus",1310,'3rd_MobAML3,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+end;
+
+OnEventF4:
+callfunc("ArrayShuffle",101);
+for (.@i = 0; .@i < 17; .@i++)
+	donpcevent instance_npcname("Fire#"+callfunc("ArrayShuffle"))+"::OnEnable";
+instance_announce -1,"[Fiery Fairy Forest Instance] 4th Wave begins. Don't allow them to kill off all the trees inhabiting the Fairies!",bc_map;
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Magmaring",1836,'1st_MobAML4,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Lava Golem",1549,'2nd_MobAML4,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+monster instance_mapname("f@prt"),169,369,"Kaho",1072,'3rd_MobAML4,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF"; 
+sleep 2000;
+end;
+
+OnEventF5:
+callfunc("ArrayShuffle",101);
+for (.@i = 0; .@i < 34; .@i++)
+	donpcevent instance_npcname("Fire#"+callfunc("ArrayShuffle"))+"::OnEnable";
+instance_announce -1,"[Fiery Fairy Forest Instance] 5th Wave begins. You're nearing Victory! Protect the Fairy Forest from the Fire Demon Kings most Loyal Demons located near the entrance of Prontera!",bc_map;
+sleep 2000;
+areamonster instance_mapname("f@prt"),29,76,327,361,"Kasa",1835,'1st_MobAML5,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF";
+sleep 2000;
+monster instance_mapname("f@prt"),169,369,"Imp",1837,'2nd_MobAML5,instance_npcname("SpwnMonsterF#Ins")+"::OnThisMobDeathF"; 
+end;
+
+OnEventF6:
+instance_announce -1,"[Fiery Fairy Forest Instance] Final wave begins.. Watch out! It's the Fire Demon King! He's reaching the entrance of Prontera! Go over there!",bc_map;
+sleep 2000;
+monster instance_mapname("f@prt"),181,227,"Fire Demon King Ifrit",1832,'1st_MobAML6,instance_npcname("SpwnMonsterF#Ins")+"::OnThisLastWaveF";
+sleep 2000;
+end;
+
+OnThisMobDeathF:
+	'InsF_Count++;
+	instance_announce -1,"[Fiery Fairy Forest Instance] You have killed a total of "+('InsF_Count)+" Fire Demons! Only "+('InsF_MobCount-'InsF_Count)+" to go!",bc_map;
+	donpcevent instance_npcname("Count#F_Ins")+"::OnCountKill_F";
+	end;
+
+	
+OnThisSemiWaveF:
+'InsF_Count++;
+donpcevent instance_npcname("Count#F_Ins")+"::OnCountKill_F";
+end;
+
+OnThisLastWaveF:
+sleep 2000;
+enablenpc instance_npcname("Prontera Castle Guard#b");
+instance_announce -1,"[Fiery Fairy Forest Instance] Final Wave Completed. You have completely eradicated the Fire from the forest as well as kept the Fire Demons at bay! Congratulations!",bc_map;
+end;
+}
+
+f@prt,1,2,1	script	Count#F_Ins	-1,{
+
+OnCountKill_F:
+
+if ('InsF_Count=='MOBAML1TOT && 'Fire_T == 17)
+{
+	donpcevent instance_npcname("SpwnMonsterF#Ins")+"::OnEventF2";
+	end;
+	}
+
+if ('InsF_Count=='MOBAML1TOT+'MOBAML2TOT && 'Fire_T == 34)
+{
+	donpcevent instance_npcname("SpwnMonsterF#Ins")+"::OnEventF3";
+	end;
+	}
+	
+if ('InsF_Count=='MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT && 'Fire_T == 51)
+{
+	donpcevent instance_npcname("SpwnMonsterF#Ins")+"::OnEventF4";
+	end;
+	}
+
+if ('InsF_Count=='MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT && 'Fire_T == 68)
+{
+	donpcevent instance_npcname("SpwnMonsterF#Ins")+"::OnEventF5";
+	end;
+	}
+if ('InsF_Count=='MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT && 'Fire_T == 102)
+{
+
+	donpcevent instance_npcname("SpwnMonsterF#Ins")+"::OnEventF6";
+	end;
+	}
+	}
+//Reward npc
+f@prt,148,195,4	script	Prontera Castle Guard#b	4_M_ROYALGUARD	108,{
+if('RewardGiven == 0) 
+{
+	'RewardGiven++;
+	mes "[^0000FF Prontera Castle Guard ^000000]";
+	mes "Thank you so much "+strcharinfo(0)+", you helped save Prontera from a Fiery disaster.";
+	next;
+	mes "[^0000FF Prontera Castle Guard ^000000]";
+	mes "Even though our town is saved, one or two show up every now and then, and that means they're regrouping.";
+	mes "For helping me out, here's a little something to show my appreciation for guarding Prontera and the Fairies within the Forest.";
+	if( getcharid(1) ) {
+		getpartymember( getcharid(1),2 );
+		getpartymember( getcharid(1),1 );
+		for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+			if( isloggedin( $@partymemberaid[ .@i ],$@partymembercid[ .@i ] ) ) { // Checking for login
+				if( attachrid($@partymemberaid[ .@i ]) ) { // Attaching that player to script
+					if( compare(strcharinfo(3),"f@prt") ) { // Checking if they are on the right map
+						FIns_CD = gettimetick(2) + 14400; // 4 hours cooldown
+						getitem 501, 1, $@partymemberaid[ .@i ];// put ID bronze coin instead of 501
+					}
+				}
+			}
+		}
+		sleep 5000;
+		instance_destroy();
+		end;
+	}
+	end;
+}
+end;
+}
+f@prt,184,362,0	script	Fire#1	HIDDEN_NPC,0,0,{
+	viewpointmap instance_mapname("f@prt"),2,0,0,atoi(strnpcinfo(2)),0xFF0000;
+	'Fire_T++;
+	delitem 7868, 1;
+	instance_announce -1,"[Fiery Fairy Forest Instance] You have Watered down a total of "+('Fire_T)+"! Only "+('Tree_Total-'Fire_T)+" to go! Save those Fairies!",bc_map;
+	specialeffect 256;
+	stopnpctimer;
+	disablenpc instance_npcname(strnpcinfo(0));
+	donpcevent instance_npcname("Count#F_Ins")+"::OnCountKill_F";
+end;
+
+OnInstanceInit:
+	disablenpc instance_npcname(strnpcinfo(0));
+	stopnpctimer;
+	end;
+	
+OnEnable:
+	enablenpc instance_npcname(strnpcinfo(0));
+	debugmes "Tree " + strnpcinfo(0) + " enabled";
+//	viewpointmap instance_mapname("f@prt"),1,.@x,.@y,atoi(strnpcinfo(2)),0xFF0000;
+	getmapxy .@map$, .@x, .@y,1;
+	viewpointmap instance_mapname("f@prt"),1,.@x,.@y,atoi(strnpcinfo(2)),0xFF0000;
+	initnpctimer;
+	end;
+
+OnTimer500:
+	specialeffect 25;
+	initnpctimer;
+	end;
+}
+
+f@prt,190,353,0	duplicate(Fire#1)	Fire#2	HIDDEN_NPC,0,0
+f@prt,193,365,0	duplicate(Fire#1)	Fire#3	HIDDEN_NPC,0,0
+f@prt,191,360,0	duplicate(Fire#1)	Fire#4	HIDDEN_NPC,0,0
+f@prt,195,365,0	duplicate(Fire#1)	Fire#5	HIDDEN_NPC,0,0
+f@prt,205,343,0	duplicate(Fire#1)	Fire#6	HIDDEN_NPC,0,0
+f@prt,217,341,0	duplicate(Fire#1)	Fire#7	HIDDEN_NPC,0,0
+f@prt,217,355,0	duplicate(Fire#1)	Fire#8	HIDDEN_NPC,0,0
+f@prt,212,353,0	duplicate(Fire#1)	Fire#9	HIDDEN_NPC,0,0
+f@prt,235,346,0	duplicate(Fire#1)	Fire#10	HIDDEN_NPC,0,0
+f@prt,242,355,0	duplicate(Fire#1)	Fire#11	HIDDEN_NPC,0,0
+f@prt,245,365,0	duplicate(Fire#1)	Fire#12	HIDDEN_NPC,0,0
+f@prt,238,365,0	duplicate(Fire#1)	Fire#13	HIDDEN_NPC,0,0
+f@prt,247,368,0	duplicate(Fire#1)	Fire#14	HIDDEN_NPC,0,0
+f@prt,252,367,0	duplicate(Fire#1)	Fire#15	HIDDEN_NPC,0,0
+f@prt,259,361,0	duplicate(Fire#1)	Fire#16	HIDDEN_NPC,0,0
+f@prt,256,353,0	duplicate(Fire#1)	Fire#17	HIDDEN_NPC,0,0
+f@prt,253,346,0	duplicate(Fire#1)	Fire#18	HIDDEN_NPC,0,0
+f@prt,247,341,0	duplicate(Fire#1)	Fire#19	HIDDEN_NPC,0,0
+f@prt,252,330,0	duplicate(Fire#1)	Fire#20	HIDDEN_NPC,0,0
+f@prt,258,330,0	duplicate(Fire#1)	Fire#21	HIDDEN_NPC,0,0
+f@prt,262,327,0	duplicate(Fire#1)	Fire#22	HIDDEN_NPC,0,0
+f@prt,269,334,0	duplicate(Fire#1)	Fire#23	HIDDEN_NPC,0,0
+f@prt,263,346,0	duplicate(Fire#1)	Fire#24	HIDDEN_NPC,0,0
+f@prt,265,362,0	duplicate(Fire#1)	Fire#25	HIDDEN_NPC,0,0
+f@prt,270,372,0	duplicate(Fire#1)	Fire#26	HIDDEN_NPC,0,0
+f@prt,281,374,0	duplicate(Fire#1)	Fire#27	HIDDEN_NPC,0,0
+f@prt,297,351,0	duplicate(Fire#1)	Fire#28	HIDDEN_NPC,0,0
+f@prt,284,320,0	duplicate(Fire#1)	Fire#29	HIDDEN_NPC,0,0
+f@prt,275,308,0	duplicate(Fire#1)	Fire#30	HIDDEN_NPC,0,0
+f@prt,283,300,0	duplicate(Fire#1)	Fire#31	HIDDEN_NPC,0,0
+f@prt,270,294,0	duplicate(Fire#1)	Fire#32	HIDDEN_NPC,0,0
+f@prt,193,365,0	duplicate(Fire#1)	Fire#33	HIDDEN_NPC,0,0
+f@prt,263,291,0	duplicate(Fire#1)	Fire#34	HIDDEN_NPC,0,0
+f@prt,267,283,0	duplicate(Fire#1)	Fire#35	HIDDEN_NPC,0,0
+f@prt,252,272,0	duplicate(Fire#1)	Fire#36	HIDDEN_NPC,0,0
+f@prt,259,271,0	duplicate(Fire#1)	Fire#37	HIDDEN_NPC,0,0
+f@prt,265,268,0	duplicate(Fire#1)	Fire#38	HIDDEN_NPC,0,0
+f@prt,256,261,0	duplicate(Fire#1)	Fire#39	HIDDEN_NPC,0,0
+f@prt,222,264,0	duplicate(Fire#1)	Fire#40	HIDDEN_NPC,0,0
+f@prt,146,370,0	duplicate(Fire#1)	Fire#41	HIDDEN_NPC,0,0
+f@prt,138,372,0	duplicate(Fire#1)	Fire#42	HIDDEN_NPC,0,0
+f@prt,134,370,0	duplicate(Fire#1)	Fire#43	HIDDEN_NPC,0,0
+f@prt,129,366,0	duplicate(Fire#1)	Fire#44	HIDDEN_NPC,0,0
+f@prt,118,371,0	duplicate(Fire#1)	Fire#45	HIDDEN_NPC,0,0
+f@prt,115,365,0	duplicate(Fire#1)	Fire#46	HIDDEN_NPC,0,0
+f@prt,116,355,0	duplicate(Fire#1)	Fire#47	HIDDEN_NPC,0,0
+f@prt,125,351,0	duplicate(Fire#1)	Fire#48	HIDDEN_NPC,0,0
+f@prt,133,348,0	duplicate(Fire#1)	Fire#49	HIDDEN_NPC,0,0
+f@prt,138,342,0	duplicate(Fire#1)	Fire#50	HIDDEN_NPC,0,0
+f@prt,128,330,0	duplicate(Fire#1)	Fire#51	HIDDEN_NPC,0,0
+f@prt,115,338,0	duplicate(Fire#1)	Fire#52	HIDDEN_NPC,0,0
+f@prt,106,332,0	duplicate(Fire#1)	Fire#53	HIDDEN_NPC,0,0
+f@prt,99,333,0	duplicate(Fire#1)	Fire#54	HIDDEN_NPC,0,0
+f@prt,101,345,0	duplicate(Fire#1)	Fire#55	HIDDEN_NPC,0,0
+f@prt,86,335,0	duplicate(Fire#1)	Fire#56	HIDDEN_NPC,0,0
+f@prt,87,319,0	duplicate(Fire#1)	Fire#57	HIDDEN_NPC,0,0
+f@prt,96,313,0	duplicate(Fire#1)	Fire#58	HIDDEN_NPC,0,0
+f@prt,106,314,0	duplicate(Fire#1)	Fire#59	HIDDEN_NPC,0,0
+f@prt,71,308,0	duplicate(Fire#1)	Fire#60	HIDDEN_NPC,0,0
+f@prt,56,308,0	duplicate(Fire#1)	Fire#61	HIDDEN_NPC,0,0
+f@prt,59,315,0	duplicate(Fire#1)	Fire#62	HIDDEN_NPC,0,0
+f@prt,54,320,0	duplicate(Fire#1)	Fire#63	HIDDEN_NPC,0,0
+f@prt,47,325,0	duplicate(Fire#1)	Fire#64	HIDDEN_NPC,0,0
+f@prt,61,353,0	duplicate(Fire#1)	Fire#65	HIDDEN_NPC,0,0
+f@prt,53,370,0	duplicate(Fire#1)	Fire#66	HIDDEN_NPC,0,0
+f@prt,46,374,0	duplicate(Fire#1)	Fire#67	HIDDEN_NPC,0,0
+f@prt,37,366,0	duplicate(Fire#1)	Fire#68	HIDDEN_NPC,0,0
+f@prt,56,258,0	duplicate(Fire#1)	Fire#69	HIDDEN_NPC,0,0
+f@prt,57,246,0	duplicate(Fire#1)	Fire#70	HIDDEN_NPC,0,0
+f@prt,123,242,0	duplicate(Fire#1)	Fire#71	HIDDEN_NPC,0,0
+f@prt,113,234,0	duplicate(Fire#1)	Fire#72	HIDDEN_NPC,0,0
+f@prt,107,243,0	duplicate(Fire#1)	Fire#73	HIDDEN_NPC,0,0
+f@prt,117,244,0	duplicate(Fire#1)	Fire#74	HIDDEN_NPC,0,0
+f@prt,115,250,0	duplicate(Fire#1)	Fire#75	HIDDEN_NPC,0,0
+f@prt,114,262,0	duplicate(Fire#1)	Fire#76	HIDDEN_NPC,0,0
+f@prt,170,208,0	duplicate(Fire#1)	Fire#77	HIDDEN_NPC,0,0
+f@prt,182,208,0	duplicate(Fire#1)	Fire#78	HIDDEN_NPC,0,0
+f@prt,219,204,0	duplicate(Fire#1)	Fire#79	HIDDEN_NPC,0,0
+f@prt,223,193,0	duplicate(Fire#1)	Fire#80	HIDDEN_NPC,0,0
+f@prt,240,206,0	duplicate(Fire#1)	Fire#81	HIDDEN_NPC,0,0
+f@prt,246,219,0	duplicate(Fire#1)	Fire#82	HIDDEN_NPC,0,0
+f@prt,250,221,0	duplicate(Fire#1)	Fire#83	HIDDEN_NPC,0,0
+f@prt,257,224,0	duplicate(Fire#1)	Fire#84	HIDDEN_NPC,0,0
+f@prt,264,231,0	duplicate(Fire#1)	Fire#85	HIDDEN_NPC,0,0
+f@prt,331,225,0	duplicate(Fire#1)	Fire#86	HIDDEN_NPC,0,0
+f@prt,316,197,0	duplicate(Fire#1)	Fire#87	HIDDEN_NPC,0,0
+f@prt,182,164,0	duplicate(Fire#1)	Fire#88	HIDDEN_NPC,0,0
+f@prt,188,164,0	duplicate(Fire#1)	Fire#89	HIDDEN_NPC,0,0
+f@prt,178,167,0	duplicate(Fire#1)	Fire#90	HIDDEN_NPC,0,0
+f@prt,174,133,0	duplicate(Fire#1)	Fire#91	HIDDEN_NPC,0,0
+f@prt,166,140,0	duplicate(Fire#1)	Fire#92	HIDDEN_NPC,0,0
+f@prt,155,157,0	duplicate(Fire#1)	Fire#93	HIDDEN_NPC,0,0
+f@prt,146,154,0	duplicate(Fire#1)	Fire#94	HIDDEN_NPC,0,0
+f@prt,152,133,0	duplicate(Fire#1)	Fire#95	HIDDEN_NPC,0,0
+f@prt,127,129,0	duplicate(Fire#1)	Fire#96	HIDDEN_NPC,0,0
+f@prt,119,120,0	duplicate(Fire#1)	Fire#97	HIDDEN_NPC,0,0
+f@prt,113,120,0	duplicate(Fire#1)	Fire#98	HIDDEN_NPC,0,0
+f@prt,134,73,0	duplicate(Fire#1)	Fire#99	HIDDEN_NPC,0,0
+f@prt,104,36,0	duplicate(Fire#1)	Fire#100	HIDDEN_NPC,0,0
+f@prt,93,44,0	duplicate(Fire#1)	Fire#101	HIDDEN_NPC,0,0
+f@prt,89,89,0	duplicate(Fire#1)	Fire#102	HIDDEN_NPC,0,0
+//Mapflags
+f@prt	mapflag	nowarp
+f@prt	mapflag	nowarpto
+f@prt	mapflag	noteleport
+f@prt	mapflag	nosave	SavePoint
+f@prt	mapflag	nomemo
+f@prt	mapflag	nobranch
+f@prt	mapflag	noicewall
+f@prt	mapflag	monster_noteleport
+f@prt	mapflag	partylock
+f@prt	mapflag	noicewall

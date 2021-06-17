@@ -1,0 +1,382 @@
+//	~~~~~ show time left in days, hours, minutes and seconds ~~~~~
+function	script	timeleft__	{
+	if ( ( .@left = getarg(0) ) <= 0 ) return getarg(0);
+	set .@day, .@left / 86400;
+	set .@hour, .@left % 86400 / 3600;
+	set .@min, .@left % 3600 / 60;
+	set .@SEC, .@left % 60;
+	if ( .@day )
+		return .@day +" day "+ .@hour +" hour";
+	else if ( .@hour )
+		return .@hour +" hour "+ .@min +" min";
+	else if ( .@min )
+		return .@min +" min "+ .@SEC +" sec";
+	else
+		return .@SEC +" sec";
+}
+
+
+prontera,152,178,3	script	Master Ryok	997,{
+	mes "[^000080 Master Ryok ^000000]";
+	mes "- Each difficulty has 10 levels",
+		"- Each difficulty has a certain time to finish the Instance Dungeon.",
+		"- For [^00FF00Easy^000000] mode: 30 minutes",
+		"- For [^ffa500Normal^000000] mode: 45 minutes",
+		"- For [^ff0000Hardcore^000000] mode: 60 minutes",
+		"- For [^800080Nightmare^000000] mode: 90 minutes";
+	next;
+	// can re-enter if already generated
+	if( getcharid(1) && instance_mapname(.map_inst$) != "" ) {
+		if ( select( "Enter", "Cancel" ) -1 ) {
+			mes "See ya.";
+			close;
+		}
+/*
+		if  has_instance( .map_inst$ ) == "" ) {
+			mes "Your group is already registered at an other instance.";
+			close;
+		}
+*/
+/*		if ( @Registered ) {
+		mes "You group is already registered for this instance.";
+		close;
+}*/
+		getpartymember getcharid(1), 1;
+		if ( $@partymembercount > .max_players ) {
+			mes "Maximum of "+ .max_players +" members in the party in order to participate in Mystery Dungeon.";
+			close;
+		}
+		// check job if a player is invited
+		if( .same_job ) {
+			.@self = getcharid(3);
+			for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+				if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+					attachrid( $@partymemberaid[ .@i ] );
+					.@job_name$ = .@job_name$ + jobname(Class) +"|";
+				}
+			}
+			attachrid( .@self );
+			if( countstr( .@job_name$, jobname(Class) ) > 1 ) {
+				mes "Sorry there is 2 of the same job in the party, you can't enter Mystery Dungeon.";
+				close;
+			}
+		}
+		// check delay if a player is invited
+		for( .@i = 0; .@i < getarraysize( getd( ".char_id"+ getcharid(1) ) ); .@i++ )
+			if( getd( ".char_id"+ getcharid(1) +"["+ .@i +"]" ) == getcharid(0) ) {
+				.@pass = 1;
+				break;
+			}
+		if( !.@pass ) {
+			if( gettimetick(2) < Delay_instance ) {
+				mes "Sorry you must wait "+ callfunc( "timeleft__", Delay_instance - gettimetick(2) ) +" before entering the Mystery Dungeon again.";
+				close;
+			}
+			.@size = getarraysize( getd( ".char_id"+ getcharid(1) ) );
+			setd( ".char_id"+ getcharid(1) +"[ "+ .@size +" ]", getcharid(0) );
+			Delay_instance = gettimetick(2) + 3600 * 3;
+		}
+//		instance_announce has_instance2(.map_inst$), strcharinfo(0)+" of the party "+ getpartyname( getcharid(1) ) +" is entering in the instance.",bc_map;
+		announce strcharinfo(0)+" of the party "+ getpartyname( getcharid(1) ) +" is entering in the instance.",bc_party;
+		instance_enter(.name_inst$); 
+		end; 
+	}
+	if ( select ( "- [^00FF00Easy^000000] mode", "- [^ffa500Normal^000000] mode", "- [^ff0000Hardcore^000000] mode", "- [^800080Nightmare^000000] mode", "Leave" ) == 5 ) {// using @menu for instancing
+		mes "[^000080 Master Ryok ^000000]";
+		mes "Alrighty then! Come again!";
+		close;
+	}
+	else if( !getcharid(1) ) {
+		mes "[^000080 Master Ryok ^000000]";
+		mes "You need to be in party ( Maximum of "+ .max_players +" members to participate. ).";
+		close;
+	}
+	// check delay of players in the party
+	getpartymember getcharid(1), 1;
+	getpartymember getcharid(1), 2;
+	.@self = getcharid(3);
+	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+			attachrid( $@partymemberaid[ .@i ] );
+			if( gettimetick(2) < Delay_instance ) {
+				set .@name$, strcharinfo(0);
+				set .@time, Delay_instance - gettimetick(2);
+				attachrid( .@self );
+				mes "[^000080 Master Ryok ^000000]";
+				mes "Sorry "+ .@name$ +" you must wait "+ callfunc( "timeleft__", .@time ) +" before entering the ^551a8bMastery Dungeon^000000 again.";
+				close;
+			}
+			else if( compare( .@job_name$, jobname(Class) ) && .same_job ) {
+				set .@name$, strcharinfo(0);
+				set .@job$, jobname(Class);
+				attachrid( .@self );
+				mes "sorry, "+ .@name$ +" is "+ .@job$ +" and there is already a "+ .@job$ +" in the party";
+				close;
+			}
+			.@job_name$ = .@job_name$ + jobname(Class) +"|";
+		}
+	}
+	attachrid( .@self );
+	if ( $@partymembercount > .max_players ) {
+		mes "Maximum of "+ .max_players +" members in the party";
+		close;
+	}
+	else if( getpartyleader( getcharid(1),2 ) != getcharid(0) ) {
+		mes "I will only talk to your leader.";
+		close;
+	}
+	mes "If the instance is successfully generated all your party members will be warped inside. Get ready";
+	next;
+
+//	.@inst_id = instance_create(.name_inst$, getcharid(1));
+	set .@inst_id, instance_create(.name_inst$);
+//	set .@inst_id, instance_create(.name_inst$), getcharid(1);  
+	if( .@inst_id < 0 ){
+		mes "Failed. Contact a GM.";
+		instance_destroy(.@inst_id );
+		close;
+	}
+//	instance_set_timeout .timelimit[ @menu ], .timeidle, .@inst_id;
+//	instance_init .@inst_id;
+//	instance_attach .@inst_id;
+	set 'diff$, .diff$[ @menu ];
+	set 'party_id, getcharid(1);
+	set 'time_inst, gettimetick(2) + .timelimit[ @menu ];
+	set 'inst_id, .@inst_id;
+	set 'max_players, .max_players;
+	donpcevent instance_npcname( "Inst_cust" ) +"::Oninstancing";
+	sleep2 50;
+	getpartymember getcharid(1), 1;
+	getpartymember getcharid(1), 2;
+	.@self = getcharid(3);
+	if( .same_job ) {
+		.@job_name$ = "";
+		for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+			if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+				attachrid( $@partymemberaid[ .@i ] );
+				.@job_name$ = .@job_name$ + jobname(Class) +"|";
+			}
+		}
+	}
+	// dispbottom .@job_name$;
+	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+			attachrid( $@partymemberaid[ .@i ] );
+			if( gettimetick(2) >= Delay_instance && countstr( .@job_name$, jobname(Class) ) <= 1 ) {
+				Delay_instance = gettimetick(2) + 3600 * 3;
+				set .@size, getarraysize( getd( ".char_id"+ getcharid(1) ) );
+				setd( ".char_id"+ getcharid(1) +"[ "+ .@size +" ]", getcharid(0) );
+//				warp has_instance( .map_inst$ ),50,50;
+//				warp ( .map_inst$ ),50,50;
+				instance_enter(.name_inst$);
+			}
+		}
+	}
+	// warpparty has_instance( .map_inst$ ),50,50, getcharid(1);
+	close;
+OnInit:
+	set .same_job, 1;				// DON'T allow 2 same job to enter in the instance
+	set .map_inst$, "1@mor";		// instance map's name
+	set .name_inst$, "Mastery Dungeon";	// instance name display
+	set .timeidle, 300;			// time (sec) to re-enter in the instance when all players outside
+	set .max_players, 2;			// max players in the party
+
+// time limit (sec) of the instance per level - Normal, Hard, Hardcore, Nightmare
+	setarray .timelimit[ 1 ], 1800, 2700, 3600, 4500;
+
+// Difficulty's names - Don't touch
+	setarray .diff$[ 1 ], "Easy", "Normal", "Hardcore", "Nightmare";
+	end;
+}
+
+jupe_ele,0,0,0	script	Inst_cust	-1,{
+function Countpartyonline;
+function Reward;
+
+OnInit:
+	set .npc_enter$, "Master Ryok"; // name of the NPC to enter in the instance
+// Number ( monsters / round / difficulty ) initialized
+	setarray .mob_init_Easy[ 1 ], 1, 2, 3, 4, 5, 6, 7, 8, 9, 10;
+	setarray .mob_init_Normal[ 1 ], 2, 3, 4, 5, 6, 7, 8, 9, 10, 12;
+	setarray .mob_init_Hardcore[ 1 ], 3, 4, 5, 6, 7, 8, 9, 10, 11, 13;
+	setarray .mob_init_Nightmare[ 1 ], 5, 6, 7, 8, 9, 10, 12, 14, 16, 20;
+
+// Hero ( points / round / difficulty ) - using #hero_points variable
+	setarray .hero_points_Easy[ 1 ], 100,110,120,130,140,150,160,170,180,200;
+	setarray .hero_points_Normal[ 1 ], 120,140,160,180,200,220,240,260,280,300;
+	setarray .hero_points_Hardcore[ 1 ], 150,180,210,240,270,300,330,360,390,420;
+	setarray .hero_points_Nightmare[ 1 ], 200,250,300,350,400,450,500,550,600,700;
+
+// Time (min) / round / difficulty
+	setarray .time_Easy[ 1 ], 1,2,3,4,5,6,7,8,9,10;
+	setarray .time_Normal[ 1 ], 2,4,6,8,10,12,14,16,18,20;
+	setarray .time_Hardcore[ 1 ], 3,6,9,12,15,18,21,24,27,30;
+	setarray .time_Nightmare[ 1 ], 4,8,12,16,20,24,28,32,36,40;
+
+// Mob ID / round
+// Level : Normal
+	setarray .mob_ID_Easy_round1[ 0 ], 1002,1005,1004;// poring, hornet, familiar
+	setarray .mob_ID_Easy_round2[ 0 ], 1002,1005;
+	setarray .mob_ID_Easy_round3[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Easy_round4[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Easy_round5[ 0 ], 1002,1005,1004,1005;
+	setarray .mob_ID_Easy_round6[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Easy_round7[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Easy_round8[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Easy_round9[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Easy_round10[ 0 ], 1002,1005,1004;
+// Level : Hard
+	setarray .mob_ID_Normal_round1[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round2[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round3[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round4[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round5[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round6[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round7[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round8[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round9[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Normal_round10[ 0 ], 1002,1005,1004;
+// Level : Hardcore
+	setarray .mob_ID_Hardcore_round1[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round2[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round3[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round4[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round5[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round6[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round7[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round8[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round9[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Hardcore_round10[ 0 ], 1002,1005,1004;
+// Level : Nightmare
+	setarray .mob_ID_Nightmare_round1[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round2[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round3[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round4[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round5[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round6[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round7[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round8[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round9[ 0 ], 1002,1005,1004;
+	setarray .mob_ID_Nightmare_round10[ 0 ], 1002,1005,1004;
+	set .round_max, 10; // round max
+	end;
+
+// Instance start
+// --------------
+Oninstancing:
+	sleep 10000;
+// New round
+// ---------
+LStart:
+sleep 3000;
+	'round++;
+//	instance_announce 'inst_id, 'round + ( 'round % 10 == 1 ? "st" : ( 'round % 10 == 2 ? "nd" : ( 'round % 10 == 3 ? "rd" : "th" ) ) ) +" round in :", bc_map;
+	instance_announce 'inst_id, "[Mastery Dungeon: "+'diff$+"] " +'round + ( 'round % 10 == 1 ? "st" : ( 'round % 10 == 2 ? "nd" : ( 'round % 10 == 3 ? "rd" : "th" ) ) ) +" round in :", bc_map;
+	for( .@i = 5; .@i > 0; .@i-- ) {
+		instance_announce 'inst_id, .@i +"" ,bc_map;
+		sleep 1000;
+	}
+	donpcevent instance_npcname( "Inst_cust" ) +"::OnTimevent";// initialize time limit for the round
+	callsub OnRound;
+
+// Monster is dead : check player on map + reward if 0 mob
+// -------------------------------------------------------
+OnMobDead:
+	if( instance_check_party( 'party_id,'max_players +1 ) ) {// check if there are more than 4 players in the party instance
+		instance_announce 'inst_id, "To much players. End of instance.", bc_map;
+		set 'round, .round_max + 1;
+		callsub L_pr;
+	}
+	set 'count, mobcount( strnpcinfo(4), instance_npcname( "Inst_cust", 'inst_id ) +"::OnMobDead" );
+	instance_announce 'inst_id, "[Mastery Dungeon: "+'diff$+"] Only "+ 'count +" Monsters are left for the current round! Keep going!" ,bc_map;
+	if( !'count ) {
+		instance_announce 'inst_id, "[Mastery Dungeon: "+'diff$+"] All monsters on the "+ 'round + ( 'round % 10 == 1 ? "st" : ( 'round % 10 == 2 ? "nd" : ( 'round % 10 == 3 ? "rd" : "th" ) ) ) +" level have been defeated.", bc_map;
+		Reward();// hero points / round / difficulty
+		if( 'round == .round_max ) {
+			'round = .round_max + 1;
+			callsub L_end;
+		}
+		callsub LStart;
+	}
+	end;
+
+// Random (spawn / round / difficulty)
+// -----------------------------------
+OnRound:
+	set .@spawn, 'count = Countpartyonline() + getd( ".mob_init_"+ 'diff$ +"[ "+ 'round +" ]" );// spawn count = ( monster initialized / round / difficulty ) + number players online in party
+	instance_announce 'inst_id, "[Mastery Dungeon: "+'diff$+"] You have "+ getd( ".time_"+ 'diff$ +"[ "+ 'round +" ]" ) +" minutes to finish this round in "+ 'diff$ +" mode. "+ .@spawn +" mobs have been spawned! Good luck!",bc_map;
+	while( .@spawn ) {// spawned ( monster / round / difficulty ) randomly 
+		set .@Rand, rand( 1,.@spawn );// number mobs
+		set .@spawn, .@spawn - .@Rand;
+		set .@i, rand( getarraysize( getd( ".mob_ID_"+ 'diff$ +"_round"+ 'round ) ) );// ID mob
+		monster strnpcinfo(4),110,105,"--ja--", getd( ".mob_ID_"+ 'diff$ +"_round"+ 'round +"[ "+ .@i +" ]" ), .@Rand, instance_npcname( strnpcinfo(0),'inst_id )+"::OnMobDead";
+	}
+	end;
+
+// End of instance
+// ---------------
+L_end:
+	instance_announce 'inst_id, "[Mastery Dungeon: "+'diff$+"] Congratulations, you have finished the Mastery Dungeon in "+ callfunc( "timeleft__", gettimetick(2) - 'ins_start ),bc_map;
+OnTimevent:// time limit / round / difficulty
+	awake instance_npcname( "Inst_cust" );
+	if( 'round <= .round_max ) {
+		sleep 1;
+		set 'tmp, 'round;
+		sleep 1000 * 60 * getd( ".time_"+ 'diff$ +"[ "+ 'round +" ]" );
+		if( 'round != 'tmp ) end;
+		instance_announce 'inst_id, "[Mastery Dungeon: "+'diff$+"] You took too much time to complete the round! Better luck next time!", bc_map;
+	}
+L_pr:
+	instance_warpall "prontera", 152,178, 'inst_id;
+	set .party_id, 'party_id;
+	killmonsterall strnpcinfo(4);
+	sleep 500;
+	instance_destroy 'inst_id;
+	end;
+
+
+// Functions
+// ---------
+function Countpartyonline {
+	getpartymember 'party_id, 1;
+	getpartymember 'party_id, 2;
+	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
+		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) && getarg( 0,1 ) ) .@j++;
+		// else if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) && !getarg( 0,1 ) ) {
+			// attachrid( $@partymemberaid[ .@i ] );
+			// Delay_instance = gettimetick(2) + 3600 * 3;
+		// }
+	}
+	return .@j;
+}
+
+function Reward {
+	getpartymember 'party_id, 1;
+	getpartymember 'party_id, 2;
+	set .@tmp$, strcharinfo(3);
+	for( .@i = 0; .@i < $@partymembercount; .@i++ )
+		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
+			attachrid( $@partymemberaid[ .@i ] );
+			if( strcharinfo(3) == .@tmp$ ) {
+				set #CASHPOINTS, #CASHPOINTS + getd( ".hero_points_"+ 'diff$ +"[ "+ 'round +" ]" );
+				dispbottom "Gained : "+ getd( ".hero_points_"+ 'diff$ +"[ "+ 'round +" ]" ) +" Cash Points total : "+ #CASHPOINTS;
+			}
+		}
+	return;
+}
+
+// function Delayparty {
+	// Countpartyonline( 0 );
+	// return;
+// }
+
+}
+
+jupe_ele	mapflag	nowarp
+jupe_ele	mapflag	partylock
+jupe_ele	mapflag	nowarpto
+jupe_ele	mapflag	noteleport
+jupe_ele	mapflag	nosave	SavePoint
+jupe_ele	mapflag	nomemo
+jupe_ele	mapflag	nobranch
+jupe_ele	mapflag	monster_noteleport
