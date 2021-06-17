@@ -12,4 +12,6 @@ Discord: Aeromesi#0293
 All scripts are made for the Hercules & rAthena emulator software
 
 # Recent updates:
-Updated and simplified installation of custom instances for the Hercules emulator.
+1) Updated and simplified installation of custom instances for the Hercules emulator.
+2) .mcache files are provided for re/pre-re
+3) Fixed ArrayShuffle function (Now Ice Titans attack El Dicastes should be working as well as Fiery Fairy Forest)
