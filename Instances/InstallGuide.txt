@@ -18,10 +18,7 @@
 5) Upload AeroPatch1.thor to your webhost, apply new patch into your "patchlist.txt".
 
 //Server Side Installation
-1) For simple installation of all .txt (NPC/Instance related files) just do the following:
-1.a) Open "npc/custom/" from your emulator.
-1.b) For all the Custom Scripts, just add folders: "customnpc", "PartyBoard", "broadcaster", to "npc/custom/" folder.
-1.c) For all the Custom Instances, just make folder in "custom" called "custom_instances" and drag all the instance files into the "npc/custom/custom_instances" folder.
+1. All contents in the folder "CopyPaste" you would copy and paste contents into your base Ragnarok server folder.
 
 2) Install .mcache files to your maps/re(pre-re) folders
 
