@@ -13,7 +13,7 @@ OnNPCKillEvent:
 			if (rand(100) > $DropRate[.@i]) {
 				if ( .EnableItem ) {
 					if ( $RewardAmount[.@i] == 0 ) {
-						debugmes "[Warning] Did not recieve Item reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Item is currently 0!";  
+						mes "[Warning] Did not recieve Item reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Item is currently 0!";  
 						.@errorcode1 = 1;
 					}
 					if ( !.@errorcode1 ) {
@@ -23,7 +23,7 @@ OnNPCKillEvent:
 				}
 				if ( .EnableZeny ) {
 					if ( $ZenyAmount[.@i] == 0 ) {
-						debugmes "[Warning] Did not recieve Zeny reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Zeny is currently 0!";
+						mes "[Warning] Did not recieve Zeny reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Zeny is currently 0!";
 						.@errorcode2 = 1; 
 					}
 					if ( !.@errorcode2 ) {
@@ -33,7 +33,7 @@ OnNPCKillEvent:
 				}
 				if ( .EnableCash ) {
 					if ( $CashAmount[.@i] == 0 ) {
-						debugmes "[Warning] Did not recieve Cash reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Cash is currently 0!";
+						mes "[Warning] Did not recieve Cash reward! Data entry for "+strmobinfo( 1, $MonsterID[.@i])+"s Cash is currently 0!";
 						.@errorcode3 = 1;
 					}
 					if ( !.@errorcode3 ) {
@@ -65,7 +65,7 @@ GMMenu:
 	mes "Select Monster to edit data:";
 	for ( .@i = 1; .@i <= .SelectedMob; .@i++ ) {
 		setarray $MonsterName$[.@i],""+strmobinfo (1,$MonsterID[.@i]);
-		debugmes ""+$MonsterName$[.@i]+" loaded.";
+		mes ""+$MonsterName$[.@i]+" loaded.";
 	}
 
 	.@choice = select(implode( $MonsterName$ ,":")) - 1;
@@ -207,10 +207,9 @@ OnInit:
 
 	// View monster information
 	OnAtViewDrops:
-		dispbottom "Please view Map-Server console to view Extra Drops information.";
 		for ( .@i = 1; .@i <= 4; .@i++ )
 		{
-			debugmes ""+ strmobinfo( 1,$MonsterID[.@i] )+" - Zeny: "+$ZenyAmount[.@i]+" || Item: "+getitemname($ItemRewards[.@i])+" x ("+$RewardAmount[.@i]+") || Cash: ("+$CashAmount[.@i]+") Drop Rates: "+$DropRate[.@i]+"% chance.";
+			mes ""+ strmobinfo( 1,$MonsterID[.@i] )+" - Zeny: "+$ZenyAmount[.@i]+" || Item: "+getitemname($ItemRewards[.@i])+" x ("+$RewardAmount[.@i]+") || Cash: ("+$CashAmount[.@i]+") Drop Rates: "+$DropRate[.@i]+"% chance.";
 		}
 		end;
 }
