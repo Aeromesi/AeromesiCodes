@@ -10,6 +10,7 @@ d@eld.rsw#prt_fild08.rsw#
 // Background story: The Ice Titans have invaded Dicastes and put the Citizens into an eternal slumber, you must finish off all the Ice Titans as well as save all the citizens. If you die you LOSE!
 // Control the amount of MOBS you want by simply editing the variables below the `OnInstanceInit:`!
 // Citizens are loaded in Randomized spots, so will never be the same, edit rewards in the `OnInit:` label.
+// Thank you Garr ^^
 
 dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 	mes	.md_namenpc$ = "[ ^0000FF Jack Frost ^000000 ]";
@@ -89,7 +90,7 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 		instance_attach .@instance;
 		
 			announce strcharinfo(0)+" is attempting Ice Titans! Wish them luck!",bc_all;
-			warp instance_mapname("d@eld",.@instance),155,190;
+			warp instance_mapname("d@eld",.@instance),197,189;
 			'PlayType = 0;
 		end;
 
@@ -148,7 +149,7 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 		instance_attach .@instance;
 		'PlayType = 1;
 		announce "The party "+ getpartyname( getcharid(1) ) +" is attempting the "+.md_namenpc$+" Dungeon! Wish them luck!",bc_all;
-		warpparty instance_mapname( "d@eld",.@instance ),155,190,getcharid(1);
+		warpparty instance_mapname( "d@eld",.@instance ),197,189,getcharid(1);
 		end;
 
 		case 3:
@@ -203,7 +204,7 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 
 	OnInit:
 	$@ilabel$ = "[Ice Titans]";
-	.delay_time = 0; // 2 = 2 hours, 3 = 3 hours, etc..
+	.delay_time = 0; // 2 = 2 hours, 3 = 3 hours, etc.. set to 0 to disable
 	$@BeatenIceMax = 5; // Max ranking for Beaten Most
 	$@FastestIceMax = 5; // Max ranking for Fastest Raider
 	$@IRewMin = 1; // Min Solo "Coin" reward 
@@ -268,7 +269,7 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	'1st_MobAML6 = 1;
 	'MOBAML6TOT = '1st_MobAML6;
 	'Ins_MobCount = 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT+'MOBAML6TOT;
-	'Iced_HTotal = 23; // Total humans
+	'Iced_HTotal = 102; // Total humans
 	'Ins_Count =  0;
 	'Ins_Start = 0;
 	'Iced_H = 0;
@@ -294,8 +295,8 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	sleep2 10000;
 	instance_announce -1,"Jack Frost: Good luck!",bc_map;
 //	sleep2 10000;
-	callfunc("ArrayShuffle",4);
-	for (.@i = 0; .@i < 1; .@i++) {
+	callfunc("ArrayShuffle",101);
+	for (.@i = 0; .@i < 17; .@i++) {
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 		donpcevent instance_npcname("IceEffect#"+callfunc("ArrayShuffle"))+"::OnEnable";
 		donpcevent instance_npcname("IceEffect#"+callfunc("ArrayShuffle"))+"::OnEnable";
@@ -309,8 +310,8 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	end;
 
 	OnEventI2:
-	callfunc("ArrayShuffle",4);
-	for (.@i = 0; .@i < 1; .@i++)
+	callfunc("ArrayShuffle",101);
+	for (.@i = 0; .@i < 17; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 2nd Wave begins. Be on the lookout!",bc_map;
 	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'1st_MobAML2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
@@ -321,8 +322,8 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	end;
 
 	OnEventI3:
-	callfunc("ArrayShuffle",4);
-	for (.@i = 0; .@i < 1; .@i++)
+	callfunc("ArrayShuffle",101);
+	for (.@i = 0; .@i < 17; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 3rd Wave begins. The Ice Titans won't stop! Keep going!",bc_map;
 	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'1st_MobAML3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
@@ -334,8 +335,8 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	end;
 
 	OnEventI4:
-	callfunc("ArrayShuffle",4);
-	for (.@i = 0; .@i < 1; .@i++)
+	callfunc("ArrayShuffle",101);
+	for (.@i = 0; .@i < 17; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 4th Wave begins. Don't allow them to kill off all the Citizens inhabiting El Dicastes!",bc_map;
 	sleep 2000;
@@ -348,8 +349,8 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	end;
 
 	OnEventI5:
-	callfunc("ArrayShuffle",4);
-	for (.@i = 0; .@i < 1; .@i++)
+	callfunc("ArrayShuffle",101);
+	for (.@i = 0; .@i < 34; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 5th Wave begins. You're nearing Victory! Protect the Dicastes Citizens from the Ice Titan Kings most Loyal Mini Titans!",bc_map;
 	sleep 2000;
@@ -464,23 +465,23 @@ d@eld,1,2,1	script	Count#I_Ins	HIDDEN_NPC,{
 	end;
 
 	OnCountKill:
-	if ( 'Ins_Count == 'MOBAML1TOT && 'Iced_H == 1 ) {
+	if ( 'Ins_Count == 'MOBAML1TOT && 'Iced_H == 17 ) {
 		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI2";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT && 'Iced_H == 2 ){
+	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT && 'Iced_H == 34 ){
 		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI3";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT && 'Iced_H == 3 ) {
+	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT && 'Iced_H == 51 ) {
 		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI4";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT && 'Iced_H == 4 ) {
+	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT && 'Iced_H == 68 ) {
 		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI5";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT && 'Iced_H == 5 ) {
+	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT && 'Iced_H == 102 ) {
 		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI6";
 		end;
 	}
