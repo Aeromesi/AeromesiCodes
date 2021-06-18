@@ -1,5 +1,5 @@
 //	~~~~~ show time left in days, hours, minutes and seconds ~~~~~
-function	script	timeleft__	{
+/*function	script	timeleft__	{
 	if ( ( .@left = getarg(0) ) <= 0 ) return getarg(0);
 	set .@day, .@left / 86400;
 	set .@hour, .@left % 86400 / 3600;
@@ -13,16 +13,16 @@ function	script	timeleft__	{
 		return .@min +" min "+ .@SEC +" sec";
 	else
 		return .@SEC +" sec";
-}
+}*/
 
 prontera,152,178,3	script	Master Ryok	4_M_MOCASS1,{
 	mes "[^000080 Master Ryok ^000000]";
-	mes "- Each difficulty has 10 levels",
-		"- Each difficulty has a certain time to finish the Instance Dungeon.",
-		"- For [^00FF00Easy^000000] mode: 30 minutes",
-		"- For [^ffa500Normal^000000] mode: 45 minutes",
-		"- For [^ff0000Hardcore^000000] mode: 60 minutes",
-		"- For [^800080Nightmare^000000] mode: 90 minutes";
+	mes "- Each difficulty has 10 levels";
+	mes	"- Each difficulty has a certain time to finish the Instance Dungeon.";
+	mes	"- For [^00FF00Easy^000000] mode: 30 minutes";
+	mes	"- For [^ffa500Normal^000000] mode: 45 minutes";
+	mes	"- For [^ff0000Hardcore^000000] mode: 60 minutes";
+	mes	"- For [^800080Nightmare^000000] mode: 90 minutes";
 	next;
 	// can re-enter if already generated
 		if (has_instance("1@mor") != "" ) {
@@ -200,7 +200,7 @@ OnInit:
 	end;
 }
 
-1@mor,0,0,0	script	Inst_cust#Ins	-1,{
+1@mor,0,0,0	script	Inst_cust#Ins	HIDDEN_NPC,{
 function Countpartyonline;
 function Reward;
 
@@ -375,13 +375,6 @@ function Reward {
 			}
 		}
 	return;
-}
-
-// function Delayparty {
-	// Countpartyonline( 0 );
-	// return;
-// }
-
 }
 
 1@mor	mapflag	nowarp
