@@ -1,11 +1,3 @@
-prontera,152,149,4	script	WhoIsThis	89,{
-
-mes "Hello there "+strcharinfo(0)+".";
-mes "My name is "+strnpcinfo(0)+".";
-close;
-}
-
-
 /*Fiery Fairy Forest
 f@prt.gnd#prt_fild08.gnd#
 f@prt.gat#prt_fild08.gat#
