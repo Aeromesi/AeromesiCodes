@@ -190,7 +190,7 @@ OnInit:
 	.same_job = 1;				// DON'T allow 2 same job to enter in the instance;
 	.name_inst$ = "Mastery Dungeon";	// instance name display
 	.timeidle = 300;			// time (sec) to re-enter in the instance when all players outside
-	.max_players = 1;			// max players in the party
+	.max_players = 2;			// max players in the party
 
 // time limit (sec) of the instance per level - Normal, Hard, Hardcore, Nightmare
 	setarray .timelimit[ 1 ], 1800, 2700, 3600, 4500;
@@ -200,7 +200,7 @@ OnInit:
 	end;
 }
 
-1@mor,0,0,0	script	Inst_cust#Ins	HIDDEN_NPC,{
+1@mor,0,0,0	script	Inst_cust#Ins	-1,{
 function Countpartyonline;
 function Reward;
 
@@ -375,6 +375,13 @@ function Reward {
 			}
 		}
 	return;
+}
+
+// function Delayparty {
+	// Countpartyonline( 0 );
+	// return;
+// }
+
 }
 
 1@mor	mapflag	nowarp
