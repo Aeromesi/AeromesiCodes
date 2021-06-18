@@ -12,3 +12,5 @@ r_road 1260//Trivia (Will be Trivia 5)
 4@trivia 1261//Trivia
 6@trivia 1262//Trivia (Will be Trivia 5)
 1@mor 1263//Mastery Dungeon
+haunt_e 1264
+haunt_h 1265
