@@ -301,10 +301,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 1 ID's ========
 	setarray 'WaveId1[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 1 AM's
 	//=====================
@@ -320,10 +320,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 2 ID's 
 	setarray 'WaveId2[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 2 AM's
 	//=====================
@@ -339,10 +339,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 3 ID's 
 	setarray 'WaveId3[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 3 AM's
 	//=====================
@@ -358,10 +358,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 4 ID's 
 	setarray 'WaveId4[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 4 AM's
 	//=====================
@@ -376,10 +376,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 5 ID's 
 	setarray 'WaveId5[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 5 AM's
 	//=====================
@@ -395,10 +395,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 6 ID's 
 	setarray 'WaveId6[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 6 AM's
 	//=====================
@@ -414,10 +414,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 7 ID's 
 	setarray 'WaveId7[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 7 AM's
 	//=====================
@@ -433,10 +433,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 8 ID's 
 	setarray 'WaveId8[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 8 AM's
 	//=====================
@@ -452,10 +452,10 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 9 ID's 
 	setarray 'WaveId9[1]
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170)
-	,rand(1100,1170);
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110)
+	,rand(1100,1110);
 
 	//Wave 9 AM's
 	//=====================
@@ -471,9 +471,9 @@ prontera,152,159,4	script	Scientist#Ins	4_M_SCIENCE,{
 	//=====================
 	// Wave 10 ID's 
 	setarray 'WaveId10[1]
-	,1689
-	,2476
-	,1511
+	,1100
+	,1100
+	,1100
 	,1389; // Dracula
 
 	//Wave 10 AM's
