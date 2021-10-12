@@ -1,0 +1,188 @@
+// Pluck a Chicken
+// Automated Event
+// Created by Aeromesi
+// Version 1.0
+// Details:
+//= Winner gets double the amount of cash points based on how many they clicked/plucked.
+//= If any players are in the 11x11 square they will be moved somewhere safe to participate in the event.
+//= Player who wins, gets item, Zeny, and Double Cash Points based on how many clicks they did to win.
+//= Randomized each time, one time you could have to pluck the chicken 100 times, or 350 times, never know.
+//= Players who lose STILL WIN! When the event is disabled go to Pluckins (wherever you put him)
+//= and he will exchange your Plucks on the Chicken you got for the exact same amount of Cash Points.
+//= If the next hour goes and no one has completed the Pluckin' a Chicken event, it won't start again until it's finished.
+//= 1 hour timer, once you start your server, in 1 hour the event will begin, once completed, another hour and the event will start.
+//= When WoE FE:SE is in session ( agitcheck / agitcheck2 ) the event will not start, to prevent too much going on at once.
+// Emulator supported: Hercules | rAthena
+
+prontera,161,176,4	script	Chicken Gate#1	HIDDEN_NPC,0,0,{
+
+	end;
+
+	OnEnable:
+	initnpctimer;
+	end;
+
+	OnTimer500:
+	specialeffect 25;
+	initnpctimer;
+	end;
+}
+prontera,161,165,0	duplicate(Chicken Gate#1)	Chicken Gate#2	HIDDEN_NPC,0,0
+prontera,150,165,0	duplicate(Chicken Gate#1)	Chicken Gate#3	HIDDEN_NPC,0,0
+prontera,150,176,0	duplicate(Chicken Gate#1)	Chicken Gate#4	HIDDEN_NPC,0,0
+
+prontera,150,155,4	script	Pluckins	4_NFCOCK,{
+if ( !.whackActive && #plucksTotal >= 1 ) {
+		#OldCash = #CASHPOINTS;
+		#CASHPOINTS += #plucksTotal;
+		mes "[ Pluckins ]";
+		mes "You had "+#OldCash+" Cash Points, you have "+#CASHPOINTS+" now from converting your extra Pluckins from the Plucka' Chicken Event!";
+		mes "The only one who's a loser is me! Gosh I need my feathers back...";
+		#plucksTotal = 0;
+		close;
+	end;
+} else
+	end;
+//	OnInit:
+//	disablenpc strnpcinfo(0);
+//	end;
+}
+prontera,155,167,4	script	Mr.Pluckins	4_NFCOCK,{
+		if ( .plucksTotal2 <= 20 ) {
+		.speed = 1;
+}
+		if ( .plucksTotal2 == 25 ) {
+		.speed = 2;
+}
+		if ( .plucksTotal2 ==  30 ) {
+		.speed = 3;
+}
+		if ( .plucksTotal2 == 35 ) {
+		.speed = 4;
+}
+		if ( .plucksTotal2 == 40 ) {
+		.speed = 5;
+}
+		soundeffect "kweh.wav",0;
+		#plucksTotal++;
+		.plucksTotal2++;
+		specialeffect 154;
+
+	for ( .@i = #plucksTotal; .@i < .whacksTotal; .@i++ ) {
+	dispbottom "You have plucked the Chicken ("+#plucksTotal+"/"+.whacksTotal+") times!";
+	end;
+	}
+
+	if ( #plucksTotal >= .whacksTotal ) {
+	enablenpc "Pluckins";
+	announce ""+strcharinfo(0)+" has Plucked "+.whacksTotal+" Chickens! Congratulations!",bc_all;
+	//==============================================
+	//==============================================
+	//=============== [ Rewards ] ==================
+	getitem 501, 100;
+	Zeny += 10000;
+	#CASHPOINTS += #plucksTotal*2; // Winner gets double the amount of cash points based on how many they clicked/plucked.
+	#OldCash = #CASHPOINTS; // Don't edit unless you know what you're doing.
+	//==============================================
+	//==============================================
+	//==============================================
+	//==============================================
+	.whackActive = 0;
+	#plucksTotal = 0;
+	.plucksTotal2 = 0;
+	.speed = 0;
+	enablenpc "Mr.Pluckins";
+	.@fireLength = 4;
+		for ( .@i = 1; .@i <= .@fireLength; .@i++ ) {
+		disablenpc "Chicken Gate#"+.@i+"";
+}
+	disablenpc strnpcinfo(0);
+	setcell "prontera",161,176,161,175,cell_walkable,1;
+	setcell "prontera",150,176,161,165,cell_walkable,1;
+	initnpctimer;
+}
+end;
+
+OnInit:
+
+	setcell "prontera",161,176,161,175,cell_walkable,1;
+	setcell "prontera",150,176,161,165,cell_walkable,1;
+	disablenpc strnpcinfo(0);
+	.@fireLength = 4;
+		for ( .@i = 1; .@i <= .@fireLength; .@i++ ) {
+		disablenpc "Chicken Gate#"+.@i+"";
+}
+	initnpctimer;
+end;
+
+	OnTimer3600: // 1 hour
+	if (agitcheck() || agitcheck2()) { // Checks if WoE is active, delete this block to disable that feature.
+			stopnpctimer;
+			end;
+}
+		if ( !.whackActive )
+	{
+		disablenpc "Pluckins";
+		disablenpc "Mr.Pluckins";
+		areawarp "prontera",161,176,150,165,"prontera",150,150,152,152;
+		enablenpc strnpcinfo(0);
+		donpcevent strnpcinfo(0)+"::OnEnable";
+		.whacksTotal = rand(20); // Input how many they could possibly have to pluck/whack of the Chickens.
+		playbgmall "ukelelede","prontera";
+		setcell "prontera",161,176,161,175,cell_walkable,0;
+		setcell "prontera",150,176,161,165,cell_walkable,0;
+		.whackActive++;
+		.@fireLength = 4;
+
+		for ( .@i = 1; .@i <= .@fireLength; .@i++ ) {
+		enablenpc "Chicken Gate#"+.@i+"";
+		donpcevent "Chicken Gate#"+.@i+"""::OnEnable";
+		}
+
+	} else
+
+	if ( .whackActive ) {
+	end;
+	}
+end;
+
+OnEnable:
+	announce "[Pluckin' a Chicken] has begun!",bc_all;
+	initnpctimer;
+	end;
+
+OnTimer1000:
+		if ( !.speed  || .speed <= 1 ) {
+		.val1 = 3000;
+		.val2 = 8000;
+}
+
+		if ( .speed == 2) {
+		.val1 = 3000;
+		.val2 = 7000;
+}
+
+		if ( .speed == 3) {
+		.val1 = 3000;
+		.val2 = 6000;
+}
+
+		if ( .speed == 4) {
+		.val1 = 3000;
+		.val2 = 5000;
+}
+
+		if ( .speed == 5) {
+		.val1 = 2000;
+		.val2 = 4000;
+}
+
+	while ( true ) {
+		getmapxy .@map$, .@x, .@y, 1;
+		.@x2 =  rand(150,161);
+		.@y2 = rand(165,175);
+		movenpc ("Mr.Pluckins",.@x2, .@y2, cell_chknopass);
+		sleep rand(.val1,.val2);
+	}
+end;
+}

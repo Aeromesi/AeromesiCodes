@@ -37,10 +37,10 @@ ________________________________________________________
 prontera,156,138,4	script	Toeken Exchanger	2_COLAVEND,{
 	mes "[ Toeken Exchanger ]";
 	if ( !$@TokenType ) {
-	mes ("Current Token balance (char): "+TTTokens+"");
+	mes ("Current Token balance (char): "+#TTTokens+"");
 }
 	if ( $@TokenType ) {
-	mes ("Current Token balance (acc): "+#TTTokens+"");
+	mes ("Current Token balance (acc): "+TTTokens+"");
 }
 	mes ("You've won Tic Tac Toe: "+TTTRank+" times.");
 	mes ("Keep rising the ranks!");
