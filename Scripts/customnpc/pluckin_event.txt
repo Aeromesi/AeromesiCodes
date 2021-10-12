@@ -115,7 +115,7 @@ OnInit:
 	initnpctimer;
 end;
 
-	OnTimer3600: // 1 hour
+	OnTimer3600000: // 1 hour
 	if (agitcheck() || agitcheck2()) { // Checks if WoE is active, delete this block to disable that feature.
 			stopnpctimer;
 			end;
