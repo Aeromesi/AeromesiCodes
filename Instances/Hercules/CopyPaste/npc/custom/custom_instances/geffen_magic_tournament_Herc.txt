@@ -13,7 +13,7 @@
 //= 1.0 First version.
 //=	DIFFERENCES:
 //= The difference in this script is
-//= No quest progression (only because quest DB created yet)
+//= No quest progression (only because quest DB isn't created yet)
 //= Instantly hop in the instance by talking to dimensional device
 //============================================================ 
 
