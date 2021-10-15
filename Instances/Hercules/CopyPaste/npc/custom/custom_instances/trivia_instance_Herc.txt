@@ -4,7 +4,6 @@
 	Built for: Hercules (rAthena version exists but not for free)
 */
 prontera,144,172,4	script	Trivia Totem	2_MONEMUS,{
-//	instance_destroy(.@instance);
 	.@md_namenpc$ = "[ ^ff0000 Trivia Totem^000000 ]";
 	if( has_instance("2@trivia") != "" ) {
 	dispbottom "Proceed to the Dimensional Gate in the middle to move onto the Trivia you're currently attempting.";
@@ -39,7 +38,6 @@ prontera,144,172,4	script	Trivia Totem	2_MONEMUS,{
 			close;
 		}
 		if( instance_attachmap("2@trivia",.@instance) == "" ) {
-//		if ( instance_attachmap( "2@trivia", .@instance, 1, ( getcharid(3) - 2000000 )+"FYC" ) == "" ) {
 			mes "error : 5";
 			instance_destroy .@instance;
 			close;
@@ -68,7 +66,7 @@ prontera,144,172,4	script	Trivia Totem	2_MONEMUS,{
 		end;
 	}
 	
-		instance_set_timeout 3600, 120, .@instance; // 1 hour to finish, 120 seconds (2 minutes) to re-enter until it is destroyed.
+		instance_set_timeout 36000, 120, .@instance; // 1 hour to finish, 120 seconds (2 minutes) to re-enter until it is destroyed.
 		instance_init .@instance;
 		instance_attach .@instance;
 		'cid = getcharid(0);
