@@ -5,7 +5,10 @@ d@eld.rsw#prt_fild08.rsw#
 유저인터페이스\map\d@eld.bmp#유저인터페이스\map\prt_fild08.bmp# */
 // Dicastes Ice Titans
 // Created by: Aeromesi
-// Version 1.1
+// Version 1.2
+// What's new? Renamed variables to look neat, rename some event labels also.
+// Fixed a couple issues & bugs
+// Map server loaded with no errors, on Hercules 10/15/2021 emulator.
 // My PREMIUM (PAID) Version supports Party-Mode as well as Solo-Mode with a Ranking system for Solo players on who beat the Ice Titans Instance the fastest and who beat it most times. Plus a few untold different ideas.
 // Background story: The Ice Titans have invaded Dicastes and put the Citizens into an eternal slumber, you must finish off all the Ice Titans as well as save all the citizens. If you die you LOSE!
 // Control the amount of MOBS you want by simply editing the variables below the `OnInstanceInit:`!
@@ -13,14 +16,14 @@ d@eld.rsw#prt_fild08.rsw#
 // Thank you Garr ^^
 
 dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
-	mes	.md_namenpc$ = "[ ^0000FF Jack Frost ^000000 ]";
+	mes	.@md_namenpc$ = "[ ^0000FF Jack Frost ^000000 ]";
 	.@md_name$ = "Dicastes Ice Titans";
 	if( has_instance( "d@eld" ) != "" ) {
 		cutin "rutie_snownow01.bmp",2;
 		mes "Hurry before the Ice Titans breach and destroy El Dicastes!";
 		next;
 		if(getcharid(1) ) {
-		announce strcharinfo(0)+" of the party "+ getpartyname( getcharid(1) ) +" is coming back into "+$@ilabel$+"!",bc_party;
+		announce strcharinfo(0)+" of the party "+ getpartyname( getcharid(1) ) +" is coming back to protect El Dicastes!",bc_party;
 	}
 		cutin "", 255;
 		warp has_instance("d@eld"),204,178;
@@ -29,13 +32,13 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 	mes "Hello there "+strcharinfo(0)+".";
 	mes "There's been a recent word about the Ice Titans approaching El Dicastes from our Assassins.";
 	next;
-	mes .md_namenpc$;
+	mes .@md_namenpc$;
 	mes "Would you be willing to watch out for them in-case of an attack in the town of El Dicastes "+strcharinfo(0)+"?";
 	next;
-	mes .md_namenpc$;
+	mes .@md_namenpc$;
 	mes "If the Ice Titans breach Dicastes, they will destroy the town and put the Citizens of Dicastes in an eternal frozen slumber.";
 	next;
-	mes .md_namenpc$;
+	mes .@md_namenpc$;
 	mes "";
 	mes "ELEMENT WEAKNESS:";
 	mes "";
@@ -44,23 +47,23 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 	next;
 	switch(select("[Create] "+.@md_name$+" Solo","[Create] "+.@md_name$+" Party","[Solo Ranking] "+.@md_name$+"","[Party Ranking] "+.@md_name$+"","[Exit] Changed my mind.")) {
 	case 1:
-		mes .md_namenpc$;
+		mes .@md_namenpc$;
 		if (getcharid(1) != 0 ) {
 			mes "You must not be in a party to join by yourself.";
 			close2;
 			cutin "", 255;
 			end;
 		}
-			if( gettimetick(2) < IceTDelay ) {
+			if( gettimetick(2) < iceTitansDelay ) {
 				.@name$ = strcharinfo(0);
-				.@time = IceTDelay - gettimetick(2);
+				.@time = iceTitansDelay - gettimetick(2);
 				attachrid( .@self );
-				mes "Sorry "+ .@name$ +" you must wait "+ callfunc( "timeleft__", .@time ) +" before entering the "+.md_namenpc$+" Dungeon again.";
+				mes "Sorry "+ .@name$ +" you must wait ^FF0000"+ callfunc( "timeleft__", .@time ) +"^000000 before entering the "+.@md_name$+" Dungeon again.";
 				close2;
 				cutin "", 255;
 				end;
 			}
-			IceTDelay = gettimetick(2) + 3600 * .delay_time;
+			iceTitansDelay = gettimetick(2) + 3600 * .delayTime;
 		mes "Alright, I hope you're prepared!";
 		mes "...";
 		sleep2 1000;
@@ -91,11 +94,11 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 		
 			announce strcharinfo(0)+" is attempting Ice Titans! Wish them luck!",bc_all;
 			warp instance_mapname("d@eld",.@instance),197,189;
-			'PlayType = 0;
+			'playType = 0;
 		end;
 
 	case 2:
-			mes .md_namenpc$;
+			mes .@md_namenpc$;
  		if ( getpartyleader(getcharid(1),2) != getcharid(0) ) { 
 			mes "Only the party leader can create a party instance.";
 			close2;
@@ -109,11 +112,11 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
 		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
 			attachrid( $@partymemberaid[ .@i ] );
-			if( gettimetick(2) < IceTDelay ) {
+			if( gettimetick(2) < iceTitansDelay ) {
 				 .@name$ = strcharinfo(0);
-				 .@time = IceTDelay - gettimetick(2);
+				 .@time = iceTitansDelay - gettimetick(2);
 				attachrid( .@self );
-				mes "Sorry but player "+ .@name$ +" must wait "+ callfunc( "timeleft__", .@time ) +" before entering the "+.md_namenpc$+" Dungeon again.";
+				mes "Sorry but player "+ .@name$ +" must wait ^FF0000"+ callfunc( "timeleft__", .@time ) +"^000000 before entering the "+.@md_name$+" Dungeon again.";
 				cutin "", 255;
 				close();
 			}
@@ -122,15 +125,13 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 	for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
 		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
 			attachrid( $@partymemberaid[ .@i ] );
-			if( gettimetick(2) >= IceTDelay ) {
-				IceTDelay = gettimetick(2) + 3600 * .delay_time;
+			if( gettimetick(2) >= iceTitansDelay ) {
+				iceTitansDelay = gettimetick(2) + 3600 * .delayTime;
 				.@size = getarraysize( getd( ".char_id"+ getcharid(1) ) );
 				setd( ".char_id"+ getcharid(1) +"[ "+ .@size +" ]", getcharid(0) );
 			}
 		}
 	}
-		announce $@ilabel$+" Alright, I hope your party is prepared!",bc_party;
-		sleep2 (2000);
 
 			.@instance = instance_create( .@md_name$, getcharid( 1 ), IOT_PARTY);
 			if( .@instance < 0 ) { 
@@ -144,25 +145,27 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 				end;
 			}
 		dispbottom "Attempt successful on Instance attach!";
+		sleep2 2500;
+		announce "Alright, I hope your party is prepared!",bc_party;
 		instance_set_timeout( 3600, 120, .@instance ); // 1 hour to finish, 2 minutes for re-entry
 		instance_init( .@instance );
 		instance_attach .@instance;
-		'PlayType = 1;
-		announce "The party "+ getpartyname( getcharid(1) ) +" is attempting the "+.md_namenpc$+" Dungeon! Wish them luck!",bc_all;
+		'playType = 1;
+		announce "The party "+ getpartyname( getcharid(1) ) +" is attempting the "+.@md_name$+" Dungeon! Wish them luck!",bc_all;
 		warpparty instance_mapname( "d@eld",.@instance ),197,189,getcharid(1);
 		end;
 
 		case 3:
 		mes "[ ^ee7600 Ice Titans Ranking ^000000 ]";
 		mes "Total Times Beaten:";
-		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'ISoloRank' ORDER BY CAST(`value` AS SIGNED) DESC LIMIT 5", .@id, .@name$, .@val);
-		for (.@i = 0; .@i < $@BeatenIceMax; .@i++)
+		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'iceSoloRank' ORDER BY CAST(`value` AS SIGNED) DESC LIMIT 5", .@id, .@name$, .@val);
+		for (.@i = 0; .@i < .beatenMax; .@i++)
 		mes "[Rank " + (.@i+1) + "]  " + ((.@name$[.@i] == "") ? "^777777None" : "^0055FF" + .@name$[.@i]+"^000000 : ^FF0000" + .@val[.@i] + "^000000x ") + "^000000";
 		next;
 		mes "[ ^ee7600 Ice Titans Ranking ^000000 ]";
 		mes "Best Raider:";
-		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'INewRank' ORDER BY CAST(`value` AS SIGNED) ASC LIMIT 5", .@id, .@name$, .@val);
-		for (.@i = 0; .@i < $@FastestIceMax; .@i++)
+		query_sql("SELECT char_id AS id, (SELECT `name` FROM `char` WHERE char_id = id),`value` FROM `char_reg_num_db` WHERE `key` = 'iceTitansNewRank' ORDER BY CAST(`value` AS SIGNED) ASC LIMIT 5", .@id, .@name$, .@val);
+		for (.@i = 0; .@i < .fastestMax; .@i++)
 		mes "[Rank " + (.@i+1) + "]  " + ((.@name$[.@i] == "") ? "^777777None" : "^0055FF" + .@name$[.@i]+"^000000 : Fastest time: ^FF0000 "+ callfunc( "Time2Str", .@val[.@i]+gettimetick(2))) + "^000000";
 		close2;
 		cutin "", 255;
@@ -170,7 +173,7 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 		case 4:
 		next;
 		mes "[ ^ee7600 Ice Titans Ranking ^000000 ]";
-		if ( !$iceladdderparty_time ) {
+		if ( !$iceladderparty_time ) {
 
 			mes "No party has finished this game yet.";
 			close2;
@@ -178,8 +181,8 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 			end;
 		}
 		mes "The best record is";
-		mes "[ "+( $iceladdderparty_time / 60 )+" min "+( $iceladdderparty_time % 60 )+" sec ]";
-		mes "By the party ^FF0000"+ $iceladdderparty_name$ +"^000000.";
+		mes "[ "+( $iceladderparty_time / 60 )+" min "+( $iceladderparty_time % 60 )+" sec ]";
+		mes "By the party ^FF0000"+ $iceladderparty_name$ +"^000000.";
 		cutin "", 255;
 		.@size = getarraysize( $iceladderparty_member$ );
 		for ( .@i = 0; .@i < .@size; .@i++ )
@@ -188,14 +191,14 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 		next;
 		if ( select( "Close.", "Reset the record." ) == 1 ) close;
 		if ( select( "Never mind.", "I really want to reset it." ) == 1 ) close;
-		$iceladdderparty_time = 0;
-		$iceladdderparty_name$ = "";
+		$iceladderparty_time = 0;
+		$iceladderparty_name$ = "";
 		deletearray $iceladderparty_member$[.@i];
 		mes "[ ^ee7600 Ice Titans Ranking ^000000 ]";
 		mes "Record reset successfully.";
 		close;
 		case 5:
-		mes .md_namenpc$;
+		mes .@md_namenpc$;
 		mes "Well come again if you decide to change your mind.";
 		close2;
 		cutin "", 255;
@@ -203,98 +206,86 @@ dicastes01,192,191,4	script	Jack Frost#a	4_M_SNOWMAN,{
 	}
 
 	OnInit:
-	$@ilabel$ = "[Ice Titans]";
-	.delay_time = 0; // 2 = 2 hours, 3 = 3 hours, etc.. set to 0 to disable
-	$@BeatenIceMax = 5; // Max ranking for Beaten Most
-	$@FastestIceMax = 5; // Max ranking for Fastest Raider
-	$@IRewMin = 1; // Min Solo "Coin" reward 
-	$@IRewMax = 100; // Max Solo "Coin" reward
-
-}
-d@eld,197,189,4	script	JackFrostGL	HIDDEN_NPC,{
-OnTouch:
-	sleep2 5000;
-	sleep2 5000;
-	sleep2 5000;
-	sleep2 5000;
-	sleep2 10000;
-	cutin "rutie_snownow01.bmp",2;
-	sleep 3000;
-	cutin "",255;
+	.delayTime = 1; // 2 = 2 hours, 3 = 3 hours, etc.. set to 0 to disable
+	.beatenMax = 5; // Max ranking for Beaten Most
+	.fastestMax = 5; // Max ranking for Fastest Raider
 	end;
 }
 d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 	end;
 
 	OnInstanceInit:
-
+	'label$ = "[Ice Titans]";
 	// After Instance initiating, it start to record the time duration you were/party were playing instance.
-	'Ice_Start = gettimetick(2);
+	'iceStart = gettimetick(2);
 
 	// item reward for completing the entire ladder
 	'Item_Reward = 7729; // (When beat instance, get reward (Solo & Party, all members of party-mode recieve same item..)
 	'Item_Reward_Amount = 5; // The Amount of reward when beat Dungeon.
 
 	// bonus reward if ladder completed within a certain time (in minutes)
-	'bonus_time = 2; // if completed within 30 minutes, this reward is given.. ( Party for now, all member get same reward..)
+	'bonusTime = 2; // if completed within 30 minutes, this reward is given.. ( Party for now, all member get same reward..)
 	'bonus_item_id = 7729; // ID of reward.
 	'bonus_item_amount = 5; // Amount of reward.
 
 	//Level 1
 	//1st mob amount
-	'1st_MobAML1 = 1;
-	'2nd_MobAML1 = 1;
-	'3rd_MobAML1 = 1;
-	'MOBAML1TOT = '1st_MobAML1+'2nd_MobAML1+'3rd_MobAML1;
+	'firstMobAmount1 = 1;
+	'secondMobAmount1 = 1;
+	'thirdMobAmount1 = 1;
+	'MOBAML1TOT = 'firstMobAmount1+'secondMobAmount1+'thirdMobAmount1;
 	//Level 2 Mob Amounts
-	'1st_MobAML2 = 1;
-	'2nd_MobAML2 = 1;
-	'3rd_MobAML2 = 1;
-	'MOBAML2TOT = '1st_MobAML2+'2nd_MobAML2+'3rd_MobAML2;
+	'firstMobAmount2 = 1;
+	'secondMobAmount2 = 1;
+	'thirdMobAmount2 = 1;
+	'MOBAML2TOT = 'firstMobAmount2+'secondMobAmount2+'thirdMobAmount2;
 	//Level 3 Mob Amounts
-	'1st_MobAML3 = 1;
-	'2nd_MobAML3 = 1;
-	'3rd_MobAML3 = 1;
-	'MOBAML3TOT = '1st_MobAML3+'2nd_MobAML3+'3rd_MobAML3;
+	'firstMobAmount3 = 1;
+	'secondMobAmount3 = 1;
+	'thirdMobAmount3 = 1;
+	'MOBAML3TOT = 'firstMobAmount3+'secondMobAmount3+'thirdMobAmount3;
 	//Level 4 Mob Amounts
-	'1st_MobAML4 = 1;
-	'2nd_MobAML4 = 1;
-	'3rd_MobAML4 = 1;
-	'MOBAML4TOT = '1st_MobAML4+'2nd_MobAML4+'3rd_MobAML4;
+	'firstMobAmount4 = 1;
+	'secondMobAmount4 = 1;
+	'thirdMobAmount4 = 1;
+	'MOBAML4TOT = 'firstMobAmount4+'secondMobAmount4+'thirdMobAmount4;
 	//Level 5 Mob Amounts
-	'1st_MobAML5 = 1;
-	'2nd_MobAML5 = 1;
-	'MOBAML5TOT = '1st_MobAML5+'2nd_MobAML5;
+	'firstMobAmount5 = 1;
+	'secondMobAmount5 = 1;
+	'MOBAML5TOT = 'firstMobAmount5+'secondMobAmount5;
 	//Level 6 (Final Mob/Boss)
-	'1st_MobAML6 = 1;
-	'MOBAML6TOT = '1st_MobAML6;
-	'Ins_MobCount = 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT+'MOBAML6TOT;
-	'Iced_HTotal = 102; // Total humans
-	'Ins_Count =  0;
-	'Ins_Start = 0;
-	'Iced_H = 0;
-	'I_Begin = 0;
-	'IceTID1 = 1788;
+	'firstMobAmount6 = 1;
+	'MOBAML6TOT = 'firstMobAmount6;
+	'instanceMobCount = 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT+'MOBAML6TOT;
+	'frozenHumansTotal = 102; // Total humans
+	'insCount =  0;
+	'instanceStart = 0;
+	'frozenHumans = 0;
+	'iceBegin = 0;
+	'iceTitanId = 1788;
 
-	if ( !'Ins_Start ){
-		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI1";
-		'Ins_Start++;
+	'rewardMinimum = 1; // Minimum Solo "Coin" reward 
+	'rewardMaximum = 100; // Max Solo "Coin" reward
+
+	if ( !'instanceStart ){
+		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEvent1";
+		'instanceStart++;
 	}
 	end;
 	
-	OnEventI1:
-//	sleep2 5000;
+	OnEvent1:
+	sleep2 5000;
 	instance_announce -1,"[Dicastes Ice Titans] As you ready your battle gear, the mist coming from out your breath turns even thicker",bc_map;
-//	sleep2 5000;
+	sleep2 5000;
 	instance_announce -1,"[Dicastes Ice Titans] The temperature is dropping even faster",bc_map;
-//	sleep2 5000;
+	sleep2 5000;
 	instance_announce -1,"[Dicastes Ice Titans] They prepare to launch their Ice Projectiles at El Dicastes!",bc_map;
 	specialeffect 563;
-//	sleep2 5000;
+	sleep2 5000;
 	instance_announce -1,"[Dicastes Ice Titans] Melt away all of the Ice Titans to a puddle of water and save the Dicastes Citizens! Hurry!",bc_map;
 	sleep2 10000;
 	instance_announce -1,"Jack Frost: Good luck!",bc_map;
-//	sleep2 10000;
+	sleep2 10000;
 	callfunc("ArrayShuffle",101);
 	for (.@i = 0; .@i < 17; .@i++) {
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
@@ -302,96 +293,96 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 		donpcevent instance_npcname("IceEffect#"+callfunc("ArrayShuffle"))+"::OnEnable";
 		donpcevent instance_npcname("IceEffect#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	}
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'1st_MobAML1,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'firstMobAmount1,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'2nd_MobAML1,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'secondMobAmount1,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'3rd_MobAML1,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";  
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'thirdMobAmount1,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";  
 	end;
 
-	OnEventI2:
+	OnEvent2:
 	callfunc("ArrayShuffle",101);
 	for (.@i = 0; .@i < 17; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 2nd Wave begins. Be on the lookout!",bc_map;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'1st_MobAML2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'firstMobAmount2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'2nd_MobAML2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'secondMobAmount2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'3rd_MobAML2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI"; 
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'thirdMobAmount2,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath"; 
 	end;
 
-	OnEventI3:
+	OnEvent3:
 	callfunc("ArrayShuffle",101);
 	for (.@i = 0; .@i < 17; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 3rd Wave begins. The Ice Titans won't stop! Keep going!",bc_map;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'1st_MobAML3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'firstMobAmount3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'2nd_MobAML3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'secondMobAmount3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'3rd_MobAML3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'thirdMobAmount3,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
 	end;
 
-	OnEventI4:
+	OnEvent4:
 	callfunc("ArrayShuffle",101);
 	for (.@i = 0; .@i < 17; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 4th Wave begins. Don't allow them to kill off all the Citizens inhabiting El Dicastes!",bc_map;
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'1st_MobAML4,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'firstMobAmount4,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'2nd_MobAML4,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'secondMobAmount4,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'3rd_MobAML4,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI"; 
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'thirdMobAmount4,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath"; 
 	sleep 2000;
 	end;
 
-	OnEventI5:
+	OnEvent5:
 	callfunc("ArrayShuffle",101);
 	for (.@i = 0; .@i < 34; .@i++)
 		donpcevent instance_npcname("Dicastes Citizen#"+callfunc("ArrayShuffle"))+"::OnEnable";
 	instance_announce -1,"[Dicastes Ice Titans] 5th Wave begins. You're nearing Victory! Protect the Dicastes Citizens from the Ice Titan Kings most Loyal Mini Titans!",bc_map;
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",1251,'1st_MobAML5,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI";
+	monster instance_mapname("d@eld"),0,0,"--en--",1251,'firstMobAmount5,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath";
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"--en--",'IceTID1,'2nd_MobAML5,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeathI"; 
+	monster instance_mapname("d@eld"),0,0,"--en--",'iceTitanId,'secondMobAmount5,instance_npcname("SpawnTitans#Ins")+"::OnThisMobDeath"; 
 	end;
 
-	OnEventI6:
+	OnEvent6:
 	instance_announce -1,"[Dicastes Ice Titans] Final wave begins.. Watch out! It's the Ice Titan King! If you don't stop him, this is the end for more than just the Citizens! Hurry!",bc_map;
 	sleep 2000;
-	monster instance_mapname("d@eld"),0,0,"Ice Titan King",1779,'1st_MobAML6,instance_npcname("SpawnTitans#Ins")+"::OnThisLastWaveI";
+	monster instance_mapname("d@eld"),0,0,"Ice Titan King",1779,'firstMobAmount6,instance_npcname("SpawnTitans#Ins")+"::OnThisLastWave";
 	sleep 2000;
 	end;
 
-	OnThisMobDeathI:
-	'Ins_Count++;
-	instance_announce -1,"[Dicastes Ice Titans] You have killed a total of "+( 'Ins_Count )+" Ice Titans! Only "+('Ins_MobCount-'Ins_Count)+" to go!",bc_map;
+	OnThisMobDeath:
+	'insCount++;
+	instance_announce -1,"[Dicastes Ice Titans] You have killed a total of "+( 'insCount )+" Ice Titans! Only "+('instanceMobCount-'insCount)+" to go!",bc_map;
 	donpcevent instance_npcname("Count#I_Ins")+"::OnCountKill";
 	end;
 
-	OnThisLastWaveI:
-	if ( !'PlayType ) 
+	OnThisLastWave:
+	if ( !'playType ) 
 	{
 	debugmes "Solo-Mode";
-	instance_announce -1,$@ilabel$+" Congratulations, you have stopped the Ice Titans in "+ callfunc( "timeleft__", gettimetick(2) - 'Ice_Start ),bc_map;
-	if( !INewRank ) {
-	INewRank = 'Ice_Start;
+	instance_announce -1,'label$+" Congratulations, you have stopped the Ice Titans in "+ callfunc( "timeleft__", gettimetick(2) - 'iceStart ),bc_map;
+	if( !iceTitansNewRank ) {
+	iceTitansNewRank = 'iceStart;
 	}
-	'IRaid_End = gettimetick(2);
-	'IRaid_End-='Ice_Start;
-	if ( 'IRaid_End < INewRank ) 
+	'iceRaidEnd = gettimetick(2);
+	'iceRaidEnd-='iceStart;
+	if ( 'iceRaidEnd < iceTitansNewRank ) 
 	{
-	INewRank = 'IRaid_End;
-	announce $@ilabel$+" Congratulations to "+strcharinfo(0)+" for breaking their old record in "+ callfunc( "timeleft__",gettimetick(2) - 'Ice_Start ),bc_all;
+	iceTitansNewRank = 'iceRaidEnd;
+	announce 'label$+" Congratulations to "+strcharinfo(0)+" for breaking their old record in "+ callfunc( "timeleft__",gettimetick(2) - 'iceStart ),bc_all;
 	}
 	warp instance_mapname( "d@eld",.@instance),150,150;
 	end;
 	} else
 
-	if ( 'PlayType )
+	if ( 'playType )
 	{
 		.@party_id = getcharid(1);
 		getpartymember .@party_id, 1;
@@ -405,9 +396,9 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 			}
 		}
 		debugmes "Party-Mode";
-		.@timeused = gettimetick(2) - 'Ice_Start;
-		if ( 'bonus_item_amount && .@timeused < 'bonus_time * 60 ) {
-			instance_announce 0, "You are rewarded a bonus item for securing Dicastes from the Ice Titans within "+ 'bonus_time +" minutes.", bc_map;
+		.@timeused = gettimetick(2) - 'iceStart;
+		if ( 'bonus_item_amount && .@timeused < 'bonusTime * 60 ) {
+			instance_announce 0, "You are rewarded a bonus item for securing Dicastes from the Ice Titans within "+ 'bonusTime +" minutes.", bc_map;
 			for ( .@i = 0; .@i < $@partymembercount; .@i++ ) {
 				if ( isloggedin( $@partymemberaid[.@i], $@partymembercid[.@i] ) ) {
 					attachrid $@partymemberaid[.@i];
@@ -419,10 +410,10 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 			}
 		}
 
-		if ( !$iceladdderparty_time || .@timeused < $iceladdderparty_time ) {
+		if ( !$iceladderparty_time || .@timeused < $iceladderparty_time ) {
 			instance_announce 0, "Wow you broke the record! [ "+( .@timeused / 60 )+" min "+( .@timeused % 60 )+" sec ]", bc_map;
-			$iceladdderparty_time = .@timeused;
-			$iceladdderparty_name$ = getpartyname( .@party_id );
+			$iceladderparty_time = .@timeused;
+			$iceladderparty_name$ = getpartyname( .@party_id );
 			copyarray $iceladderparty_member$, .@name$, .@c;
 		}
 		else
@@ -438,21 +429,21 @@ d@eld,1,1,1	script	SpawnTitans#Ins	HIDDEN_NPC,{
 
 d@eld,150,150,0	script	IceEnd#Ins	WARPNPC,1,1,{
 OnTouch:
-	if ( 'PlayType )
+	if ( 'playType )
 	{
 	end;
 	}
-	if ( 'Iced_H >= 'IceH_Total ) {
-	ISoloRank++;
-	.SoloReward = rand($@IRewMin,$@IRewMax);
-	#DIM_COIN += .SoloReward;
-	dispbottom "Gained : "+.SoloReward+" Instance Dimension Coins total : "+ #DIM_COIN+"";
+	if ( 'frozenHumans >= 'iceHumanTotal ) {
+	iceSoloRank++;
+	.soloReward = rand('rewardMinimum,'rewardMaximum);
+	#dimCoin += .soloReward;
+	dispbottom "Gained : "+.soloReward+" Instance Dimension Coins total : "+ #dimCoin+"";
 	sleep2 2500;
-	if ( ISoloRank == 1 ) {
-	query_sql("INSERT INTO `char_reg_num_db` (`char_id`,`key`,`index`,`value`) VALUES (" + getcharid(0) + ",'ISoloRank','0',1)");
+	if ( iceSoloRank == 1 ) {
+	query_sql("INSERT INTO `char_reg_num_db` (`char_id`,`key`,`index`,`value`) VALUES (" + getcharid(0) + ",'iceSoloRank','0',1)");
 	}	else
-	query_sql("UPDATE `char_reg_num_db` SET `value` = " + ISoloRank + " WHERE `char_id` = " + getcharid(0) + " AND `key` = 'ISoloRank'");
-	instance_announce -1,$@ilabel$+" Exiting dungeon...",bc_map;
+	query_sql("UPDATE `char_reg_num_db` SET `value` = " + iceSoloRank + " WHERE `char_id` = " + getcharid(0) + " AND `key` = 'iceSoloRank'");
+	instance_announce -1,'label$+" Exiting dungeon...",bc_map;
 	sleep2 2000;
 	instance_destroy ( .@instance );
 	end;
@@ -465,24 +456,24 @@ d@eld,1,2,1	script	Count#I_Ins	HIDDEN_NPC,{
 	end;
 
 	OnCountKill:
-	if ( 'Ins_Count == 'MOBAML1TOT && 'Iced_H == 17 ) {
-		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI2";
+	if ( 'insCount == 'MOBAML1TOT && 'frozenHumans == 17 ) {
+		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEvent2";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT && 'Iced_H == 34 ){
-		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI3";
+	if ( 'insCount == 'MOBAML1TOT+'MOBAML2TOT && 'frozenHumans == 34 ){
+		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEvent3";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT && 'Iced_H == 51 ) {
-		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI4";
+	if ( 'insCount == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT && 'frozenHumans == 51 ) {
+		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEvent4";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT && 'Iced_H == 68 ) {
-		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI5";
+	if ( 'insCount == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT && 'frozenHumans == 68 ) {
+		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEvent5";
 		end;
 	}
-	if ( 'Ins_Count == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT && 'Iced_H == 102 ) {
-		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEventI6";
+	if ( 'insCount == 'MOBAML1TOT+'MOBAML2TOT+'MOBAML3TOT+'MOBAML4TOT+'MOBAML5TOT && 'frozenHumans == 102 ) {
+		donpcevent instance_npcname("SpawnTitans#Ins")+"::OnEvent6";
 		end;
 	}
 }
@@ -506,8 +497,8 @@ d@eld,183,160,0	script	IceEffect#1	HIDDEN_WARP_NPC,0,0,{
 
 d@eld,197,189,0	script	IBegin	HIDDEN_WARP_NPC,0,0,{
 OnTouch:
-	if( 'I_Begin == 0) {
-		'I_Begin = 1;
+	if( 'iceBegin == 0) {
+		'iceBegin = 1;
 	soundeffectall "beg_miss.wav",0;
 	specialeffect 563;
 	sleep2 5000;
@@ -523,11 +514,11 @@ OnTouch:
 }
 
 d@eld,214,155,0	script	Dicastes Citizen#1	4_GEFFEN_02,{
-if( !.ClickedI ) {
-	.ClickedI++;
-	'Iced_H++;
+if( !.clicked ) {
+	.clicked++;
+	'frozenHumans++;
 
-	instance_announce -1,"[Dicastes Ice Titans] You have saved total of "+('Iced_H)+" Dicastes Citizen! Only "+('Iced_HTotal-'Iced_H)+" to go! Save the Dicastes Citizens!",bc_map;
+	instance_announce -1,"[Dicastes Ice Titans] You have saved total of "+('frozenHumans)+" Dicastes Citizen! Only "+('frozenHumansTotal-'frozenHumans)+" to go! Save the Dicastes Citizens!",bc_map;
 	stopnpctimer;
 	viewpointmap instance_mapname("d@eld"),2,0,0,atoi(strnpcinfo(2)),0x0000FF;
 	getmapxy .@map$, .@x, .@y, 1;
@@ -568,7 +559,7 @@ if( !.ClickedI ) {
 	sleep 1000;
 	disablenpc instance_npcname(strnpcinfo(0));
 	donpcevent instance_npcname("Count#I_Ins")+"::OnCountKill";
-	.ClickedI = 0;
+	.clicked = 0;
 	}
 	end;
 
