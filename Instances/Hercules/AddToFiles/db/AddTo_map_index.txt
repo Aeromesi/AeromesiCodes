@@ -14,3 +14,4 @@ r_road 1260//Trivia (Will be Trivia 5)
 1@mor 1263//Mastery Dungeon
 haunt_e 1264
 haunt_h 1265
+d@eld 1266 //ice titans
