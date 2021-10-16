@@ -1,3 +1,20 @@
+//////////////////////////////////////////////////////////////////////////////////
+// Returns a number with a '-st', '-nd', '-rd', or '-th' suffix.
+// -- callfunc "F_GetNumSuffix",<number>
+// Examples:
+//    callfunc("F_GetNumSuffix",1)   // returns "1st"
+//    callfunc("F_GetNumSuffix",11)  // returns "11th"
+//    callfunc("F_GetNumSuffix",32)  // returns "32nd"
+//////////////////////////////////////////////////////////////////////////////////
+function	script	F_GetNumSuffix	{
+	set .@n, getarg(0);
+	set .@mod, .@n % 10;
+	if      (.@mod == 1 && .@n != 11) return .@n+"st";
+	else if (.@mod == 2 && .@n != 12) return .@n+"nd";
+	else if (.@mod == 3 && .@n != 13) return .@n+"rd";
+	else return .@n+"th";
+}
+
 function	script	F_GetPlural	{
 	set .@str$, getarg(0);
 
