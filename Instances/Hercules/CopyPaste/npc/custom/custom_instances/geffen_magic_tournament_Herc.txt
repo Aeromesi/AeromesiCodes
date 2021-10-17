@@ -729,8 +729,7 @@ dali,100,147,3	script	Dimensional Device#gefma	PORTAL,{
 				instance_attach .@instance;
 				announce "The party "+ getpartyname( getcharid(1) ) +" is attempting the "+.@md_name$+" Dungeon! Wish them luck!",bc_all;
 				warpparty instance_mapname( "1@gef",.@instance ),119,209,getcharid(1);
-//				GeffenTournament = gettimetick(2) + 82800;
-				GeffenTournament = gettimetick(2) + 100;
+				GeffenTournament = gettimetick(2) + 82800; // 1 hour wait time
 				end;
 }
 	}
