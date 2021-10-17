@@ -697,18 +697,6 @@ dali,100,147,3	script	Dimensional Device#gefma	PORTAL,{
 						mes "You must be base level 90 to continue.";
 						close;
 					}
-
-	/*for( .@i = 0; .@i < $@partymembercount; .@i++ ) {
-		if( isloggedin( $@partymemberaid[ .@i ], $@partymembercid[ .@i ] ) ) {
-			attachrid( $@partymemberaid[ .@i ] );
-			if( gettimetick(2) >= FreDelay ) {
-				FreDelay = gettimetick(2) + 3600 * .delay_time;
-				.@size = getarraysize( getd( ".char_id"+ getcharid(1) ) );
-				setd( ".char_id"+ getcharid(1) +"[ "+ .@size +" ]", getcharid(0) );
-			}
-		}
-	}*/
-	//	announce $@flabel$+" Alright, I hope your party is prepared!",bc_party;
 			if( getcharid(1)) {
 		announce strcharinfo(0)+" of the party "+ getpartyname( getcharid(1) ) +" is starting "+.@md_name$+"!",bc_party;
 				.@instance = instance_create( .@md_name$, getcharid( 1 ), IOT_PARTY);
