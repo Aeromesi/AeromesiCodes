@@ -129,6 +129,10 @@ return;
 	switch(select("Start Devil's Square", "Player Menu"))
 	{
 		case 1:
+	if ( !$@EnableDrops ) {
+		setmapflag "ordeal_1-1",mf_nomobloot;
+		}
+		removemapflag "ordeal_1-1",mf_noskill;
 			donpcevent ("DS_EVENT#DSMAIN")+"::OnStartDS";
 		case 2: 
 			break;
@@ -140,6 +144,7 @@ OnInit:
 If you do decide to ever edit the details, even upon @reloadscript or a server-crash/maintenance, your edits will stay with the script and never reload to the default values!
 */
 
+	$@Entered = 0;
 	$@DSMapName$ = "prontera"; // Change this where the NPC [DS]Organizer will be, so that it announces where you can go to register.
 if ( !$MinGMOverRide ) {
 	$@MinGM = 99; // This covers all of the GM features whether it be the @commands for @repeatds/@disableds and even the NPC.
@@ -162,8 +167,8 @@ if ( !$MaxMinOverRide ) {
 } else
 $@MaxMin = $MaxMin;
 if ( !$ChestsOverRide ) {
-	$@MaxChests = 2; // KEEP THIS SAME AS $@MaxChests2! So if you change this, make sure to change $@MaxChests2 to the same value!
-	$@MaxChests2 = 2; // This will be reset value DO NOT TOUCH
+	$@MaxChests = 20; // KEEP THIS SAME AS $@MaxChests2! So if you change this, make sure to change $@MaxChests2 to the same value!
+	$@MaxChests2 = 20; // This will be reset value DO NOT TOUCH
 } else
 	$@MaxChests = $MaxChests2;
 	$@MaxChests2 = $MaxChests2;
@@ -176,7 +181,7 @@ end;
 /*= End Organizer =*/
 
 /*= Event Code =*/
-ordeal_1-1,0,0,0	script	DS_EVENT#DSMAIN	-1,{
+ordeal_1-1,0,0,0	script	DS_EVENT#DSMAIN	HIDDEN_NPC,{
 
 	function DS_CheckDup;
 	
@@ -203,15 +208,14 @@ OnMinute00:
 		end;
 OnStartDS:
 	$@DS_Active = 1;
-if ( !$@EnableDrops ) {
-	setmapflag "ordeal_1-1",mf_nomobloot;
-}
+//if ( !$@EnableDrops ) {
+//	setmapflag "ordeal_1-1",mf_nomobloot;
+//}
 	if ( !$ChestsOverRide ) {
 	$@MaxChests = $@MaxChests2;
 } else {
 	$@MaxChests = $MaxChests2;
 }
-	removemapflag "ordeal_1-1",mf_noskill;
 	mapwarp "ordeal_1-1","prontera",150,150;
 	killmonsterall "ordeal_1-1";
 	$@DS_Open = 1;
@@ -238,7 +242,7 @@ OnBeginRound:
 	if($@DS_Round == 10)
 	{
 		mapannounce "ordeal_1-1","[Devil's Square] Please move to the center of the map for the boss round.", 0;
-		removemapflag "ordeal_1-1",mf_nomobloot;
+//		removemapflag "ordeal_1-1",mf_nomobloot;
 		while(getareausers("ordeal_1-1", 142, 142, 157, 157) < getmapusers("ordeal_1-1"))
 			sleep 25;
 		.@MVP = $@DSMVP[rand(getarraysize($@DSMVP))];
