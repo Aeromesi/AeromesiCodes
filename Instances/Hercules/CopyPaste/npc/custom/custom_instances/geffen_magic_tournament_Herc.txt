@@ -1500,53 +1500,6 @@ OnInstanceInit:
 				mes "Not a problem, talk to me when you're ready.";
 				close;
 		}
-/*	if ( 'GMT_1QUE >= 22 ) 
-				{
-//	if (questprogress(9308) != -1) {
-		switch(select("Leave the Arena and receive your reward:End Conversation")) {
-			case 1:
-				mes .@n$;
-				mes "You won the competition!";
-				mes "Congratulations!";
-				next;
-				mes .@n$;
-				mes "By the way, the Academy Master has";
-				mes "something to tell you!";
-				next;
-				cutin "acamaster_a.bmp",2;
-				.@n2$ = "[ Geffen Academy Master ]";
-				mes .@n2$;
-				mes "Congratulations!";
-				mes "This has been the best pool of";
-				mes "competitors in the history of this";
-				mes "competition.";
-				next;
-				mes .@n2$;
-				mes "I present to you your earned ^55CC55Geffen";
-				mes "Magic Tournament Coins.^000000";
-				next;
-				mes .@n2$;
-				mes "Bring the coins to the ^55CC55Geffen Coin";
-				mes "Operator^000000 to exchange for special";
-				mes "equipment.";
-				next;
-				mes .@n2$;
-				mes "Your name will be remembered in the";
-				mes "history books of Geffen.";
-				next;
-				mes .@n2$;
-				mes "Congratulations again.";
-				mes "I hope you enjoy the rest of the";
-				mes "Geffen Festivities.";
-				close2;
-				cutin "",255;
-				getitem 6671,'reward[getarraysize('reward[0]) - 1];
-				warp instance_mapname("1@gef"), 120,35;
-				end;
-			case 2:
-				close;
-		}
-}*/
 OnInstanceInit:
 	setarray 'reward,1,2,3,4,5,6,7,8,9,10,15,20,20;
 	end;
