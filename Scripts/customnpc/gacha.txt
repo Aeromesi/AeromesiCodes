@@ -1,0 +1,206 @@
+// Gacha System
+// Developed by: Aeromesi
+// Rewritten script of my old Fumbi system
+                            
+prontera,163,171,4	script	Gacha	2_DROP_MACHINE,{
+MainMenu:
+    mes .gachaNpc$;
+	if ( Weight >= MaxWeight/2 ) {
+		mes "Your weight is above or equal to 50%, please put item in storage to reduce weight so you can roll some armor or weapons!";
+		close;
+}
+    if( gachaAttempts >= .gachaPulls ) {
+		if ( .sound )
+        soundeffect "fumbi_fail.wav",0;
+        mes "Congratulations!";
+        mes "You are at "+.gachaPulls+" Gachas pulls.";
+        next;
+        mes .gachaNpc$;
+        mes "Would you like to Gacha pull a card for "+.cardFee+" Zeny?";
+        next;
+        if(select("Yes","No") == 1) {
+            if(Zeny < .cardFee) {
+                mes .gachaNpc$;
+                mes "Sorry, but you need "+.cardFee+" Zeny to Gacha pull a card.";
+                close;
+            }
+                mes .gachaNpc$;
+                mes "Are you sure you want to Gacha pull a card for "+.cardFee+" Zeny?";
+				next;
+                    if(select("Yes","No") == 1) {
+                        mes .gachaNpc$;
+                        mes "Alright then, we will now commence the Gacha pull!";
+                        mes "Now let's start this up.";
+                        next;
+                        callsub Gacha_Snd;
+                        switch(rand(1,2)) //100% chance for a card
+						{
+                            case 1:
+								if ( .sound )
+                                soundeffect "s4miss_start.wav",0;
+                                mes "Sorry, but it seems you failed...";
+                                mes "Better luck next time!";
+                                gachaAttempts = 0; Zeny-=.cardFee;
+								next;
+                                callsub MainMenu;
+                            default:
+                                .@item = callfunc ("Gacha_Roll", 4001,4453);
+                                mes "Congratulations! You've successfully Gacha pulled a "+getitemname(.@item)+".";
+                                getitem .@item,1;
+                                 gachaAttempts = 0; Zeny-=.cardFee;
+								next;
+                                callsub MainMenu;
+                        }
+                    close;
+                }
+        }
+                mes .gachaNpc$;
+				if ( .sound )
+                soundeffect "fumbi_fail.wav",0;
+                mes "Oh okay.";
+                mes "Do you want to reset your Gacha count or wait until you have "+.cardFee+" zeny?";
+                next;
+                switch(select("I'll reset my Gacha count.:I changed my mind."))    {
+                    case 1:
+                        mes .gachaNpc$;
+                        mes "Oh okay, your Gacha count will now be reset!";
+                        mes "1...";
+                        sleep2 1000;
+                        mes "2...";
+                        sleep2 1000;
+                        mes "3...";
+                        sleep2 1000;
+                        mes "Your Gacha count is now reset.";
+                        gachaAttempts = 0;
+                        close;
+                    case 2:
+                        mes .gachaNpc$;
+                        mes "All right";
+                        mes "Come back to me when you're prepared to try and Gacha.";
+                        close;
+                }
+
+}
+	if ( .sound )
+		soundeffect "fumbi_fail.wav",0;
+		mes "Gacha System 1.0";
+    if(select("Weapon","Armor") == 1) {
+            mes "Weapons Category:";
+            switch(select("- Sword:- Daggers:- Katars:- Maces:- Staffs:- Guns:- Bows:- Knuckles:- Whips:- Books:- Axes:- Spears:- Instruments")) {
+                case 1:  callsub Gacha, 1101, 1190, .weaponChance, .weaponFee; break;
+                case 2:  callsub Gacha, 1201, 1249, .weaponChance, .weaponFee; break;
+                case 3:  callsub Gacha, 1250, 1282, .weaponChance, .weaponFee; break;
+                case 4:  callsub Gacha, 1501, 1546, .weaponChance, .weaponFee; break;
+                case 5:  callsub Gacha, 1601, 1641, .weaponChance, .weaponFee; break;
+                case 6:  callsub Gacha, 1101, 1190, .weaponChance, .weaponFee; break;
+                case 7:  callsub Gacha, 1701, 1743, .weaponChance, .weaponFee; break;
+                case 8:  callsub Gacha, 1801, 1827, .weaponChance, .weaponFee; break;
+                case 9:  callsub Gacha, 1950, 1981, .weaponChance, .weaponFee; break;
+                case 10: callsub Gacha, 1550, 1577, .weaponChance, .weaponFee; break;
+                case 11: callsub Gacha, 1351, 1382, .weaponChance, .weaponFee; break;
+                case 12: callsub Gacha, 1401, 1471, .weaponChance, .weaponFee; break;
+                case 13: callsub Gacha, 1901, 1927, .weaponChance, .weaponFee; break;
+
+            }
+    }
+        mes "Armor Category:";
+            switch(select("- Shields:- Armors:- Footgear:- Garments:- Accessories")) {
+                case 1: callsub Gacha, 2101, 2135, .armorChance, .armorFee; break;
+                case 2: callsub Gacha, 2301, 2391, .armorChance, .armorFee; break;
+                case 3: callsub Gacha, 2401, 2441, .armorChance, .armorFee; break;
+                case 4: callsub Gacha, 2501, 2546, .armorChance, .armorFee; break;
+                case 5: callsub Gacha, 2601, 2762, .armorChance, .armorFee; break;
+            }
+
+Gacha:
+    mes "All right, so would you like to try a Gacha pull?";
+	next;
+    if(select("Yes","No") == 1) {
+        if(Zeny < getarg(3)) {
+			mes .gachaNpc$;
+            mes "I'm sorry, but it seems you don't have "+getarg(3)+"z.";
+            mes "Please come again when you have "+getarg(3)+"z.";
+            close;
+        }
+        Zeny -= getarg(3); ++gachaAttempts;
+		next;
+		mes .gachaNpc$;
+        mes "You have "+ getarg(3) +" Zeny! We will now start the Gachang process.";
+        next;
+        callsub Gacha_Snd;
+        if ( rand(100) < getarg(2) ) {
+            mes "You have failed the Gacha roll.";
+            mes "Gacha Points: (^CD3333"+gachaAttempts+"^000000/^003EFF"+.gachaPulls+"^000000)  to Gacha a card for "+.cardFee+" Zeny.";
+			next;
+            callsub MainMenu;
+        }
+		if ( .sound )
+        soundeffect "fumbi_wpn.wav",0;
+		.@item = callsub (Gacha_Roll, getarg(0), getarg(1));
+        getitem .@item, 1;
+        mes "You successfully Gacha pulled an item! Please come again to try and Gacha pull more items towards a card!";
+        mes "You have (^CD3333"+gachaAttempts+"^000000/^003EFF"+.gachaPulls+"^000000)  to Gacha pull a card for "+.cardFee+" zeny!";
+		next;
+		callsub MainMenu;
+    }
+    next;
+    mes .gachaNpc$;
+    mes "Okay, please come back if you'd like to try and Gacha.";
+    close;
+    
+Gacha_Roll:
+    .@item = rand(getarg(0),getarg(1));
+
+    for( .@i = 0; .@i<getarraysize($@godItems); .@i+=1)
+        if(.@item == $@godItems[.@i]) callsub Gacha_Roll;
+
+    return (.@item);
+
+Gacha_Snd:
+		mes .gachaNpc$;
+        sleep2 .gachaCounter;
+		if ( .sound )
+        soundeffect "fumbi_run.wav",0;
+        mes "1..";
+		if ( .sound )
+        soundeffect "fumbi_start.wav",0;
+        sleep2 .gachaCounter;
+        mes "2...";
+		if ( .sound )
+        soundeffect "fumbi_start.wav",0;
+        sleep2 .gachaCounter;
+        mes "3...";
+		if ( .sound )
+        soundeffect "fumbi_start.wav",0;
+        sleep2 .gachaCounter;
+		if ( .sound )
+        soundeffect "fumbi_start.wav",0;
+        mes "4...";
+        sleep2 .gachaCounter;
+        return;
+
+OnInit: // Config
+	.gachaCounter = 50;
+    .gachaPulls = 3; // How many gacha pulls they need until they can pull for a card
+    .weaponChance = 2; // Weapon chance 2%
+    .armorChance = 2; // Armor chance 2%
+    .weaponFee = 500000;
+    .armorFee = 400000;
+    .cardFee = 900000;
+    .gachaNpc$ = "^FF0000[Gacha]^000000";
+    .servName$ = "^00ff00GachaRO^000000";
+	.sound = 1; // 0 = SOUND OFF 1 = SOUND ON <- this is for people who want sound disabled if they dont have sound files for the gacha npc. Disabled by default for quick testing of NPC.
+    setarray $@godItems[0],2410,2629,1530,1161,5013,2630,4121,4128,4129,4131,4132,4134,4135,4137,4142,4143,4144,4145,4146,4147,4148,4168,4263,4276,4302,4305,4318,4324,4330,4342,4352,4357,4359,4361,4363,4365,4367,4372,4374,4376,4386,4399,4403,4407,4408,4419,4425,4430,4441;
+    end;
+}
+function	script	Gacha_Roll	{
+
+GachaAction:
+	.@item = rand(getarg(0),getarg(1));
+
+	for( .@i = 0; .@i<getarraysize($@godItems); .@i+=1)
+		if(.@item == $@godItems[.@i]) 
+		callsub GachaAction;
+
+	return (.@item);
+}
