@@ -130,6 +130,13 @@ return;
 	switch(select("Start Devil's Square", "Player Menu"))
 	{
 		case 1:
+		removemapflag "ordeal_1-1",mf_noskill;
+		if ( !$@EnableDrops ) {
+		setmapflag "ordeal_1-1",mf_nomobloot;
+		}
+		if ( $@EnableDrops ) {
+		removemapflag "ordeal_1-1",mf_nomobloot;
+		}
 			donpcevent ("DS_EVENT#DSMAIN")+"::OnStartDS";
 		case 2: 
 			break;
@@ -187,7 +194,7 @@ OnInit:
 	$@DS_Open = 0;
 	setarray $@DS1[0],1002,1113,1005,1010,1090,1089,1089,1089,1015,1076,1015,1094,1025;
 	setarray $@DS2[0],1068,1052,1019,1077,1089,1088,1018,1028,1176,1128,1056,1169;
-	setarray $@DS3[0],1073,1057,1234,1686,1138,1212,1629,1323,1074,1016,1144,1317;
+	setarray $@DS3[0],1073,1057,1057,1686,1138,1212,1629,1323,1074,1016,1144,1317;
 	setarray $@DS4[0],1248,1099,1129,1880,1881,1151,1264,1108,1409,1069,1045,1271;
 	setarray $@DS5[0],1101,1061,1412,1291,1109,1699,1299,1065,1165,1180,1127;
 	setarray $@DS6[0],1302,1865,1297,1752,1753,1870,1283,1773,1773,1989,1989;
@@ -204,15 +211,11 @@ OnMinute00:
 OnStartDS:
 	$@DS_Active = 1;
 	$@DS_Open = 1;
-if ( !$@EnableDrops ) {
-	setmapflag "ordeal_1-1",mf_nomobloot;
-}
 	if ( !$ChestsOverRide ) {
 	$@MaxChests = $@MaxChests2;
 } else {
 	$@MaxChests = $MaxChests2;
 }
-	removemapflag "ordeal_1-1",mf_noskill;
 	mapwarp "ordeal_1-1","prontera",150,150;
 	killmonsterall "ordeal_1-1";
 	announce "[Devil's Square] The door to Devil's Square is NOW OPEN! You have "+$@MaxMin+" minutes to get in before it starts! Speak to the Ringmaster in "+$@DSMapName$ +" to join!",0;
@@ -230,9 +233,9 @@ OnBeginRound:
 	if($@DS_Round == 10)
 	{
 		mapannounce "ordeal_1-1","[Devil's Square] Please move to the center of the map for the boss round.", 0;
-		removemapflag "ordeal_1-1",mf_nomobloot;
 		while(getareausers("ordeal_1-1", 142, 142, 157, 157) < getmapusers("ordeal_1-1"))
 			sleep 25;
+//		removemapflag "ordeal_1-1",mf_nomobloot;
 		.@MVP = $@DSMVP[rand(getarraysize($@DSMVP))];
 		areamonster "ordeal_1-1", 132, 137, 167, 159, "[DS]" + getmonsterinfo(.@MVP, MOB_NAME), .@MVP, 1, "DS_EVENT#DSMAIN::OnDSMVPDead";
 		end;
@@ -278,12 +281,12 @@ OnDSDead:
 		
 		case 0:
 			$@DS_Round++;
-			mapannounce "ordeal_1-1","All monsters in round " + ($@DS_Round - 1) + "have been defeated!",0;
+			mapannounce "ordeal_1-1","All monsters in round " + ($@DS_Round - 1) + " have been defeated!",0;
 			donpcevent strnpcinfo(0)+"::OnBeginRound";
 		default:
 			if(mobcount("ordeal_1-1","DS_EVENT#DSMAIN::OnDSDead") < 5)
 			{
-			mapannounce "ordeal_1-1",mobcount("ordeal_1-1","DS_EVENT#DSMAIN::OnDSDead") + "monsters remaining.",0;
+			mapannounce "ordeal_1-1","Down to the last "+ mobcount("ordeal_1-1","DS_EVENT#DSMAIN::OnDSDead"),0;
 			}
 	}
 	end;
@@ -324,10 +327,12 @@ if ( getgmlevel() >= 99) {
 	dispbottom "Currently Devil Square is Activated. Try again when it is over.";
 	end;
 } else
-	if ( !$@DS_Active ) {
+	if ( !$@DS_Active )
 	donpcevent ("DS_EVENT#DSMAIN")+"::OnStartDS";
-	end;
+	if ( !$@EnableDrops ) {
+	setmapflag "ordeal_1-1",mf_nomobloot;
 	}
+	end;
 } else
 end;
 OnAtDisableDS:

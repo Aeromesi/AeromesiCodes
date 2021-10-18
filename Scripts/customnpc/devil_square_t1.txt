@@ -290,19 +290,19 @@ OnDSDead:
 		
 		case 0:
 			$@DS_Round++;
-			mapannounce "ordeal_1-1","All monsters in round " + ($@DS_Round - 1) + "have been defeated!",0;
+			mapannounce "ordeal_1-1","All monsters in round " + ($@DS_Round - 1) + " have been defeated!",0;
 			donpcevent strnpcinfo(0)+"::OnBeginRound";
 		default:
 			if(mobcount("ordeal_1-1","DS_EVENT#DSMAIN::OnDSDead") < 5)
 			{
-			mapannounce "ordeal_1-1",mobcount("ordeal_1-1","DS_EVENT#DSMAIN::OnDSDead") + "monsters remaining.",0;
+			mapannounce "ordeal_1-1",mobcount("ordeal_1-1","DS_EVENT#DSMAIN::OnDSDead") + " monsters remaining!.",0;
 			}
 	}
 	end;
 
 OnDSMVPDead:
 	mapannounce "ordeal_1-1", "Congratulations! You may now open your treasure boxes!", 0;
-	setmapflag "ordeal_1-1",mf_noskill;
+//	setmapflag "ordeal_1-1",mf_noskill;
 	for(.@i = 0; .@i  < $@MaxChests; .@i++)
 {
 		monster "ordeal_1-1",0,0, "[DS] Treasure Box",rand(1324,1356),1,"DS_EVENT#DSMAIN::OnBoxOpened";
