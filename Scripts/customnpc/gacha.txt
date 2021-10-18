@@ -180,8 +180,8 @@ Gacha_Snd:
         return;
 
 OnInit: // Config
-	.gachaCounter = 50;
-    .gachaPulls = 3; // How many gacha pulls they need until they can pull for a card
+	.gachaCounter = 100;
+    .gachaPulls = 20; // How many gacha pulls they need until they can pull for a card
     .weaponChance = 2; // Weapon chance 2%
     .armorChance = 2; // Armor chance 2%
     .weaponFee = 500000;
