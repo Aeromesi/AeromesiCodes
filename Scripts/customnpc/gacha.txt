@@ -83,7 +83,7 @@ MainMenu:
 }
 	if ( .sound )
 		soundeffect "fumbi_fail.wav",0;
-		mes "Gacha System 1.0";
+		mes "Would you like to try some Gacha Pulls?"
     if(select("Weapon","Armor") == 1) {
             mes "Weapons Category:";
             switch(select("- Sword:- Daggers:- Katars:- Maces:- Staffs:- Guns:- Bows:- Knuckles:- Whips:- Books:- Axes:- Spears:- Instruments")) {
