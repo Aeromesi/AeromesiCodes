@@ -189,7 +189,7 @@ OnInit: // Config
     .cardFee = 900000;
     .gachaNpc$ = "^FF0000[Gacha]^000000";
     .servName$ = "^00ff00GachaRO^000000";
-	.sound = 1; // 0 = SOUND OFF 1 = SOUND ON <- this is for people who want sound disabled if they dont have sound files for the gacha npc. Disabled by default for quick testing of NPC.
+	.sound = 0; // 0 = SOUND OFF 1 = SOUND ON <- this is for people who want sound disabled if they dont have sound files for the gacha npc. Disabled by default for quick testing of NPC.
     setarray $@godItems[0],2410,2629,1530,1161,5013,2630,4121,4128,4129,4131,4132,4134,4135,4137,4142,4143,4144,4145,4146,4147,4148,4168,4263,4276,4302,4305,4318,4324,4330,4342,4352,4357,4359,4361,4363,4365,4367,4372,4374,4376,4386,4399,4403,4407,4408,4419,4425,4430,4441;
     end;
 }
