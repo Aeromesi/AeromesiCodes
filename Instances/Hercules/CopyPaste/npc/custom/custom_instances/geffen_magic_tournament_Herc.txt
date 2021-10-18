@@ -470,7 +470,6 @@ OnTouch_:
 		else setarray .@quotes$, "Dwigh: I want this Magic Tournament to become my turning point.","Dwigh: I am quite depressed these days...","Dwigh: I will show my great skills to all of my students.";
 			showscript .@quotes$[rand(getarraysize(.@quotes$))], getnpcid(instance_npcname("Dwigh#z1_0et"));
 	}
-//	showscript .@quotes$[rand(getarraysize(.@quotes$))], getnpcid(0);
 	end;
 }
 
@@ -614,26 +613,19 @@ OnTouch_:
 		end;
 	} else if ((eaclass()&EAJ_THIRDMASK==EAJ_RANGER) && !countitem(6124)) {
 		if (!checkmount() == MOUNT_FALCON && getskilllv("HT_FALCON") && !checkmount() == MOUNT_WUG ) {
-//		if (!checkmount() == MOUNT_FALCON && getskilllv("HT_FALCON") && !checkmount() == MOUNT_WUG ) {
 			if(select(" ~ Falcon: ~ Warg")==1) setfalcon;
 			else getitem 6124,1; //Wolf's_Flute
 		} else getitem 6124,1; //Wolf's_Flute
 	} else if ((eaclass()&EAJ_THIRDMASK==EAJ_MECHANIC) && !checkcart() && getskilllv("MC_PUSHCART")) {
 		if (!checkmount() == MOUNT_MADO && getskilllv("NC_MADOLICENSE")) {
-//		if (!checkmadogear() && getskilllv("NC_MADOLICENCE")) {
 			if(select(" ~ Cart: ~ Mado")==1) setcart;
 			else setmount(MOUNT_MADO);
-//			else setmadogear;
 		} else setcart;
 	} else if (!checkcart() && getskilllv("MC_PUSHCART")) setcart;
-//	else if (!checkmount() && getskilllv("HT_FALCON") && !checkwug()) setfalcon;
 	else if (!checkmount() == MOUNT_FALCON && getskilllv("HT_FALCON") && !checkmount() == MOUNT_WUG ) setfalcon;
 	else if (!checkmount() && !checkmount() == MOUNT_DRAGON && getskilllv("KN_RIDING")) {
-//	else if (!checkriding() && !checkdragon() && getskilllv("KN_RIDING")) {
-//		if (eaclass()&EAJ_THIRDMASK==EAJ_RUNE_KNIGHT) setdragon;
 		if (eaclass()&EAJ_THIRDMASK==EAJ_RUNE_KNIGHT) setmount(MOUNT_DRAGON);
 		else setmount();
-//	} else if (!checkmadogear() && getskilllv("NC_MADOLICENCE")) setmadogear;
 	} else if (!checkmount() == MOUNT_MADO && getskilllv("NC_MADOLICENCE")) setmount(MOUNT_MADO);
 	else {
 		message strcharinfo(0),"You do not meet requirements to rent.";
@@ -717,7 +709,7 @@ dali,100,147,3	script	Dimensional Device#gefma	PORTAL,{
 				instance_attach .@instance;
 				announce "The party "+ getpartyname( getcharid(1) ) +" is attempting the "+.@md_name$+" Dungeon! Wish them luck!",bc_all;
 				warpparty instance_mapname( "1@gef",.@instance ),119,209,getcharid(1);
-				GeffenTournament = gettimetick(2) + 82800; // 1 hour wait time
+				GeffenTournament = gettimetick(2) + 82800;
 				end;
 }
 	}
@@ -815,12 +807,10 @@ OnTouch:
 
 OnInstanceInit:
 OnDisable:
-//	disablenpc();
 	disablenpc instance_npcname("#gefmagic_warp01");
 	end;
 OnEnable:
 	enablenpc instance_npcname("#gefmagic_warp01");
-//	enablenpc();
 	end;
 }
 
@@ -882,7 +872,6 @@ OnInstanceInit:
 OnInstanceInit:
 OnEnable:
 	enablenpc instance_npcname("Tournament Guide#gfmg");
-//	enablenpc();
 	end;
 }
 
@@ -907,7 +896,13 @@ OnEnable:
 		mes "Congratulations on being this year's Magic Tournament winner!";
 		close;
 	}
-*/		
+*/
+if ( 'GMT_1QUE >= 22 )
+		{
+			mes .@n$;
+			mes "Congratulations on being this year's Magic Tournament winner!";
+			close;
+		}
 	if ( 'passtest == 2 ) 
 		{
 		mes .@n$;
@@ -946,8 +941,8 @@ OnEnable:
 						mes "Then, let us begin!";
 						close2; //custom
 						npctalk "Time limit is 60 seconds ! Ready! Set! Go!";
-						erasequest 9292;
-						setquest 9293;
+	//					erasequest 9292;
+	//					setquest 9293;
 						addtimer 60000,instance_npcname("Receptionist#1_0et")+"::OnFail";
 						monster instance_mapname("1@gef"),120,62,"--ja--",1106,1,instance_npcname("Receptionist#1_0et")+"::OnTest";
 						hideonnpc instance_npcname("Receptionist#1_0et");	
@@ -1370,11 +1365,55 @@ OnInstanceInit:
 
 1@ge_st,107,57,4	script	Tournament Guide#gefMT	4_M_HUMAN_02,{
 	.@n$ = "[ Tournament Guide ]";
-//	ignoretimeout 1;
 	mes .@n$;
-//	if ( 'Victory < 22 )
-//		{
-	if ('GMT_1QUE <22) 
+	if ( 'Victory ) 
+				{
+//	if (questprogress(9308) != -1) {
+		switch(select("Leave the Arena and receive your reward:End Conversation")) {
+			case 1:
+				mes .@n$;
+				mes "You won the competition!";
+				mes "Congratulations!";
+				next;
+				mes .@n$;
+				mes "By the way, the Academy Master has";
+				mes "something to tell you!";
+				next;
+				cutin "acamaster_a.bmp",2;
+				.@n2$ = "[ Geffen Academy Master ]";
+				mes .@n2$;
+				mes "Congratulations!";
+				mes "This has been the best pool of";
+				mes "competitors in the history of this";
+				mes "competition.";
+				next;
+				mes .@n2$;
+				mes "I present to you your earned ^55CC55Geffen";
+				mes "Magic Tournament Coins.^000000";
+				next;
+				mes .@n2$;
+				mes "Bring the coins to the ^55CC55Geffen Coin";
+				mes "Operator^000000 to exchange for special";
+				mes "equipment.";
+				next;
+				mes .@n2$;
+				mes "Your name will be remembered in the";
+				mes "history books of Geffen.";
+				next;
+				mes .@n2$;
+				mes "Congratulations again.";
+				mes "I hope you enjoy the rest of the";
+				mes "Geffen Festivities.";
+				close2;
+				cutin "",255;
+				getitem 6671,'reward[getarraysize('reward[0]) - 1];
+				warp instance_mapname("1@gef"), 120,35;
+				end;
+			case 2:
+				close;
+		}
+}
+	if ('GMT_1QUE < 22 ) 
 		{
 		mes "Congratulations on winning the "+callfunc("F_GetNumSuffix",('GMT_1QUE-10))+" round!";
 		.@menu$ = "Begin the "+callfunc("F_GetNumSuffix",('GMT_1QUE-9))+" match.";
@@ -1461,7 +1500,8 @@ OnInstanceInit:
 				mes "Not a problem, talk to me when you're ready.";
 				close;
 		}
-	if ('GMT_1QUE >= 22) 
+/*	if ( 'GMT_1QUE >= 22 ) 
+				{
 //	if (questprogress(9308) != -1) {
 		switch(select("Leave the Arena and receive your reward:End Conversation")) {
 			case 1:
@@ -1506,6 +1546,7 @@ OnInstanceInit:
 			case 2:
 				close;
 		}
+}*/
 OnInstanceInit:
 	setarray 'reward,1,2,3,4,5,6,7,8,9,10,15,20,20;
 	end;
@@ -1532,15 +1573,12 @@ OnStart:
 			npctalk "The Geffen Magic Tournament will now commence!";
 			sleep 1000;
 			.@spec = rand(70,257);
-//			showscript "Tournament Spectator: Wow~!!! Looks fun~~!! Yahoo~!",instance_npcname("Tournament Spectator#"+.@spec);
 			showscript "Tournament Spectator: Wow~!!! Looks fun~~!! Yahoo~!",getnpcid(instance_npcname("Tournament Spectator#"+.@spec));
 			sleep 1000;
 			.@spec = rand(70,257);
-//			showscript "Tournament Spectator: This is getting exciting~!",instance_npcname("Tournament Spectator#"+.@spec);
 			showscript "Tournament Spectator: This is getting exciting~!",getnpcid(instance_npcname("Tournament Spectator#"+.@spec));
 			sleep 1000;
 			.@spec = rand(70,257);
-//			showscript "Tournament Spectator: When is the game going to start~!",instance_npcname("Tournament Spectator#"+.@spec);
 			showscript "Tournament Spectator: When is the game going to start~!",getnpcid(instance_npcname("Tournament Spectator#"+.@spec));
 			sleep 500;
 			donpcevent instance_npcname("Arhi#1")+"::OnActivate";
@@ -2360,8 +2398,6 @@ OnRndtalk:
 	for (.@i = 0; .@i <.@iter ;.@i++) {
 	.@group = rand(30);
 	if (.@group <18) {
-//		showscript 'audience$[rand(getarraysize('audience$))],instance_npcname("Tournament Spectator#"+rand(70,257));
-//		showscript 'audience$[rand(getarraysize('audience$))],instance_npcname("Tournament Spectator#"+rand(70,257));
 		showscript 'audience$[rand(getarraysize('audience$))],getnpcid(instance_npcname("Tournament Spectator#"+rand(70,257)));
 		showscript 'audience$[rand(getarraysize('audience$))],getnpcid(instance_npcname("Tournament Spectator#"+rand(70,257)));
 	} else if (.@group <23) {
@@ -2383,16 +2419,12 @@ OnTimer13000:
 			.@group = rand(30);
 			
 				if ( .@group <18) {
-//					showscript 'audience$[rand(getarraysize('audience$))],instance_npcname("Tournament Spectator#"+rand(70,257));
-//					showscript 'audience$[rand(getarraysize('audience$))],instance_npcname("Tournament Spectator#"+rand(70,257));
 					showscript 'audience$[rand(getarraysize('audience$))],getnpcid(instance_npcname("Tournament Spectator#"+rand(70,257)));
 					showscript 'audience$[rand(getarraysize('audience$))],getnpcid(instance_npcname("Tournament Spectator#"+rand(70,257)));
 				} else if (.group <23) {
-//					showscript 'student$[rand(getarraysize('student$))],instance_npcname("Magic Academy Student#" + rand(1,5));
 					showscript 'student$[rand(getarraysize('student$))],getnpcid(instance_npcname("Magic Academy Student#" + rand(1,5)));
 				} else {
 					.@id = rand(getarraysize('tourist$));
-//					showscript 'touristname2$[.@id]+'tourist$[.@id],instance_npcname('touristname$[.@id]);
 					showscript 'touristname2$[.@id]+'tourist$[.@id],getnpcid(instance_npcname('touristname$[.@id]));
 				}
 					
@@ -2511,7 +2543,6 @@ OnDefeat:
 	movenpc instance_npcname("Arhi#z1_0et"),145,125;
 	hideoffnpc instance_npcname("Tournament Guide#gefMT");
 	disablenpc instance_npcname("Arhi#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -2569,7 +2600,7 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Dio Anemos#z1_0et"),91,117;
 	disablenpc instance_npcname("Dio Anemos#1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2625,7 +2656,7 @@ OnDefeat:
 	hideonnpc instance_npcname("Geffen Gangster#n1");
 	sleep 1000;
 	disablenpc instance_npcname("Geffen Gangster#n1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2678,7 +2709,7 @@ OnDefeat:
 	hideonnpc instance_npcname("Geffen Bully#n1");
 	sleep 1000;
 	disablenpc instance_npcname("Geffen Bully#n1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2734,7 +2765,7 @@ OnDefeat:
 	hideonnpc instance_npcname("Geffen Shoplifter#n1");
 	sleep 1000;
 	disablenpc instance_npcname("Geffen Shoplifter#n1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2792,7 +2823,7 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Faymont#z1_0et"),53,90;
 	disablenpc instance_npcname("Faymont#1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2852,7 +2883,7 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Ordre#z1_0et"),85,68;
 	disablenpc instance_npcname("Ordre#1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2913,7 +2944,7 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Blut Hase#z1_0et"),111,62;
 	disablenpc instance_npcname("Blut Hase#1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -2968,7 +2999,7 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Kuro Akuma#z1_0et"),104,42;
 	disablenpc instance_npcname("Kuro Akuma#1");
-	'Victory++;
+	
 	end;
 	
 OnVictory:
@@ -3024,7 +3055,6 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Ifodes#z1_0et"),115,66;
 	disablenpc instance_npcname("Ifodes#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -3079,7 +3109,6 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Licheniyes#z1_0et"),137,53;
 	disablenpc instance_npcname("Licheniyes#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -3137,7 +3166,6 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Odoric#z1_0et"),158,63;
 	disablenpc instance_npcname("Odoric#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -3194,7 +3222,6 @@ OnDefeat:
 	sleep 1000;
 	movenpc	instance_npcname("Ju#z1_0et"),178,91;
 	disablenpc instance_npcname("Ju#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -3263,7 +3290,6 @@ OnDefeat:
 	sleep 1000;
 	movenpc instance_npcname("Dwigh#z1_0et"),120,98;
 	disablenpc instance_npcname("Dwigh#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -3292,7 +3318,6 @@ OnDefeat:
 	killmonster instance_mapname("1@ge_st"),instance_npcname("#GMTHomun")+"::OnHomJR";
 	killmonster instance_mapname("1@ge_st"),instance_npcname("#GMTHomun")+"::OnHomDead";
 	enablenpc instance_npcname("#paycanatalk2");
-	'Victory++;
 	end;
 
 OnTalk1:
@@ -3332,7 +3357,6 @@ OnTalk2:
 	sleep 1000;
 	movenpc instance_npcname("Fay Kanavian#z1_0et"),117,72;
 	disablenpc instance_npcname("Fay Kanavian#1");
-	'Victory++;
 	end;
 	
 OnVictory:
@@ -3430,6 +3454,7 @@ OnTalk2:
     cutin "", 255;
 //	if (questprogress(9307) != -1)
 //		changequest 9307,9308;
+	'Victory = 1;
     warp instance_mapname("1@ge_st"), 109,50;
 	donpcevent instance_npcname("#win")+"::OnEnable";
 	movenpc instance_npcname("#gefmagic_warp02"),120,213;
@@ -3510,10 +3535,10 @@ end;
 1@ge_st,1,1,6	script	Arhi#q1	670,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Arhi : Tsk, I will come back when I get stronger!",getnpcid(0);//DONE
+			showscript "Arhi : Tsk, I will come back when I get stronger!",getnpcid(instance_npcname("Arhi#q1"));//DONE
 			break;
 		case 2:
-			showscript "Arhi : Congratulations~!",getnpcid(0);//DONE
+			showscript "Arhi : Congratulations~!",getnpcid(instance_npcname("Arhi#q1"));//DONE
 			break;
 	}
 	end;
@@ -3522,25 +3547,25 @@ end;
 	
 		switch(rand(1,2)){
 		case 1:
-			showscript "Dio Anemos : I'm suddenly really hungry...",getnpcid(0);//DONE
+			showscript "Dio Anemos : I'm suddenly really hungry...",getnpcid(instance_npcname("Dio Anemos#q1"));//DONE
 			break;
 		case 2:
-			showscript "Dio Anemos : Congratulations~! It is your treat~!",getnpcid(0);//DONE
+			showscript "Dio Anemos : Congratulations~! It is your treat~!",getnpcid(instance_npcname("Dio Anemos#q1"));//DONE
 			break;
 	}
 	end;
 }
 1@ge_st,1,1,0	script	Faymont#q1	672,{
-	showscript "Faymont : Awesome fighting ability!",getnpcid(0);//DONE
+	showscript "Faymont : Awesome fighting ability!",getnpcid(instance_npcname("Faymont#q1"));//DONE
 	end;
 }
 1@ge_st,1,1,0	script	Ordre#q1	673,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Ordre : Simply amazing!",getnpcid(0);//DONE
+			showscript "Ordre : Simply amazing!",getnpcid(instance_npcname("Ordre#q1"));//DONE
 			break;
 		case 2:
-			showscript "Ordre : I can only imagine how long you have trained yourself to become this strong.",getnpcid(0);//DONE
+			showscript "Ordre : I can only imagine how long you have trained yourself to become this strong.",getnpcid(instance_npcname("Ordre#q1"));//DONE
 			break;
 	}	
 	end;
@@ -3548,40 +3573,40 @@ end;
 1@ge_st,1,1,2	script	Blut Hase#q1	674,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Blut Hase : You must be famous, right?",getnpcid(0);//DONE
+			showscript "Blut Hase : You must be famous, right?",getnpcid(instance_npcname("Blut Hase#q1"));//DONE
 			break;
 		case 2:
-			showscript "Blut Hase : Well... Congratulations anyway...",getnpcid(0);//DONE
+			showscript "Blut Hase : Well... Congratulations anyway...",getnpcid(instance_npcname("Blut Hase#q1"));//DONE
 			break;
 	}	
 	end;
 }
 1@ge_st,1,1,2	script	Kuro Akuma#q1	675,{
-	showscript "Kuro Akuma : So... very strong...",getnpcid(0);//DONE
+	showscript "Kuro Akuma : So... very strong...",getnpcid(instance_npcname("Kuro Akuma#q1"));//DONE
 	end;
 }
 1@ge_st,1,1,4	script	Ifodes#q1	676,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Ifodes : Your talents suit your chivalry.",getnpcid(0);//DONE
+			showscript "Ifodes : Your talents suit your chivalry.",getnpcid(instance_npcname("Ifodes#q1"));//DONE
 			break;
 		case 2:
-			showscript "Ifodes : You were great competition. Congratulations!",getnpcid(0);//DONE
+			showscript "Ifodes : You were great competition. Congratulations!",getnpcid(instance_npcname("Ifodes#q1"));//DONE
 			break;
 	}	
 	end;
 }
 1@ge_st,1,1,4	script	Licheniyes#q1	677,{
-	showscript "Licheniyes : Awesome victory~!",getnpcid(0);//DONE
+	showscript "Licheniyes : Awesome victory~!",getnpcid(instance_npcname("Licheniyes#q1"));//DONE
 	end;
 }
 1@ge_st,1,1,4	script	Odoric#q1	678,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Odoric : Simply amazing.",getnpcid(0);//DONE
+			showscript "Odoric : Simply amazing.",getnpcid(instance_npcname("Odoric#q1"));//DONE
 			break;
 		case 2:
-			showscript "Odoric : Congratulations on your victory~!",getnpcid(0);//DONE
+			showscript "Odoric : Congratulations on your victory~!",getnpcid(instance_npcname("Odoric#q1"));//DONE
 			break;
 	}	
 	end;
@@ -3589,25 +3614,25 @@ end;
 1@ge_st,1,1,4	script	Ju#q1	679,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Ju : You... are... strong... I... won't... forget... you...",getnpcid(0);//DONE	
+			showscript "Ju : You... are... strong... I... won't... forget... you...",getnpcid(instance_npcname("Ju#q1"));//DONE	
 			break;
 		case 2:
-			showscript "Ju : I've never lost before. But you are a worthy foe.",getnpcid(0);//DONE
+			showscript "Ju : I've never lost before. But you are a worthy foe.",getnpcid(instance_npcname("Ju#q1"));//DONE
 			break;
 	}
 	end;
 }
 1@ge_st,1,1,6	script	Dwigh#q1	680,{
-	showscript "Dwigh : Really good fight, you've got exceptional strength!",getnpcid(0);
+	showscript "Dwigh : Really good fight, you've got exceptional strength!",getnpcid(instance_npcname("Dwigh#q1"));
 	end;
 }
 1@ge_st,1,1,0	script	Fay Kanavian#q1	665,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Fay Kanavian : I didn't think that Fenrir would lose...",getnpcid(0);//DONE
+			showscript "Fay Kanavian : I didn't think that Fenrir would lose...",getnpcid(instance_npcname("Fay Kanavian#q1"));//DONE
 			break;
 		case 2:
-			showscript "Fay Kanavian : Next time we fight, Alphonse will be stronger!",getnpcid(0);//DONE
+			showscript "Fay Kanavian : Next time we fight, Alphonse will be stronger!",getnpcid(instance_npcname("Fay Kanavian#q1"));//DONE
 			break;
 	}
 	end;
@@ -3615,10 +3640,10 @@ end;
 1@ge_st,1,1,4	script	Fenrir#q1	664,{
 	switch(rand(1,2)){
 		case 1:
-			showscript "Fenrir : All of my colleagues are so excited about your victory. They are eager to meet you.",getnpcid(0);//DONE
+			showscript "Fenrir : All of my colleagues are so excited about your victory. They are eager to meet you.",getnpcid(instance_npcname("Fenrir#q1"));//DONE
 			break;
 		case 2:
-			showscript "Fenrir : You defeated me in a fair fight. You are very strong.",getnpcid(0);//DONE
+			showscript "Fenrir : You defeated me in a fair fight. You are very strong.",getnpcid(instance_npcname("Fenrir#q1"));//DONE
 			break;
 	}	
 	end;
