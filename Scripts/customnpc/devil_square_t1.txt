@@ -163,7 +163,7 @@ if ( !$MaxUserOverRide ) {
 } else
 	$@MaxUsers = $MaxUsers;
 if ( !$MaxMinOverRide ) {
-	$@MaxMin = 5; // The Max Minutes the players have to enter Devil's Square.
+	$@MaxMin = 2; // The Max Minutes the players have to enter Devil's Square.
 } else
 $@MaxMin = $MaxMin;
 if ( !$ChestsOverRide ) {
@@ -223,7 +223,7 @@ OnStartDS:
 	for(.@i = $@MaxMin; .@i  > 0; .@i--)
 	{
 		announce "Devil Square will begin in " + .@i + " minutes!", 0;
-		sleep 6000;
+		sleep 60000;
 	}
 		if( getmapusers("ordeal_1-1") == 0 )
 {

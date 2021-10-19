@@ -165,7 +165,7 @@ if ( !$MaxUserOverRide ) {
 } else
 	$@MaxUsers = $MaxUsers;
 if ( !$MaxMinOverRide ) {
-	$@MaxMin = 5; // The Max Minutes the players have to enter Devil's Square.
+	$@MaxMin = 2; // The Max Minutes the players have to enter Devil's Square.
 } else
 $@MaxMin = $MaxMin;
 if ( !$ChestsOverRide ) {
