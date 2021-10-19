@@ -33,9 +33,17 @@ MainMenu:
                         mes "Now let's start this up.";
                         next;
                         callsub Gacha_Snd;
-                        switch(rand(1,2)) //100% chance for a card
+                        switch(rand(1,10)) // has to land on case 10, 10% chance for a card
 						{
                             case 1:
+							case 2:
+							case 3:
+							case 4:
+							case 5:
+							case 6:
+							case 7:
+							case 8:
+							case 9:
 								if ( .sound )
                                 soundeffect "s4miss_start.wav",0;
                                 mes "Sorry, but it seems you failed...";
@@ -43,7 +51,7 @@ MainMenu:
                                 gachaAttempts = 0; Zeny-=.cardFee;
 								next;
                                 callsub MainMenu;
-                            default:
+                            case 10:
                                 .@item = callfunc ("Gacha_Roll", 4001,4453);
                                 mes "Congratulations! You've successfully Gacha pulled a "+getitemname(.@item)+".";
                                 getitem .@item,1;
@@ -83,7 +91,7 @@ MainMenu:
 }
 	if ( .sound )
 		soundeffect "fumbi_fail.wav",0;
-		mes "Would you like to try some Gacha Pulls?"
+		mes "Gacha System 1.0";
     if(select("Weapon","Armor") == 1) {
             mes "Weapons Category:";
             switch(select("- Sword:- Daggers:- Katars:- Maces:- Staffs:- Guns:- Bows:- Knuckles:- Whips:- Books:- Axes:- Spears:- Instruments")) {
@@ -128,7 +136,7 @@ Gacha:
         mes "You have "+ getarg(3) +" Zeny! We will now start the Gachang process.";
         next;
         callsub Gacha_Snd;
-        if ( rand(100) < getarg(2) ) {
+        if ( getarg(2) < rand(100) ) {
             mes "You have failed the Gacha roll.";
             mes "Gacha Points: (^CD3333"+gachaAttempts+"^000000/^003EFF"+.gachaPulls+"^000000)  to Gacha a card for "+.cardFee+" Zeny.";
 			next;
@@ -180,10 +188,10 @@ Gacha_Snd:
         return;
 
 OnInit: // Config
-	.gachaCounter = 100;
-    .gachaPulls = 20; // How many gacha pulls they need until they can pull for a card
-    .weaponChance = 2; // Weapon chance 2%
-    .armorChance = 2; // Armor chance 2%
+	.gachaCounter = 50;
+    .gachaPulls = 10; // How many gacha pulls they need until they can pull for a card
+    .weaponChance = 12; // Weapon chance 12%
+    .armorChance = 12; // Armor chance 12%
     .weaponFee = 500000;
     .armorFee = 400000;
     .cardFee = 900000;
