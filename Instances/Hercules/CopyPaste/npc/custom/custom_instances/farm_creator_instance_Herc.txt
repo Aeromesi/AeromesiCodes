@@ -4,6 +4,7 @@
 		Built for Hercules
 */
 prontera,148,146,4	script	[Farm] Instances	4_M_EINMINER,{
+OnAtBeginning:
 	if( has_instance( "1@def01" ) != "" ) {
 			warp ("1@def01",50,50);
 }
@@ -23,7 +24,7 @@ prontera,148,146,4	script	[Farm] Instances	4_M_EINMINER,{
 	switch (select(
 		"Farming Instances"
 		,"Player Menu"
-		,""+ (($EnableNPCF)?
+		,""+ (($enableNpcFarm)?
 		"[^FF0000Disable^000000]"
 		" Farm Zones":"[^006400Enable^000000] "" Farm Zones")+ "")) {
 
@@ -33,18 +34,19 @@ prontera,148,146,4	script	[Farm] Instances	4_M_EINMINER,{
 				mes "What would you like to do with your Custom Farm Zones?";
 				next;
 				switch(select(
-				"[Click First] Farm Zone Amounts" // 1
-				,"[Create] Farm Zones"))
+				"[^006400Click First^000000] Farm Zone Amounts" // 1
+				,"[^0000FFCreate^000000] Farm Zones"
+				,"[^FF0000Reset^000000] Farm Zones"))
 				{
 
 					case 1:
-						if ( $InstFarmEdit[1] ) {
+						if ( $insFarmEdit[1] ) {
 						mes .insn$;
-						mes .ErrorCodes$[4];
+						mes .errorCodes$[4];
 						next;
 						break;
 					}
-
+						dispbottom "Please input how many Farm Zones you want.";
 						input $insMaxF;
 					if ( $insMaxF <= 0 ) {
 						dispbottom "Cannot enter 0. Switching to Edit Menu.";
@@ -53,113 +55,129 @@ prontera,148,146,4	script	[Farm] Instances	4_M_EINMINER,{
 
 					for ( .@i = 1; .@i <= $insMaxF; .@i++ )
 					{
-					// Farm stuff
 						$insStringF$[.@i] = "No Name information";
-						$InstFarmColors$[.@i] = "No Color information";
-						consolemes 0,"this got iteratated "+.@i+" times";
 					}
 						dispbottom "Amount of Farm Zones: "+$insMaxF+".";
-						$InstFarmEdit[1] = 1;
-//						next;
+						$insFarmEdit[1] = 1;
+						$clickedCreateFirst = 1;
 						callsub GM_Menu;
 						end;
 	case 2:
 	CreateF_Ins:
-//	switch(select(implode($insStringF$,":"))) {
-//for ( .@i = 1; .@i <= $insStringF$; .@i++ ) {
-//	dispbottom ""+.@i+".) "+$insStringF$[.@i-1]+"";
-//}
-//	if ( !$clickedCreateFirst )
+		if (!$clickedCreateFirst) {
+			mes .insn$;
+			mes "You must first click [Create First] button in previous menu.";
+			next;
+			callsub GM_Menu;
+			end;
+		}
+	if ( $enableNpcFarm )
+	{
+		mes "^FF0000"+strnpcinfo(PC_NAME)+"^000000";
+		mes "Farm Zones is currently ^006400Enabled^000000.";
+		mes " ";
+		mes "^FF0000Disable^000000 to continue creating Farm Zones!";
+		callsub GM_Menu;
+		end;
+	}
+
 	.@choice = select(implode( $insStringF$ ,":"));
 	.@size = getarraysize(.@choice);
-	.InstanceNum = .@choice;
+	.farmInstances = .@choice;
 
 	mes "Please type out the name of your Farm Zone.";
-	input $insStringF$[.InstanceNum-1];
+	next;
+	input $insStringF$[.farmInstances-1];
 	next;
 	mes "Please input the delay time you want before re-entrance of player.";
-	input $minDelay[.InstanceNum-1];
+	input $minDelay[.farmInstances-1];
 	next;
 	mes "Please input the Item ID you want to get for the Farm Zone.";
-	next;
-	input $FItemID[.InstanceNum-1];
+	input $fItem[.farmInstances-1];
 	next;
 	mes "Please input the Max amount of items or whatever you want them to gain per attempt at the Farm Zone.";
-	input $FMaxItemLimit[.InstanceNum-1];
+	input $maxItemLimit[.farmInstances-1];
 	next;
 	mes "Please input the rate at which you want the player to receive the rewards for Farming.";
-	input $FItemRate[.InstanceNum-1];
+	input $itemRate[.farmInstances-1];
 	next;
 	mes .@insv$;
 	mes "Alright, please input Monster 1.";
 FMOB_INPUT:
-	input $FMob1ID[.InstanceNum-1];
+	input $FMob1ID[.farmInstances-1];
 	next;
-	if(getmonsterinfo($FMob1ID[.InstanceNum-1],MOB_LV)<0 || getmonsterinfo($FMob1ID[.InstanceNum-1],MOB_NAME)=="Dummy") {
+	if(getmonsterinfo($FMob1ID[.farmInstances-1],MOB_LV)<0 || getmonsterinfo($FMob1ID[.farmInstances-1],MOB_NAME)=="Dummy") {
 
 		dispbottom "Please enter valid Monster ID";
 		callsub FMOB_INPUT;
 		end;
 }
 	mes .insn$;
-	mes "How many of "+strmobinfo(1,$FMob1ID[.InstanceNum-1])+" would you like to spawn?";
+	mes "How many of "+strmobinfo(1,$FMob1ID[.farmInstances-1])+" would you like to spawn?";
 FMOB1_INPUTAM:
-	input $FMob1AM[.InstanceNum-1];
-	if($FMob1AM[.InstanceNum-1] == 0) {
+	input $fMobOneAmount[.farmInstances-1];
+	if($fMobOneAmount[.farmInstances-1] == 0) {
 	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
-	dispbottom "Please reinput "+strmobinfo(1,$FMob1ID[.InstanceNum-1])+"'s amount.";
+	dispbottom "Please reinput "+strmobinfo(1,$FMob1ID[.farmInstances-1])+"'s amount.";
 	callsub FMOB1_INPUTAM;
 	end;
 }
-	mes "Alright, monster 1 will be ["+strmobinfo(1,$FMob1ID[.InstanceNum-1])+"] x ("+$FMob1AM[.InstanceNum-1]+").";
+	mes "Alright, monster 1 will be ["+strmobinfo(1,$FMob1ID[.farmInstances-1])+"] x ("+$fMobOneAmount[.farmInstances-1]+").";
 next;
 	mes .insn$;
 	mes "Please input Monster 2.";
 FMOB2_INPUT:
-	input $FMob2ID[.InstanceNum-1];
-	if(getmonsterinfo($FMob2ID[.InstanceNum-1],MOB_LV)<0 || getmonsterinfo($FMob2ID[.InstanceNum-1],MOB_NAME)=="Dummy") {
+	input $FMob2ID[.farmInstances-1];
+	if(getmonsterinfo($FMob2ID[.farmInstances-1],MOB_LV)<0 || getmonsterinfo($FMob2ID[.farmInstances-1],MOB_NAME)=="Dummy") {
 
 		dispbottom "Please enter valid Monster ID";
 		callsub FMOB2_INPUT;
 		end;
 }
-	mes "How many of "+strmobinfo(1,$FMob2ID[.InstanceNum-1])+" would you like to spawn?";
+	mes "How many of "+strmobinfo(1,$FMob2ID[.farmInstances-1])+" would you like to spawn?";
 FMOB2_INPUTAM:
-	input $FMob2AM[.InstanceNum-1];
-	if($FMob2AM[.InstanceNum-1] == 0) {
+	input $fMobTwoAmount[.farmInstances-1];
+	if($fMobTwoAmount[.farmInstances-1] == 0) {
 	dispbottom "Sorry, but it's impossible to enter 0 monsters.";
-	dispbottom "Please reinput "+strmobinfo(1,$FMob2ID[.InstanceNum-1])+"'s amount.";
-	.InstanceNum++;
+	dispbottom "Please reinput "+strmobinfo(1,$FMob2ID[.farmInstances-1])+"'s amount.";
+	.farmInstances++;
 	callsub FMOB2_INPUTAM;
 	end;
 }
-	mes "Alright, monster 2 will be ["+strmobinfo(1,$FMob2ID[.InstanceNum-1])+"] x ("+$FMob2AM[.InstanceNum-1]+").";
+	mes "Alright, monster 2 will be ["+strmobinfo(1,$FMob2ID[.farmInstances-1])+"] x ("+$fMobTwoAmount[.farmInstances-1]+").";
 next;
-		mes "[^FF0000"+$insStringF$[.InstanceNum-1]+"^000000]";
+	mes .insn$;
 	mes "Monster Info:";
-	mes "1. [^7D26CD"+strmobinfo(1,$FMob1ID[.InstanceNum-1])+"^000000] x (^0000FF"+$FMob1AM[.InstanceNum-1]+"^000000).";
-	mes "2. [^7D26CD"+strmobinfo(1,$FMob2ID[.InstanceNum-1])+"^000000] x (^0000FF"+$FMob2AM[.InstanceNum-1]+"^000000).";
-	mes "Delay for Re-entry: ^0000FF"+$minDelay[.InstanceNum-1]+"^000000 minutes.";
-	mes "Item Limit until completion: ^0000FF"+$FMaxItemLimit[.InstanceNum-1]+"^000000.";
-	mes "Rate of Obtaining Reward: ^0000FF"+$FItemRate[.InstanceNum-1]+"^000000%.";
+	mes "1. [^7D26CD"+strmobinfo(1,$FMob1ID[.farmInstances-1])+"^000000] x (^0000FF"+$fMobOneAmount[.farmInstances-1]+"^000000).";
+	mes "2. [^7D26CD"+strmobinfo(1,$FMob2ID[.farmInstances-1])+"^000000] x (^0000FF"+$fMobTwoAmount[.farmInstances-1]+"^000000).";
+	mes "Delay for Re-entry: ^0000FF"+$minDelay[.farmInstances-1]+"^000000 minutes.";
+	mes "Item Limit until completion: ^0000FF"+$maxItemLimit[.farmInstances-1]+"^000000.";
+	mes "Rate of Obtaining Reward: ^0000FF"+$itemRate[.farmInstances-1]+"^000000%.";
+	mes " ";
+	$InstFarmDesigner$[.farmInstances-1] = "^006400"+strcharinfo(PC_NAME)+"^000000";
+	mes "Designer: [GM] "+$InstFarmDesigner$[.farmInstances-1]+".";
 	close;
+
+	case 3:
+		callsub OnAtResetFarm;
+		end;
 }
 	case 2:				
 		callsub Player_Menu;
 		end;
 
 	case 3:
-	if ( !$EnableNPCF )
+	if ( !$enableNpcFarm )
 	{
-		dispbottom ""+strnpcinfo(0)+" Farm Zones enabled.";
-		$EnableNPCF = 1;
+		dispbottom ""+strnpcinfo(0)+" enabled.";
+		$enableNpcFarm = 1;
 		callsub GM_Menu;
 		end;
 	}
-	if ( $EnableNPCF )
+	if ( $enableNpcFarm )
 	{
-		dispbottom ""+strnpcinfo(0)+" Farm Zones disabled.";
-		$EnableNPCF = 0;
+		dispbottom ""+strnpcinfo(0)+" disabled.";
+		$enableNpcFarm = 0;
 		callsub GM_Menu;
 		end;
 	}
@@ -173,67 +191,74 @@ next;
 	switch(select("Farm Zones","Exit")) {
 
 	case 1:
-	if ( !$EnableNPCF )
+	if ( !$enableNpcFarm )
 	{
 		mes "^FF0000"+strnpcinfo(PC_NAME)+"^000000";
 		mes "Farm Zones is currently ^FF0000disabled^000000.";
 		close;
 	}
-		mes "Farm Zone Designer: ^FF0000"+$InstFarmDesigner$+"^000000.";
+		if (!$clickedCreateFirst) {
+			mes .insn$;
+			mes "GM has not created Farm Zones yet.";
+			next;
+			callsub Player_Menu;
+			end;
+		}
 
 	InsF_Choice:
 	.@choice = select(implode( $insStringF$ ,":"));
 	.@size = getarraysize(.@choice);
-	.InstanceNum = .@choice;
-	mes "[^FF0000"+$insStringF$[.InstanceNum-1]+"^000000 Zone]";
+	.farmInstances = .@choice;
+	mes .insn$;
 	mes "Monster Info:";
-	mes "1. [^7D26CD"+strmobinfo(1,$FMob1ID[.InstanceNum-1])+"^000000] x (^0000FF"+$FMob1AM[.InstanceNum-1]+"^000000).";
-	mes "2. [^7D26CD"+strmobinfo(1,$FMob2ID[.InstanceNum-1])+"^000000] x (^0000FF"+$FMob2AM[.InstanceNum-1]+"^000000).";
-	mes "Delay for Re-entry: ^0000FF"+$minDelay[.InstanceNum-1]+"^000000 minutes.";
-	mes "Item Limit until completion: ^0000FF"+$FMaxItemLimit[.InstanceNum-1]+"^000000.";
-	mes "Rate of Obtaining Reward: ^0000FF"+$FItemRate[.InstanceNum-1]+"^000000%.";
+	mes "1. [^7D26CD"+strmobinfo(1,$FMob1ID[.farmInstances-1])+"^000000] x (^0000FF"+$fMobOneAmount[.farmInstances-1]+"^000000).";
+	mes "2. [^7D26CD"+strmobinfo(1,$FMob2ID[.farmInstances-1])+"^000000] x (^0000FF"+$fMobTwoAmount[.farmInstances-1]+"^000000).";
+	mes "Delay for Re-entry: ^0000FF"+$minDelay[.farmInstances-1]+"^000000 minutes.";
+	mes "Item Limit until completion: ^0000FF"+$maxItemLimit[.farmInstances-1]+"^000000.";
+	mes "Rate of Obtaining Reward: ^0000FF"+$itemRate[.farmInstances-1]+"^000000%.";
+	mes " ";
+	mes "Designer: [GM] "+$InstFarmDesigner$[.farmInstances-1]+".";
+	mes "Are you sure you want to play this Farm Zone?";
 	next;
-			if( gettimetick(2) < #farmHuntDelay[.InstanceNum-1] ) {
-				.@name$ = strcharinfo(0);
-				.@time = #farmHuntDelay[.InstanceNum-1] - gettimetick(2);
-				attachrid( .@self );
-				mes "Sorry "+ .@name$ +" you must wait ^FF0000"+ callfunc( "timeleft__", .@time ) +"^000000 before entering the "+.@md_name$+" Dungeon again.";
-				close2;
-				cutin "", 255;
-				end;
-			}
-		.@instance = instance_create( $insStringF$[.InstanceNum-1], getcharid( 3 ), IOT_CHAR);
+		if(select("Sure.","No thanks.") == 2) callsub Player_Menu;
+
+			if( #farmDelay[.farmInstances-1] > gettimetick(2) ) {
+		.last = #farmDelay[.farmInstances-1] - gettimetick(2);
+		.@min =  .last % ( 24 * 3600 ) % 3600 / (60);
+		mes "Wait for ^FF0000"+.@min+" Minutes^000000.";
+		close;
+}
+		.@instance = instance_create( $insStringF$[.farmInstances-1], getcharid( 3 ), IOT_CHAR);
 		if( .@instance < 0 ) { 
 			dispbottom "Instance Failed.";
 			close;
 		}
-		dispbottom "" + $insStringF$[.InstanceNum-1] + "- Attempting to create Farm Instance.";
+		dispbottom "" + $insStringF$[.farmInstances-1] + "- Attempting to create Farm Instance.";
 		if( instance_attachmap("1@def01",.@instance) == "" ) {
 			instance_destroy( .@instance );
 			dispbottom "Failed to instance 1@def01";
 			end;
 		}
 
-		dispbottom "" + $insStringF$[.InstanceNum-1] + " attempt successful on Instance attach!";
-		instance_set_timeout( 3600, 120, .@instance ); // 3600 is 60 min how long instance stay on 300 is 5 min idle if you leave instance destroy in 5 min 
+		dispbottom "" + $insStringF$[.farmInstances-1] + " attempt successful on Instance attach!";
+		instance_set_timeout( 3600, 120, .@instance );
 		instance_init( .@instance );
 		instance_attach .@instance;
 
-	'option = .InstanceNum-1;
-	'delayMin = $minDelay[.InstanceNum-1];
-	'FMaxItemLimit = $FMaxItemLimit[.InstanceNum-1];
-	'FItemRate = $FItemRate[.InstanceNum-1];
-	'FItemID = $FItemID[.InstanceNum-1];
-	'MOB1ID = $FMob1ID[.InstanceNum-1];
-	'MOB2ID = $FMob2ID[.InstanceNum-1];
-	'MOB1AM = $FMob1AM[.InstanceNum-1];
-	'MOB2AM = $FMob2AM[.InstanceNum-1];
-	'MobTOTAL = 'MOB1AM+'MOB2AM;
-	'Farm_Count = 0;
+	'option = .farmInstances-1;
+	'delayMin = $minDelay[.farmInstances-1];
+	'maxItemLimit = $maxItemLimit[.farmInstances-1];
+	'fItemRate = $itemRate[.farmInstances-1];
+	'fItem = $fItem[.farmInstances-1];
+	'mobOne = $FMob1ID[.farmInstances-1];
+	'mobTwo = $FMob2ID[.farmInstances-1];
+	'mobOneAmount = $fMobOneAmount[.farmInstances-1];
+	'mobTwoAmount = $fMobTwoAmount[.farmInstances-1];
+	'MobTOTAL = 'mobOneAmount+'mobTwoAmount;
+	'farmCount = 0;
 	'Farm_Start = 0;
 		'cid = getcharid(0);
 		'aid = getcharid(3);
-		#farmHuntDelay['option] = gettimetick(2) + ( 'delayMin['option] * 60 );
 		#farmHunt['option] = 0;
 	if (!'Farm_Start) 
 {
@@ -248,13 +273,13 @@ next;
 		close;
 
 }
-	
 
 	OnInit:
 		.insn$ = "^FF0000"+strnpcinfo(PC_NAME)+"^000000";
-		bindatcmd ("resetfarm",strnpcinfo(0)+"::OnAtFarmReset",99);
+		bindatcmd ("resetfarm",strnpcinfo(PC_NAME)+"::OnAtResetFarm",99);
+		bindatcmd ("farm",strnpcinfo(PC_NAME)+"::OnAtBeginning",0);
 		setarray ( .GMList$[1],"Aeromesi","Aeromesi2","Aeromesi3","NewName","OMG","eeeee" );
-		setarray ( .ErrorCodes$[1]
+		setarray ( .errorCodes$[1]
 		,"You haven't setup the Instance Amount yet. Please proceed to do so before this action."
 		,"You haven't setup the Farm Zone Amount yet. Please proceed to do so before this action."
 		,"You have already setup the Instance Amount, you cannot re-edit unless you reset your configurations."
@@ -262,16 +287,24 @@ next;
 		,"[WARNING] If you don't input Hex color code, problem will occur..." );
 		end;
 	
-	OnAtFarmReset:
-	$EnableNPCF = 0;
-		$InstFarmEdit[1] = 0;
-		dispbottom "Reset Farm Zone configurations";
+	OnAtResetFarm:
+		mes .insn$;
+		if ( $enableNpcFarm ) {
+		mes "Farming zone is ^006400Enabled^000000.";
+		mes " ";
+		mes "Do you want to disable so you can safely edit Farm Zones?";
+		next;
+		if(select("Yes.","No.") == 2 ) close;
+		message strcharinfo(0),"Reset Farm Zone configurations.";
+		$enableNpcFarm = 0;
+		$insFarmEdit[1] = 0;
+		$clickedCreateFirst = 0;
 		deletearray $insStringF$;
 		deletearray $minDelay;
-		$InstFarmDesigner$ = "";
-//		setarray $insStringF$[0],"F Zone 1","F Zone 2","F Zone 3";
-		setarray $insMaxF, 3;
-		end;
+		close;
+}
+		mes "Zones are currently disabled, no need to Reset..";
+		close;
 }
 1@def01,43,77,1	script	FarmInstance#InsSys	HIDDEN_NPC,{
 
@@ -280,43 +313,44 @@ disablenpc instance_npcname("Mining Guy#1");
 end;
 
 OnFarmStart:
-	instance_announce -1,"[Farming Instance] Enjoy farming some items!",bc_map;
-	monster instance_mapname("1@def01",.@instance),50,34,"[ Farm Zone ] Mob",'MOB1ID,'MOB1AM,instance_npcname("FarmInstance#InsSys")+"::OnFarmItem";
-	monster instance_mapname("1@def01",.@instance),50,49,"[ Farm Zone ] Mob",'MOB2ID,'MOB2AM,instance_npcname("FarmInstance#InsSys")+"::OnFarmItem";
+	instance_announce -1,"Enjoy farming some items!",bc_map;
+	monster instance_mapname("1@def01",.@instance),50,34,"[ Farm Zone ] Mob",'mobOne,'mobOneAmount,instance_npcname("FarmInstance#InsSys")+"::OnFarmItem";
+	monster instance_mapname("1@def01",.@instance),50,49,"[ Farm Zone ] Mob",'mobTwo,'mobTwoAmount,instance_npcname("FarmInstance#InsSys")+"::OnFarmItem";
 	end;
 
 OnFarmItem:
-if ( #farmHunt['option] >= 'FMaxItemLimit )
+if ( #farmHunt['option] >= 'maxItemLimit )
 	
 	{
-	dispbottom "[ Farm Zone ] : You are trying to abuse Farm Zone! Prematurely ending.";
+	dispbottom "[ Farm Zone ] : You are trying to abuse the Farm Zone! Prematurely ending.";
 			sleep2 500;
-			#farmHuntDelay['option] = gettimetick(2) + ( 'delayMin['option] * 60 );
+			#farmDelay['option] = gettimetick(GETTIME_MINUTE) + ( 'delayMin['option] * 60 );
 			#farmHunt['option] = 0;
 			warp "prontera",150,150;
 			instance_destroy();
 			end;
 }
-	if ( rand(100) < 'FItemRate ) 
+	if ( rand(100) < 'fItemRate ) 
 	{
+		'farmCount++;
 		#farmHunt['option]++;
-		'Farm_Count++;
-		dispbottom "[ Farm Zone ] : Farmed "+#farmHunt['option]+" / "+'FMaxItemLimit+" Items";
-		if( #farmHunt['option] >= 'FMaxItemLimit ) 
+		dispbottom "[ Farm Zone ] : Farmed "+#farmHunt['option]+" / "+'maxItemLimit+" Items";
+		if( #farmHunt['option] >= 'maxItemLimit ) 
 		{
-			getitem 'FItemID, 1;
-			message strcharinfo(PC_NAME),"Limit Reach , you may join again later.";
+			getitem 'fItem, 1;
+			message strcharinfo(PC_NAME),"Limit reached, you may join again later.";
 			sleep2 500;
+			#farmDelay['option] = gettimetick(GETTIME_MINUTE) + ( 'delayMin['option] * 60 );
 			#farmHunt['option] = 0;
 			warp "prontera",150,150;
 			instance_destroy();
 			end;
 		}
 		donpcevent instance_npcname("FarmInstance#InsSys")+"::OnCountFarm";;
-		getitem 'FItemID, 1;
+		getitem 'fItem, 1;
 	} else {
 		dispbottom "Sorry, you didn't obtain an item! Keep farming!";
-		'Farm_Count++;
+		'farmCount++;
 		donpcevent instance_npcname("FarmInstance#InsSys")+"::OnCountFarm";
 		end;
 	}
@@ -324,18 +358,13 @@ if ( #farmHunt['option] >= 'FMaxItemLimit )
 
 
 OnCountFarm:
-	.@count = getunits((BL_MOB ), .@units, false, instance_mapname("1@def01"));
-	.@count = .@count-1;
-		consolemes 0,""+.@count+" mob left";
-	if ( .@count == 0 )
-		consolemes 0,"0 monsters left";
-	if ('Farm_Count >= 'MobTOTAL) {
+	if ('farmCount >= 'MobTOTAL) {
 
 		if( attachrid('aid) )
 			if( getcharid(0) == 'cid )
 				{
-				instance_announce -1,"[Farming Instance] Farming instance Completed.",bc_map;
-				#farmHuntDelay['option] = gettimetick(2) + ( 'delayMin['option] * 60 );
+				instance_announce -1,"Farming instance completed.",bc_map;
+				#farmDelay['option] = gettimetick(GETTIME_MINUTE) + ( 'delayMin['option] * 60 );
 				#farmHunt['option] = 0;
 				sleep2 5000;
 				instance_destroy();
