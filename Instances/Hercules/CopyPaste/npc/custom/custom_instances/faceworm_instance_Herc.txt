@@ -209,9 +209,6 @@ OnTalk:
 		'darkWorm = 2530;
 		sleep 500;
 		.@npc_name$ = strnpcinfo(3);
-
-		.@map$ = instance_mapname( ""+strnpcinfo(0)+"");
-		.@map$ = strnpcinfo(4);
 		'ladder_level = 0;
 		'talking = 1;
 		
@@ -225,7 +222,7 @@ OnTalk:
 		end;
 		
 	OnStart1:
-		.@map$ = strnpcinfo(4);
+		.@map$ = "1@face";
 		.@map_user = getmapusers( .@map$ );
 		.@npc_name$ = instance_npcname( "Treasure#faceworm" );
 		if ( .@map_user > 1 )
