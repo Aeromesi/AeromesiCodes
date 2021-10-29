@@ -82,11 +82,11 @@ prontera,164,168,2	script	Prontera Castle Guard#a	4_M_ROYALGUARD,{
 		mes "The instance is OPEN! Good luck!";
 		sleep2 750;
 		cutin "", 255;
-		specialeffect2 777;
+		specialeffect 777;
 		announce "[Entering Fiery Forest ]",bc_self;
 		sleep2 300;
-		specialeffect2 EF_HEALSP;
-		specialeffect2 EF_M05;
+		specialeffect EF_HEALSP;
+		specialeffect EF_M05;
 		sleep2 300;
 			.@instance = instance_create( .@md_name$, getcharid( 3 ), IOT_CHAR);
 			if( .@instance < 0 ) { 
@@ -377,7 +377,6 @@ for (.@i = 0; .@i < 34; .@i++)
 	OnThisLastWaveF:
 	if ( !'PlayType ) 
 	{
-	debugmes "Solo-Mode";
 	instance_announce -1,$@flabel$+" Congratulations, you have stopped the Fire Demon Ifrit in "+ callfunc( "timeleft__", gettimetick(2) - 'Fire_Start ),bc_map;
 	if( !FNewRank ) {
 	FNewRank = 'Fire_Start;
@@ -406,7 +405,6 @@ for (.@i = 0; .@i < 34; .@i++)
 					getitem 'Item_Reward, 'Item_Reward_Amount;
 			}
 		}
-		debugmes "Party-Mode";
 		.@timeused = gettimetick(2) - 'Fire_Start;
 		if ( 'bonus_item_amount && .@timeused < 'bonus_time * 60 ) {
 			instance_announce 0, "You are rewarded a bonus item for securing Prontera and the Fairies from the Fire Demon Ifrit within "+ 'bonus_time +" minutes.", bc_map;
@@ -490,7 +488,6 @@ f@prt,184,362,0	script	Fire#1	HIDDEN_NPC,0,0,{
 	
 	OnEnable:
 	enablenpc instance_npcname(strnpcinfo(NPC_NAME));
-	debugmes "Tree " + strnpcinfo(NPC_NAME) + " enabled";
 	getmapxy .@map$, .@x, .@y,1;
 	viewpointmap instance_mapname("f@prt"),1,.@x,.@y,atoi(strnpcinfo(2)),0xFF0000;
 	initnpctimer;
