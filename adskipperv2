@@ -1,0 +1,220 @@
+import time
+import threading
+
+import cv2
+import numpy as np
+import pytesseract
+import pyautogui
+from PIL import ImageGrab
+
+# -----------------------------
+# TESSERACT PATH
+# -----------------------------
+pytesseract.pytesseract.tesseract_cmd = (
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+)
+
+# -----------------------------
+# SCREENSHOT TEMPLATE FILES
+# -----------------------------
+CLOSE_SCREENSHOT = (
+    r"C:\Users\micha\AppData\Local\Temp"
+    r"\codex-clipboard-7cbc033c-b08a-445d-8c87-b3cad9e5db24.png"
+)
+NEXT_SCREENSHOT = (
+    r"C:\Users\micha\AppData\Local\Temp"
+    r"\codex-clipboard-3de00974-a0f3-446c-9226-37dc51089c0a.png"
+)
+
+# Target regions as fractions of the reference screenshot dimensions.
+# These keep matching focused on the close X and the top-right button.
+CLOSE_REGION = (0.82, 0.02, 0.18, 0.09)
+NEXT_REGION = (0.76, 0.00, 0.24, 0.07)
+
+MATCH_THRESHOLD = 0.78
+running = False
+
+
+def load_template(path, region):
+    """Load a screenshot and crop its target control as a grayscale template."""
+    image = cv2.imread(path)
+    if image is None:
+        raise FileNotFoundError(f"Could not load screenshot template: {path}")
+
+    height, width = image.shape[:2]
+    x_frac, y_frac, w_frac, h_frac = region
+
+    x1 = int(width * x_frac)
+    y1 = int(height * y_frac)
+    x2 = int(width * (x_frac + w_frac))
+    y2 = int(height * (y_frac + h_frac))
+
+    return cv2.cvtColor(image[y1:y2, x1:x2], cv2.COLOR_BGR2GRAY)
+
+
+CLOSE_TEMPLATE = load_template(CLOSE_SCREENSHOT, CLOSE_REGION)
+NEXT_TEMPLATE = load_template(NEXT_SCREENSHOT, NEXT_REGION)
+
+
+def find_template_on_screen(template, region, threshold=MATCH_THRESHOLD):
+    """Find a template in a proportional screen region, trying several sizes."""
+    screen = np.array(ImageGrab.grab().convert("RGB"))
+    screen = cv2.cvtColor(screen, cv2.COLOR_RGB2GRAY)
+
+    screen_h, screen_w = screen.shape
+    x_frac, y_frac, w_frac, h_frac = region
+
+    x1 = int(screen_w * x_frac)
+    y1 = int(screen_h * y_frac)
+    x2 = int(screen_w * (x_frac + w_frac))
+    y2 = int(screen_h * (y_frac + h_frac))
+    search_area = screen[y1:y2, x1:x2]
+
+    best_score = -1
+    best_location = None
+
+    # Accommodate moderate differences in display and screenshot scale.
+    for scale in (0.6, 0.75, 0.9, 1.0, 1.15, 1.3, 1.5, 1.75, 2.0):
+        new_w = int(template.shape[1] * scale)
+        new_h = int(template.shape[0] * scale)
+
+        if new_w < 8 or new_h < 8:
+            continue
+        if new_w > search_area.shape[1] or new_h > search_area.shape[0]:
+            continue
+
+        resized = cv2.resize(template, (new_w, new_h))
+        result = cv2.matchTemplate(
+            search_area, resized, cv2.TM_CCOEFF_NORMED
+        )
+        _, score, _, location = cv2.minMaxLoc(result)
+
+        if score > best_score:
+            best_score = score
+            best_location = (location, new_w, new_h)
+
+    if best_location is None or best_score < threshold:
+        return None
+
+    (match_x, match_y), match_w, match_h = best_location
+    center_x = x1 + match_x + match_w // 2
+    center_y = y1 + match_y + match_h // 2
+
+    return center_x, center_y, best_score
+
+
+def click_screenshot_controls():
+    # Check the close X first.
+    match = find_template_on_screen(CLOSE_TEMPLATE, CLOSE_REGION)
+    if match:
+        x, y, score = match
+        print(f"Found white X (match {score:.2f}); clicking {x}, {y}")
+        pyautogui.click(x, y)
+        return True
+
+    # Then check the top-right » control.
+    match = find_template_on_screen(NEXT_TEMPLATE, NEXT_REGION)
+    if match:
+        x, y, score = match
+        print(f"Found top-right » (match {score:.2f}); clicking {x}, {y}")
+        pyautogui.click(x, y)
+        return True
+
+    return False
+
+
+# -----------------------------
+# WORDS TO LOOK FOR
+# -----------------------------
+TARGET_WORDS = [
+    "close",
+    "skip",
+    "skip ad",
+    "skip ads",
+    "skip advertisement",
+    "continue",
+    "dismiss",
+    "not now",
+    "no thanks",
+]
+
+BLACKLIST_WORDS = [
+    "chrome",
+    "firefox",
+    "edge",
+    "discord",
+    "explorer",
+]
+
+
+def scan_screen():
+    img = ImageGrab.grab()
+    data = pytesseract.image_to_data(
+        img,
+        output_type=pytesseract.Output.DICT
+    )
+
+    for i, raw_text in enumerate(data["text"]):
+        text = raw_text.strip().lower()
+        if not text:
+            continue
+
+        if any(word in text for word in BLACKLIST_WORDS):
+            continue
+
+        if any(target in text for target in TARGET_WORDS):
+            x = data["left"][i]
+            y = data["top"][i]
+            w = data["width"][i]
+            h = data["height"][i]
+            center_x = x + w // 2
+            center_y = y + h // 2
+
+            print(f"Found '{text}' -> clicking {center_x}, {center_y}")
+            pyautogui.click(center_x, center_y)
+            return True
+
+    return False
+
+
+# -----------------------------
+# MAIN WATCHER LOOP
+# -----------------------------
+def watcher():
+    global running
+    print("Watcher thread started")
+
+    while True:
+        if running:
+            try:
+                if not click_screenshot_controls():
+                    scan_screen()
+            except Exception as e:
+                print("Watcher error:", e)
+
+        time.sleep(1)
+
+
+# -----------------------------
+# TOGGLE KEY
+# -----------------------------
+def toggle_loop():
+    global running
+    import keyboard
+
+    while True:
+        if keyboard.is_pressed("f1"):
+            running = not running
+            print(f"Watcher {'ENABLED' if running else 'DISABLED'}")
+            time.sleep(0.3)
+
+        time.sleep(0.05)
+
+
+threading.Thread(target=watcher, daemon=True).start()
+threading.Thread(target=toggle_loop, daemon=True).start()
+
+print("Press F1 to enable/disable")
+
+while True:
+    time.sleep(1)
